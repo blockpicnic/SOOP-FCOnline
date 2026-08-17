@@ -44,4 +44,35 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "nicknames 쿼리 파라미터가 필요합니다. 예: ?nicknames=닉네임1,닉네임2" });
   }
 
-  const divisionMap = await
+  const divisionMap = await getDivisionMap().catch(() => ({}));
+  const results = {};
+
+  await Promise.all(nicknames.map(async (nickname) => {
+    try {
+      const idData = await fetchJson(
+        `${NEXON_BASE}/id?nickname=${encodeURIComponent(nickname)}`,
+        apiKey
+      );
+      const ouid = idData.ouid;
+      if (!ouid) {
+        results[nickname] = { error: "ouid를 찾지 못했습니다 (닉네임 확인 필요)" };
+        return;
+      }
+
+      const maxDivData = await fetchJson(
+        `${NEXON_BASE}/user/maxdivision?ouid=${ouid}&matchtype=${MATCHTYPE_공식경기_1대1}`,
+        apiKey
+      );
+      const entry = Array.isArray(maxDivData) ? maxDivData[0] : maxDivData;
+      const divisionId = entry?.division ?? null;
+      const divisionName = divisionId != null ? (divisionMap[divisionId] || `등급 ${divisionId}`) : null;
+
+      results[nickname] = { ouid, divisionId, divisionName };
+    } catch (err) {
+      results[nickname] = { error: String(err.message || err) };
+    }
+  }));
+
+  res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=120");
+  res.status(200).json(results);
+}
