@@ -1,26 +1,26 @@
 [
-{
-  "id": "callmeharuby",
-  "name": "하루비_",
-  "fcNickname": "나이기면치킨드림",
-  "fcOuid": "b5a8f31714f49f29aa397a4738680c0b",
-  "tier": null,
-  "divisionId": null,
-  "soopTier": "1티어",
-  "crew": "감컴퍼니",
-  "note": "",
-  "active": true
-},
-{
-  "id": "lshooooo",
-  "name": "이상호",
-  "fcNickname": "메시연",
-  "fcOuid": "실제 저장된 OUID",
-  "tier": null,
-  "divisionId": null,
-  "soopTier": null,
-  "crew": null,
-  "note": "",
-  "active": true
-}
+  {
+    "id": "callmeharuby",
+    "name": "하루비_",
+    "fcNickname": "나이기면치킨드림",
+    "fcOuid": "b5a8f31714f49f29aa397a4738680c0b",
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "6티어",
+    "crew": "어인섬",
+    "note": "",
+    "active": true
+  },
+  {
+    "id": "lshooooo",
+    "name": "이상호",
+    "fcNickname": "메시연",
+    "fcOuid": "9ad2c4389d9199b5b9998c917e7e64ec",
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "2티어",
+    "crew": "신길동요리왕",
+    "note": "",
+    "active": true
+  }
 ]
