@@ -142,12 +142,13 @@
     display:inline-block;
     white-space:nowrap;
   }
-  .tier-플래티넘{background:rgba(127,232,212,0.14); color:var(--plat); border:1px solid rgba(127,232,212,0.35);}
-  .tier-다이아{background:rgba(140,170,255,0.14); color:#a9bcff; border:1px solid rgba(140,170,255,0.35);}
-  .tier-골드{background:rgba(240,195,76,0.15); color:var(--gold); border:1px solid rgba(240,195,76,0.4);}
-  .tier-실버{background:rgba(199,208,205,0.12); color:var(--silver); border:1px solid rgba(199,208,205,0.3);}
-  .tier-브론즈{background:rgba(201,139,78,0.15); color:var(--bronze); border:1px solid rgba(201,139,78,0.4);}
-  .tier-미확인{background:rgba(92,107,100,0.15); color:var(--unranked); border:1px solid rgba(92,107,100,0.3);}
+  /* divisionId가 낮을수록 상위 등급 (예: 800=슈퍼챔피언스, 3100=유망주3) */
+  .tier-top{background:rgba(127,232,212,0.14); color:var(--plat); border:1px solid rgba(127,232,212,0.35);}     /* ~1300: 챌린저 이상 */
+  .tier-high{background:rgba(140,170,255,0.14); color:#a9bcff; border:1px solid rgba(140,170,255,0.35);}        /* ~1900: 마스터 */
+  .tier-mid{background:rgba(240,195,76,0.15); color:var(--gold); border:1px solid rgba(240,195,76,0.4);}        /* ~2200: 월드클래스 */
+  .tier-low{background:rgba(199,208,205,0.12); color:var(--silver); border:1px solid rgba(199,208,205,0.3);}    /* ~2500: 프로 */
+  .tier-basic{background:rgba(201,139,78,0.15); color:var(--bronze); border:1px solid rgba(201,139,78,0.4);}    /* 2600+: 세미프로/유망주 */
+  .tier-unranked{background:rgba(92,107,100,0.15); color:var(--unranked); border:1px solid rgba(92,107,100,0.3);}
   .score{
     font-family:var(--font-mono); font-size:10px; color:var(--text-dim);
     margin-top:4px;
@@ -198,16 +199,16 @@
    live     : true/false — 지금 방송 중인지 수동으로 체크
    note     : 카드에 작게 표시할 메모 (선택)
 ============================================================ */
-// live 값은 이제 자동으로 채워집니다 (초기값은 false로 두면 됨).
+// id         : SOOP 채널 ID
+// name       : 표시할 이름
+// fcNickname : FC온라인 게임 내 닉네임 (공식경기 1대1 티어 자동 조회에 사용)
+// tier / divisionId 는 이제 넥슨 API에서 자동으로 채워지므로 직접 입력하지 않습니다.
 const STREAMERS = [
-  { id: "example_streamer1", name: "예시_스트리머1", tier: "플래티넘", score: "승률 68% · 등급전 챌린저", live: false, note: "" },
-  { id: "example_streamer2", name: "예시_스트리머2", tier: "다이아",   score: "승률 61%",                 live: false, note: "" },
-  { id: "example_streamer3", name: "예시_스트리머3", tier: "골드",     score: "승률 54%",                 live: false, note: "" },
-  { id: "example_streamer4", name: "예시_스트리머4", tier: "실버",     score: "",                          live: false, note: "" },
-  { id: "example_streamer5", name: "예시_스트리머5", tier: "미확인",   score: "티어 확인 필요",            live: false, note: "" },
+  { id: "callmeharuby", name: "하루비_", fcNickname: "나이기면치킨드림", tier: null, divisionId: null, live: false, note: "" },
 ];
 
-const REFRESH_MS = 60000; // 60초마다 자동 갱신
+const LIVE_REFRESH_MS = 60000;   // SOOP 방송 여부: 60초마다
+const TIER_REFRESH_MS = 300000;  // FC온라인 티어: 5분마다 (넥슨 데이터가 매시간 갱신되므로 자주 부를 필요 없음)
 
 async function refreshLiveStatus(){
   const ids = STREAMERS.map(s => s.id).join(',');
@@ -224,7 +225,41 @@ async function refreshLiveStatus(){
   render();
 }
 
-const TIER_ORDER = ["플래티넘","다이아","골드","실버","브론즈","미확인"];
+async function refreshTierStatus(){
+  const nicknames = STREAMERS.map(s => s.fcNickname).join(',');
+  try{
+    const res = await fetch(`/api/tier?nicknames=${encodeURIComponent(nicknames)}`);
+    if(!res.ok) throw new Error('tier fetch failed');
+    const data = await res.json();
+    STREAMERS.forEach(s => {
+      const info = data[s.fcNickname];
+      if(info && !info.error){
+        s.tier = info.divisionName;
+        s.divisionId = info.divisionId;
+      } else if(info && info.error){
+        s.tier = "조회 실패";
+        s.divisionId = null;
+        console.warn(`${s.name}(${s.fcNickname}) 티어 조회 실패:`, info.error);
+      }
+    });
+  } catch(err){
+    console.warn('티어 갱신 실패, 이전 상태 유지:', err);
+  }
+  render();
+}
+
+// divisionId가 낮을수록 상위 등급. 정렬/미확인 처리를 위해 없으면 맨 뒤로 보냄.
+function divisionRank(s){
+  return s.divisionId == null ? Infinity : s.divisionId;
+}
+function tierClass(divisionId){
+  if(divisionId == null) return 'tier-unranked';
+  if(divisionId <= 1300) return 'tier-top';
+  if(divisionId <= 1900) return 'tier-high';
+  if(divisionId <= 2200) return 'tier-mid';
+  if(divisionId <= 2500) return 'tier-low';
+  return 'tier-basic';
+}
 
 const grid = document.getElementById('grid');
 const search = document.getElementById('search');
@@ -237,11 +272,11 @@ function render(){
 
   const mode = sortSel.value;
   if(mode === "tier"){
-    list.sort((a,b) => TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier));
+    list.sort((a,b) => divisionRank(a) - divisionRank(b));
   } else if(mode === "name"){
     list.sort((a,b) => a.name.localeCompare(b.name, 'ko'));
   } else if(mode === "live"){
-    list.sort((a,b) => (b.live - a.live) || (TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier)));
+    list.sort((a,b) => (b.live - a.live) || (divisionRank(a) - divisionRank(b)));
   }
 
   liveCount.textContent = STREAMERS.filter(s=>s.live).length + "명 방송 중 (60초마다 자동 갱신)";
@@ -251,7 +286,9 @@ function render(){
     return;
   }
 
-  grid.innerHTML = list.map(s => `
+  grid.innerHTML = list.map(s => {
+    const tierLabel = s.tier || "불러오는 중…";
+    return `
     <a class="card ${s.live ? 'live' : ''}" href="https://ch.sooplive.co.kr/${s.id}" target="_blank" rel="noopener">
       <div class="avatar">${s.name.slice(0,1)}</div>
       <div class="meta">
@@ -259,21 +296,22 @@ function render(){
           <span class="name">${s.name}</span>
           ${s.live ? '<span class="live-badge">LIVE</span>' : ''}
         </div>
-        <div class="id-line">@${s.id}${s.note ? ' · ' + s.note : ''}</div>
+        <div class="id-line">@${s.id} · FC ${s.fcNickname}${s.note ? ' · ' + s.note : ''}</div>
       </div>
       <div class="tier-wrap">
-        <span class="tier-badge tier-${s.tier}">${s.tier}</span>
-        ${s.score ? `<div class="score">${s.score}</div>` : ''}
+        <span class="tier-badge ${tierClass(s.divisionId)}">${tierLabel}</span>
       </div>
     </a>
-  `).join('');
+  `;}).join('');
 }
 
 search.addEventListener('input', render);
 sortSel.addEventListener('change', render);
 render();
 refreshLiveStatus();
-setInterval(refreshLiveStatus, REFRESH_MS);
+refreshTierStatus();
+setInterval(refreshLiveStatus, LIVE_REFRESH_MS);
+setInterval(refreshTierStatus, TIER_REFRESH_MS);
 </script>
 
 </body>
