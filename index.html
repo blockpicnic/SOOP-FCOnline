@@ -308,6 +308,26 @@
     color:var(--text-dim);
     font-size:13px;
   }
+.badge-row{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:5px;
+  flex-wrap:wrap;
+}
+
+.info-badge{
+  background:rgba(155,255,92,0.10);
+  color:var(--turf);
+  border:1px solid rgba(155,255,92,0.30);
+  font-family:var(--font-display);
+  font-size:11px;
+  letter-spacing:0.03em;
+  padding:5px 10px;
+  border-radius:8px;
+  display:inline-block;
+  white-space:nowrap;
+}
 </style>
 </head>
 
@@ -688,46 +708,56 @@ function render(){
 
           <div class="id-line">
 
-            @${s.id}
+  @${s.id}
 
-            ${
-              s.fcNickname
-                ? ` · FC ${s.fcNickname}`
-                : ''
-            }
+  ${
+    s.fcNickname
+      ? ` · FC ${s.fcNickname}`
+      : ''
+  }
 
-            ${
-              s.soopTier
-                ? ` · SOOP ${s.soopTier}`
-                : ''
-            }
+  ${
+    s.note
+      ? ` · ${s.note}`
+      : ''
+  }
 
-            ${
-              s.crew
-                ? ` · ${s.crew}`
-                : ''
-            }
-
-            ${
-              s.note
-                ? ` · ${s.note}`
-                : ''
-            }
-
-          </div>
-
+</div>
         </div>
 
         <div class="tier-wrap">
 
-          <span
-            class="tier-badge ${tierClass(s.divisionId)}"
-          >
-            ${tierLabel}
+  <div class="badge-row">
+
+    <span
+      class="tier-badge ${tierClass(s.divisionId)}"
+    >
+      ${tierLabel}
+    </span>
+
+    ${
+      s.soopTier
+        ? `
+          <span class="info-badge">
+            ${s.soopTier}
           </span>
+        `
+        : ''
+    }
 
-        </div>
+    ${
+      s.crew
+        ? `
+          <span class="info-badge">
+            ${s.crew}
+          </span>
+        `
+        : ''
+    }
 
+  </div>
+
+</div>
       </a>
     `;
 
