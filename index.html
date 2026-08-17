@@ -496,20 +496,26 @@ async function refreshTierStatus(){
 
       if(info && !info.error){
 
-        s.tier = info.divisionName;
-        s.divisionId = info.divisionId;
+  // 현재 FC온라인 닉네임으로 자동 갱신
+  if(info.currentNickname){
+    s.fcNickname = info.currentNickname;
+  }
 
-      }else if(info && info.error){
+  // 현재 공식경기 1on1 티어
+  s.tier = info.divisionName;
+  s.divisionId = info.divisionId;
 
-        s.tier = '조회 실패';
-        s.divisionId = null;
+}else if(info && info.error){
 
-        console.warn(
-          `${s.name}(${s.fcNickname}) 티어 조회 실패:`,
-          info.error
-        );
+  s.tier = '조회 실패';
+  s.divisionId = null;
 
-      }
+  console.warn(
+    `${s.name}(${s.fcNickname}) 티어 조회 실패:`,
+    info.error
+  );
+
+}
 
     });
 
