@@ -185,8 +185,8 @@
 </main>
 
 <footer>
-  데이터는 <code>STREAMERS</code> 배열을 직접 수정해서 관리합니다 (하단 스크립트 참고).<br>
-  SOOP 공식 연동 전까지는 <code>live</code> 값과 <code>tier</code> 값을 손으로 갱신하세요.
+데이터는 <code>data/streamers.json</code>에서 관리합니다.<br>
+방송 상태는 60초마다 자동 확인하며, FC온라인 공식경기 1on1 티어는 5분마다 자동 조회합니다.
 </footer>
 
 <script>
@@ -203,10 +203,33 @@
 // name       : 표시할 이름
 // fcNickname : FC온라인 게임 내 닉네임 (공식경기 1대1 티어 자동 조회에 사용)
 // tier / divisionId 는 이제 넥슨 API에서 자동으로 채워지므로 직접 입력하지 않습니다.
-const STREAMERS = [
-  { id: "callmeharuby", name: "하루비_", fcNickname: "나이기면치킨드림", tier: null, divisionId: null, live: false, note: "" },
-];
+let STREAMERS = [];
+async function loadStreamers(){
+  try{
+    const res = await fetch('/data/streamers.json', { cache: 'no-store' });
 
+    if(!res.ok){
+      throw new Error('streamers.json fetch failed');
+    }
+
+    const data = await res.json();
+
+    if(!Array.isArray(data)){
+      throw new Error('streamers.json must be an array');
+    }
+
+    STREAMERS = data.map(s => ({
+      ...s,
+      live: false
+    }));
+
+    render();
+
+  } catch(err){
+    console.error('스트리머 데이터 불러오기 실패:', err);
+    grid.innerHTML = '<div class="empty">스트리머 데이터를 불러오지 못했습니다.</div>';
+  }
+}
 const LIVE_REFRESH_MS = 60000;   // SOOP 방송 여부: 60초마다
 const TIER_REFRESH_MS = 300000;  // FC온라인 티어: 5분마다 (넥슨 데이터가 매시간 갱신되므로 자주 부를 필요 없음)
 
@@ -296,7 +319,13 @@ function render(){
           <span class="name">${s.name}</span>
           ${s.live ? '<span class="live-badge">LIVE</span>' : ''}
         </div>
-        <div class="id-line">@${s.id} · FC ${s.fcNickname}${s.note ? ' · ' + s.note : ''}</div>
+        <div class="id-line">
+  @${s.id}
+  · FC ${s.fcNickname || '미등록'}
+  ${s.soopTier ? ` · SOOP ${s.soopTier}` : ''}
+  ${s.crew ? ` · ${s.crew}` : ''}
+  ${s.note ? ` · ${s.note}` : ''}
+</div>
       </div>
       <div class="tier-wrap">
         <span class="tier-badge ${tierClass(s.divisionId)}">${tierLabel}</span>
@@ -307,11 +336,13 @@ function render(){
 
 search.addEventListener('input', render);
 sortSel.addEventListener('change', render);
-render();
-refreshLiveStatus();
-refreshTierStatus();
-setInterval(refreshLiveStatus, LIVE_REFRESH_MS);
-setInterval(refreshTierStatus, TIER_REFRESH_MS);
+loadStreamers().then(() => {
+  refreshLiveStatus();
+  refreshTierStatus();
+
+  setInterval(refreshLiveStatus, LIVE_REFRESH_MS);
+  setInterval(refreshTierStatus, TIER_REFRESH_MS);
+});
 </script>
 
 </body>
