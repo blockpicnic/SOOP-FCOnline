@@ -1,0 +1,215 @@
+name: Update FC Online Data
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: "0 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update-fc-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update FC Online data
+        env:
+          NEXON_API_KEY: ${{ secrets.NEXON_API_KEY }}
+        run: |
+          python3 <<'PY'
+          import json
+          import os
+          import urllib.parse
+          import urllib.request
+
+          API_KEY = os.environ["NEXON_API_KEY"]
+
+          FILE = "data/streamers.json"
+
+          with open(FILE, "r", encoding="utf-8") as f:
+              streamers = json.load(f)
+
+          changed = False
+
+
+          def nexon_get(path):
+              url = "https://open.api.nexon.com" + path
+
+              req = urllib.request.Request(
+                  url,
+                  headers={
+                      "x-nxopen-api-key": API_KEY,
+                      "Content-Type": "application/json"
+                  }
+              )
+
+              with urllib.request.urlopen(req, timeout=20) as response:
+                  return json.loads(
+                      response.read().decode("utf-8")
+                  )
+
+
+          for streamer in streamers:
+
+              nickname = (
+                  streamer.get("fcNickname") or ""
+              ).strip()
+
+              if not nickname:
+                  print(
+                      f"[SKIP] {streamer.get('id')} - FC 닉네임 없음"
+                  )
+                  continue
+
+
+              try:
+
+                  fc_ouid = (
+                      streamer.get("fcOuid") or ""
+                  ).strip()
+
+
+                  # =================================================
+                  # 1. fcOuid가 없는 경우
+                  #    FC 닉네임 → OUID
+                  # =================================================
+
+                  if not fc_ouid:
+
+                      print(
+                          f"[LOOKUP] {streamer.get('name')} / {nickname}"
+                      )
+
+                      encoded_nickname = urllib.parse.quote(
+                          nickname,
+                          safe=""
+                      )
+
+                      data = nexon_get(
+                          f"/fconline/v1/id?nickname={encoded_nickname}"
+                      )
+
+                      new_ouid = data.get("ouid")
+
+                      if not new_ouid:
+                          print(
+                              f"[FAIL] OUID 없음: {nickname}"
+                          )
+                          continue
+
+                      streamer["fcOuid"] = new_ouid
+
+                      fc_ouid = new_ouid
+
+                      changed = True
+
+                      print(
+                          f"[OUID] {nickname} → {new_ouid}"
+                      )
+
+
+                  # =================================================
+                  # 2. OUID → 현재 닉네임
+                  # =================================================
+
+                  basic = nexon_get(
+                      "/fconline/v1/user/basic?ouid="
+                      + urllib.parse.quote(
+                          fc_ouid,
+                          safe=""
+                      )
+                  )
+
+                  current_nickname = (
+                      basic.get("nickname") or ""
+                  ).strip()
+
+
+                  if (
+                      current_nickname
+                      and current_nickname != nickname
+                  ):
+
+                      print(
+                          "[NICKNAME CHANGE] "
+                          f"{nickname} → {current_nickname}"
+                      )
+
+                      streamer["fcNickname"] = (
+                          current_nickname
+                      )
+
+                      changed = True
+
+
+                  else:
+
+                      print(
+                          f"[OK] {streamer.get('name')} / "
+                          f"{current_nickname}"
+                      )
+
+
+              except Exception as e:
+
+                  print(
+                      f"[ERROR] "
+                      f"{streamer.get('name')} / "
+                      f"{nickname} / "
+                      f"{e}"
+                  )
+
+
+          # =========================================================
+          # 변경사항 저장
+          # =========================================================
+
+          if changed:
+
+              with open(
+                  FILE,
+                  "w",
+                  encoding="utf-8"
+              ) as f:
+
+                  json.dump(
+                      streamers,
+                      f,
+                      ensure_ascii=False,
+                      indent=2
+                  )
+
+                  f.write("\n")
+
+
+              print(
+                  "FC 데이터가 변경되었습니다."
+              )
+
+          else:
+
+              print(
+                  "변경사항이 없습니다."
+              )
+
+          PY
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/streamers.json
+
+          if git diff --cached --quiet; then
+            echo "변경사항 없음"
+            exit 0
+          fi
+
+          git commit -m "Auto update FC Online data"
+          git push
