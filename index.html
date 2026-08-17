@@ -222,9 +222,6 @@ function render(){
   }).join('');
 }
 
-search.addEventListener('input', render);
-sortSel.addEventListener('change', render);
-
 loadStreamers()
   .then(() => {
     render();
@@ -238,8 +235,12 @@ loadStreamers()
   .catch(err => {
     console.error('초기화 실패:', err);
 
-    grid.innerHTML =
-      '<div class="empty">스트리머 데이터를 불러오지 못했습니다.</div>';
+    const grid = document.getElementById('grid');
+
+    if (grid) {
+      grid.innerHTML =
+        '<div class="empty">스트리머 데이터를 불러오지 못했습니다.</div>';
+    }
   });
   
 </script>
