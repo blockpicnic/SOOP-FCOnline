@@ -1,1 +1,44 @@
+[
+  {
+    "id": "callmeharuby",
+    "name": "하루비_",
+    "fcNickname": "나이기면치킨드림",
+    "fcOuid": null,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": null,
+    "crew": null,
+    "note": ""
+  }
+]
+id
+→ SOOP ID
+→ 절대적인 스트리머 식별자
 
+name
+→ 사이트에 표시할 이름
+
+fcNickname
+→ 현재 FC온라인 닉네임
+
+fcOuid
+→ 나중에 FC온라인 계정 추적용
+
+tier
+→ 공식경기 1on1 티어
+→ 자동 조회
+
+divisionId
+→ 공식경기 1on1 등급 코드
+→ 자동 조회
+
+soopTier
+→ 우리가 정하는 SOOP 내부 티어
+→ 수동
+
+crew
+→ 숲 크루
+→ 수동
+
+note
+→ 기타 메모
