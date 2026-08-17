@@ -707,21 +707,7 @@ function render(){
           </div>
 
           <div class="id-line">
-
-  @${s.id}
-
-  ${
-    s.fcNickname
-      ? ` · {s.fcNickname}`
-      : ''
-  }
-
-  ${
-    s.note
-      ? ` · ${s.note}`
-      : ''
-  }
-
+  @${s.id}${s.fcNickname ? ` · ${s.fcNickname}` : ''}${s.note ? ` · ${s.note}` : ''}
 </div>
         </div>
 
