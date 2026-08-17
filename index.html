@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FC온라인 스트리머 티어보드</title>
+<style>
+  :root{
+    --bg: #0c1210;
+    --bg-elev: #121a17;
+    --pitch-line: #22332c;
+    --turf: #9bff5c;
+    --turf-dim: #6fbf3f;
+    --text: #eef5ee;
+    --text-dim: #93a89c;
+    --plat: #7fe8d4;
+    --gold: #f0c34c;
+    --silver: #c7d0cd;
+    --bronze: #c98b4e;
+    --unranked: #5c6b64;
+    --card-radius: 14px;
+    --font-display: 'Archivo Black', 'Pretendard', system-ui, sans-serif;
+    --font-body: 'Pretendard', -apple-system, 'Noto Sans KR', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Roboto Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 15% -10%, rgba(155,255,92,0.10), transparent 45%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    padding-bottom:60px;
+  }
+  header{
+    padding:28px 20px 18px;
+    border-bottom:1px solid var(--pitch-line);
+    position:sticky; top:0; z-index:10;
+    background:rgba(12,18,16,0.92);
+    backdrop-filter:blur(6px);
+  }
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.18em;
+    color:var(--turf);
+    text-transform:uppercase;
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:var(--font-display);
+    font-size:clamp(22px,6vw,34px);
+    letter-spacing:-0.01em;
+    margin:0 0 4px;
+    line-height:1.05;
+  }
+  .sub{
+    color:var(--text-dim);
+    font-size:13px;
+    margin:0;
+  }
+  .controls{
+    display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;
+  }
+  .controls input[type=text]{
+    flex:1; min-width:160px;
+    background:var(--bg-elev);
+    border:1px solid var(--pitch-line);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:10px;
+    font-family:var(--font-body);
+    font-size:14px;
+  }
+  select{
+    background:var(--bg-elev);
+    border:1px solid var(--pitch-line);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:10px;
+    font-size:13px;
+    font-family:var(--font-body);
+  }
+  main{max-width:760px; margin:0 auto; padding:18px 16px 0;}
+  .live-strip{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--font-mono); font-size:11px; color:var(--text-dim);
+    margin:14px 2px 18px;
+    letter-spacing:0.04em;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:#ff5c5c;box-shadow:0 0 8px #ff5c5c; animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+  .grid{display:flex; flex-direction:column; gap:10px;}
+  .card{
+    background:var(--bg-elev);
+    border:1px solid var(--pitch-line);
+    border-radius:var(--card-radius);
+    padding:14px 14px;
+    display:grid;
+    grid-template-columns:44px 1fr auto;
+    gap:12px;
+    align-items:center;
+    text-decoration:none;
+    color:inherit;
+    transition:border-color .15s, transform .15s;
+    position:relative;
+    overflow:hidden;
+  }
+  .card:active{transform:scale(0.99);}
+  .card.live{border-color:rgba(255,92,92,0.5);}
+  .card.live::before{
+    content:"";
+    position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:#ff5c5c;
+  }
+  .avatar{
+    width:44px; height:44px; border-radius:10px;
+    background:linear-gradient(135deg,var(--pitch-line),#1c2822);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-size:15px; color:var(--turf-dim);
+    overflow:hidden; flex-shrink:0;
+  }
+  .avatar img{width:100%;height:100%;object-fit:cover;}
+  .meta{min-width:0;}
+  .name-row{display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+  .name{font-weight:700; font-size:15px;}
+  .live-badge{
+    font-family:var(--font-mono); font-size:9px; letter-spacing:0.06em;
+    background:#ff5c5c; color:#1a0a0a; padding:2px 6px; border-radius:5px;
+    font-weight:700; flex-shrink:0;
+  }
+  .id-line{
+    font-family:var(--font-mono); font-size:11.5px; color:var(--text-dim);
+    margin-top:2px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .tier-wrap{text-align:right; flex-shrink:0;}
+  .tier-badge{
+    font-family:var(--font-display); font-size:11px; letter-spacing:0.03em;
+    padding:5px 10px; border-radius:8px;
+    display:inline-block;
+    white-space:nowrap;
+  }
+  .tier-플래티넘{background:rgba(127,232,212,0.14); color:var(--plat); border:1px solid rgba(127,232,212,0.35);}
+  .tier-다이아{background:rgba(140,170,255,0.14); color:#a9bcff; border:1px solid rgba(140,170,255,0.35);}
+  .tier-골드{background:rgba(240,195,76,0.15); color:var(--gold); border:1px solid rgba(240,195,76,0.4);}
+  .tier-실버{background:rgba(199,208,205,0.12); color:var(--silver); border:1px solid rgba(199,208,205,0.3);}
+  .tier-브론즈{background:rgba(201,139,78,0.15); color:var(--bronze); border:1px solid rgba(201,139,78,0.4);}
+  .tier-미확인{background:rgba(92,107,100,0.15); color:var(--unranked); border:1px solid rgba(92,107,100,0.3);}
+  .score{
+    font-family:var(--font-mono); font-size:10px; color:var(--text-dim);
+    margin-top:4px;
+  }
+  footer{
+    max-width:760px; margin:28px auto 0; padding:0 16px;
+    font-family:var(--font-mono); font-size:11px; color:var(--text-dim); line-height:1.6;
+  }
+  footer code{background:var(--bg-elev); padding:1px 5px; border-radius:4px;}
+  .empty{
+    text-align:center; padding:40px 20px; color:var(--text-dim); font-size:13px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">SOOP · FC ONLINE</p>
+  <h1>스트리머 티어보드</h1>
+  <p class="sub">FC온라인 카테고리 스트리머 실력 랭킹 (수동 입력 데이터 · 프로토타입)</p>
+  <div class="controls">
+    <input type="text" id="search" placeholder="스트리머 이름 검색">
+    <select id="sortSel">
+      <option value="tier">티어순</option>
+      <option value="name">이름순</option>
+      <option value="live">방송중 우선</option>
+    </select>
+  </div>
+</header>
+
+<main>
+  <div class="live-strip"><span class="dot"></span><span id="liveCount">0명 방송 중 (수동 갱신)</span></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  데이터는 <code>STREAMERS</code> 배열을 직접 수정해서 관리합니다 (하단 스크립트 참고).<br>
+  SOOP 공식 연동 전까지는 <code>live</code> 값과 <code>tier</code> 값을 손으로 갱신하세요.
+</footer>
+
+<script>
+/* ============================================================
+   여기 배열만 수정하면 화면에 반영됩니다.
+   id       : SOOP 채널 ID (URL의 마지막 부분, ch.sooplive.co.kr/아이디)
+   name     : 표시할 스트리머 이름/닉네임
+   tier     : "플래티넘" | "다이아" | "골드" | "실버" | "브론즈" | "미확인"
+   score    : 참고용 텍스트 (승률, OVR 등 자유 기재)
+   live     : true/false — 지금 방송 중인지 수동으로 체크
+   note     : 카드에 작게 표시할 메모 (선택)
+============================================================ */
+// live 값은 이제 자동으로 채워집니다 (초기값은 false로 두면 됨).
+const STREAMERS = [
+  { id: "example_streamer1", name: "예시_스트리머1", tier: "플래티넘", score: "승률 68% · 등급전 챌린저", live: false, note: "" },
+  { id: "example_streamer2", name: "예시_스트리머2", tier: "다이아",   score: "승률 61%",                 live: false, note: "" },
+  { id: "example_streamer3", name: "예시_스트리머3", tier: "골드",     score: "승률 54%",                 live: false, note: "" },
+  { id: "example_streamer4", name: "예시_스트리머4", tier: "실버",     score: "",                          live: false, note: "" },
+  { id: "example_streamer5", name: "예시_스트리머5", tier: "미확인",   score: "티어 확인 필요",            live: false, note: "" },
+];
+
+const REFRESH_MS = 60000; // 60초마다 자동 갱신
+
+async function refreshLiveStatus(){
+  const ids = STREAMERS.map(s => s.id).join(',');
+  try{
+    const res = await fetch(`/api/live-status?ids=${encodeURIComponent(ids)}`);
+    if(!res.ok) throw new Error('status fetch failed');
+    const data = await res.json();
+    STREAMERS.forEach(s => {
+      if(data[s.id]) s.live = !!data[s.id].live;
+    });
+  } catch(err){
+    console.warn('실시간 상태 갱신 실패, 이전 상태 유지:', err);
+  }
+  render();
+}
+
+const TIER_ORDER = ["플래티넘","다이아","골드","실버","브론즈","미확인"];
+
+const grid = document.getElementById('grid');
+const search = document.getElementById('search');
+const sortSel = document.getElementById('sortSel');
+const liveCount = document.getElementById('liveCount');
+
+function render(){
+  const q = search.value.trim().toLowerCase();
+  let list = STREAMERS.filter(s => s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q));
+
+  const mode = sortSel.value;
+  if(mode === "tier"){
+    list.sort((a,b) => TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier));
+  } else if(mode === "name"){
+    list.sort((a,b) => a.name.localeCompare(b.name, 'ko'));
+  } else if(mode === "live"){
+    list.sort((a,b) => (b.live - a.live) || (TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier)));
+  }
+
+  liveCount.textContent = STREAMERS.filter(s=>s.live).length + "명 방송 중 (60초마다 자동 갱신)";
+
+  if(list.length === 0){
+    grid.innerHTML = '<div class="empty">검색 결과가 없습니다</div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(s => `
+    <a class="card ${s.live ? 'live' : ''}" href="https://ch.sooplive.co.kr/${s.id}" target="_blank" rel="noopener">
+      <div class="avatar">${s.name.slice(0,1)}</div>
+      <div class="meta">
+        <div class="name-row">
+          <span class="name">${s.name}</span>
+          ${s.live ? '<span class="live-badge">LIVE</span>' : ''}
+        </div>
+        <div class="id-line">@${s.id}${s.note ? ' · ' + s.note : ''}</div>
+      </div>
+      <div class="tier-wrap">
+        <span class="tier-badge tier-${s.tier}">${s.tier}</span>
+        ${s.score ? `<div class="score">${s.score}</div>` : ''}
+      </div>
+    </a>
+  `).join('');
+}
+
+search.addEventListener('input', render);
+sortSel.addEventListener('change', render);
+render();
+refreshLiveStatus();
+setInterval(refreshLiveStatus, REFRESH_MS);
+</script>
+
+</body>
+</html>
