@@ -128,15 +128,18 @@ const sortSel = document.getElementById('sortSel');
 const liveCount = document.getElementById('liveCount');
 
 function render(){
-  const q = search.value.trim().toLowerCase();
+  const q = search
+    ? search.value.trim().toLowerCase()
+    : '';
 
   let list = STREAMERS.filter(s =>
     (s.name || '').toLowerCase().includes(q) ||
-    (s.id || '').toLowerCase().includes(q) ||
-    (s.fcNickname || '').toLowerCase().includes(q)
+    (s.id || '').toLowerCase().includes(q)
   );
 
-  const mode = sortSel.value;
+  const mode = sortSel
+    ? sortSel.value
+    : 'tier';
 
   if(mode === "tier"){
     list.sort(
@@ -220,6 +223,14 @@ function render(){
       </a>
     `;
   }).join('');
+}
+
+if (search) {
+  search.addEventListener('input', render);
+}
+
+if (sortSel) {
+  sortSel.addEventListener('change', render);
 }
 
 loadStreamers()
