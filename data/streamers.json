@@ -6,8 +6,8 @@
     "fcOuid": "b5a8f31714f49f29aa397a4738680c0b",
     "tier": null,
     "divisionId": null,
-    "soopTier": "1티어",
-    "crew": "감컴퍼니",
+    "soopTier": "6티어",
+    "crew": "어인섬",
     "note": ""
   },
   {
@@ -17,8 +17,8 @@
     "fcOuid": "9ad2c4389d9199b5b9998c917e7e64ec",
     "tier": null,
     "divisionId": null,
-    "soopTier": null,
-    "crew": null,
+    "soopTier": "2티어",
+    "crew": 신길동요리왕,
     "note": ""
   }
 ]
