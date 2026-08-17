@@ -5,33 +5,28 @@ const LIVE_REFRESH_MS = 60000;
 const TIER_REFRESH_MS = 300000;
 
 async function loadStreamers(){
-  try{
-    const res = await fetch('/data/streamers.json', {
-      cache: 'no-store'
-    });
+  const res = await fetch('/data/streamers.json', {
+    cache: 'no-store'
+  });
 
-    if(!res.ok){
-      throw new Error('streamers.json fetch failed');
-    }
-
-    const data = await res.json();
-
-    if(!Array.isArray(data)){
-      throw new Error('streamers.json must be an array');
-    }
-
-    STREAMERS = data.map(s => ({
-      ...s,
-      live: false
-    }));
-
-    render();
-
-  } catch(err){
-    console.error('스트리머 데이터 불러오기 실패:', err);
-    grid.innerHTML =
-      '<div class="empty">스트리머 데이터를 불러오지 못했습니다.</div>';
+  if(!res.ok){
+    throw new Error(
+      `streamers.json 불러오기 실패: ${res.status}`
+    );
   }
+
+  const data = await res.json();
+
+  if(!Array.isArray(data)){
+    throw new Error(
+      'streamers.json은 배열 형식이어야 합니다.'
+    );
+  }
+
+  STREAMERS = data.map(s => ({
+    ...s,
+    live: false
+  }));
 }
 
 async function refreshLiveStatus(){
@@ -230,18 +225,21 @@ function render(){
 search.addEventListener('input', render);
 sortSel.addEventListener('change', render);
 
-loadStreamers().then(() => {
-  refreshLiveStatus();
-  refreshTierStatus();
+loadStreamers()
+  .then(() => {
+    render();
 
-  setInterval(
-    refreshLiveStatus,
-    LIVE_REFRESH_MS
-  );
+    refreshLiveStatus();
+    refreshTierStatus();
 
-  setInterval(
-    refreshTierStatus,
-    TIER_REFRESH_MS
-  );
-});
+    setInterval(refreshLiveStatus, LIVE_REFRESH_MS);
+    setInterval(refreshTierStatus, TIER_REFRESH_MS);
+  })
+  .catch(err => {
+    console.error('초기화 실패:', err);
+
+    grid.innerHTML =
+      '<div class="empty">스트리머 데이터를 불러오지 못했습니다.</div>';
+  });
+  
 </script>
