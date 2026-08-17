@@ -23,4 +23,16 @@
     "note": "",
     "active": true
   }
+  {
+    "id": "townboy",
+    "name": "스맵임",
+    "fcNickname": "바르셀리아",
+    "fcOuid": "null",
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "2티어",
+    "crew": "95즈",
+    "note": "",
+    "active": true
+  }
 ]
