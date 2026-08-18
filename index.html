@@ -626,14 +626,15 @@ function render(){
   const mode = sortSel.value;
 
 
-  if(mode === 'tier'){
+if(mode === 'tier'){
 
-    list.sort(
-      (a,b) =>
-        divisionRank(a) - divisionRank(b)
-    );
+  list.sort(
+    (a,b) =>
+      (b.live - a.live) ||
+      (divisionRank(a) - divisionRank(b))
+  );
 
-  }else if(mode === 'name'){
+}else if(mode === 'name'){
 
     list.sort(
       (a,b) =>
