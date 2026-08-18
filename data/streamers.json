@@ -34,5 +34,17 @@
     "crew": "95즈",
     "note": "",
     "active": true
+  },
+  {
+    "id": "xoals137",
+    "name": "클리드1",
+    "fcNickname": "태민김",
+    "fcOuid": null,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "2티어",
+    "crew": "클상도",
+    "note": "",
+    "active": true
   }
 ]
