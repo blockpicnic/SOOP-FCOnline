@@ -648,6 +648,20 @@ function render(){
         (divisionRank(a) - divisionRank(b))
     );
 
+  }else{
+
+    // 기본 정렬
+    // 1. 방송 중
+    // 2. 방송 중인 사람끼리는 FC온라인 티어순
+    // 3. 방송 종료
+    // 4. 방송 종료한 사람끼리도 FC온라인 티어순
+
+    list.sort(
+      (a,b) =>
+        (b.live - a.live) ||
+        (divisionRank(a) - divisionRank(b))
+    );
+
   }
 
 
