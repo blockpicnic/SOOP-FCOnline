@@ -305,7 +305,6 @@ jobs:
 
 
           PY
-          PY
 
       - name: Commit changes
         run: |
