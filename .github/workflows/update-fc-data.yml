@@ -147,7 +147,7 @@ jobs:
                       changed = True
 
 
-                  else:
+                                   else:
 
                       print(
                           f"[OK] {streamer.get('name')} / "
@@ -155,14 +155,56 @@ jobs:
                       )
 
 
-              except Exception as e:
+                  # =================================================
+                  # 3. 공식경기 1on1 티어 조회
+                  # =================================================
 
-                  print(
-                      f"[ERROR] "
-                      f"{streamer.get('name')} / "
-                      f"{nickname} / "
-                      f"{e}"
+                  division_data = nexon_get(
+                      "/fconline/v1/user/maxdivision"
+                      "?ouid="
+                      + urllib.parse.quote(
+                          fc_ouid,
+                          safe=""
+                      )
+                      + "&matchtype=50"
                   )
+
+                  if isinstance(division_data, list):
+                      entry = (
+                          division_data[0]
+                          if division_data
+                          else {}
+                      )
+                  else:
+                      entry = division_data or {}
+
+
+                  division_id = entry.get("division")
+
+                  if division_id is not None:
+
+                      if (
+                          streamer.get("divisionId")
+                          != division_id
+                      ):
+                          streamer["divisionId"] = (
+                              division_id
+                          )
+
+                          changed = True
+
+                      print(
+                          f"[TIER] "
+                          f"{streamer.get('name')} → "
+                          f"{division_id}"
+                      )
+
+                  else:
+
+                      print(
+                          f"[TIER FAIL] "
+                          f"{streamer.get('name')}"
+                      )
 
 
           # =========================================================
