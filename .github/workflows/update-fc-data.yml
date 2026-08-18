@@ -147,7 +147,7 @@ jobs:
                       changed = True
 
 
-                                   else:
+                  else:
 
                       print(
                           f"[OK] {streamer.get('name')} / "
@@ -199,7 +199,7 @@ jobs:
                           f"{division_id}"
                       )
 
-                                    else:
+                  else:
 
                       print(
                           f"[TIER FAIL] "
