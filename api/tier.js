@@ -234,8 +234,7 @@ export default async function handler(req, res) {
      각 스트리머 처리
   ---------------------------------------------------------- */
 
-  await Promise.all(
-    nicknames.map(async (nickname) => {
+    for (const nickname of nicknames) {
 
       try {
 
@@ -363,7 +362,7 @@ export default async function handler(req, res) {
         };
 
 
-      } catch (err) {
+        } catch (err) {
 
         results[nickname] = {
           error:
@@ -374,9 +373,7 @@ export default async function handler(req, res) {
 
       }
 
-    })
-  );
-
+  }
 
   /* ----------------------------------------------------------
      캐시
