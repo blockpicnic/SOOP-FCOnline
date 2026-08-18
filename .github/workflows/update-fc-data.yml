@@ -28,7 +28,6 @@ jobs:
           import urllib.request
 
           API_KEY = os.environ["NEXON_API_KEY"]
-
           FILE = "data/streamers.json"
 
           with open(FILE, "r", encoding="utf-8") as f:
@@ -69,20 +68,20 @@ jobs:
 
               try:
 
+                  # =================================================
+                  # 1. fcOuid가 없으면
+                  #    FC 닉네임 → OUID 조회
+                  # =================================================
+
                   fc_ouid = (
                       streamer.get("fcOuid") or ""
                   ).strip()
 
-
-                  # =================================================
-                  # 1. fcOuid가 없는 경우
-                  #    FC 닉네임 → OUID
-                  # =================================================
-
                   if not fc_ouid:
 
                       print(
-                          f"[LOOKUP] {streamer.get('name')} / {nickname}"
+                          f"[LOOKUP] "
+                          f"{streamer.get('name')} / {nickname}"
                       )
 
                       encoded_nickname = urllib.parse.quote(
@@ -103,18 +102,17 @@ jobs:
                           continue
 
                       streamer["fcOuid"] = new_ouid
-
                       fc_ouid = new_ouid
-
                       changed = True
 
                       print(
-                          f"[OUID] {nickname} → {new_ouid}"
+                          f"[OUID] "
+                          f"{nickname} → {new_ouid}"
                       )
 
 
                   # =================================================
-                  # 2. OUID → 현재 닉네임
+                  # 2. OUID → 현재 닉네임 확인
                   # =================================================
 
                   basic = nexon_get(
@@ -140,22 +138,25 @@ jobs:
                           f"{nickname} → {current_nickname}"
                       )
 
-                      streamer["fcNickname"] = (
-                          current_nickname
-                      )
-
+                      streamer["fcNickname"] = current_nickname
                       changed = True
 
                   else:
 
                       print(
-                          f"[OK] {streamer.get('name')} / "
+                          f"[OK] "
+                          f"{streamer.get('name')} / "
                           f"{current_nickname}"
                       )
 
 
                   # =================================================
-                  # 3. 공식경기 1on1 티어 조회
+                  # 3. 공식경기 1on1 현재 최고 티어 조회
+                  #
+                  # matchtype=50
+                  #
+                  # 여기서 받은 division 값을
+                  # streamers.json의 divisionId에 저장
                   # =================================================
 
                   division_data = nexon_get(
@@ -168,35 +169,48 @@ jobs:
                       + "&matchtype=50"
                   )
 
+
                   if isinstance(division_data, list):
+
                       entry = (
                           division_data[0]
                           if division_data
                           else {}
                       )
+
                   else:
+
                       entry = division_data or {}
 
 
                   division_id = entry.get("division")
 
+
                   if division_id is not None:
 
-                      if (
-                          streamer.get("divisionId")
-                          != division_id
-                      ):
-                          streamer["divisionId"] = (
-                              division_id
+                      old_division_id = streamer.get(
+                          "divisionId"
+                      )
+
+                      if old_division_id != division_id:
+
+                          print(
+                              f"[TIER CHANGE] "
+                              f"{streamer.get('name')} : "
+                              f"{old_division_id} → "
+                              f"{division_id}"
                           )
 
+                          streamer["divisionId"] = division_id
                           changed = True
 
-                      print(
-                          f"[TIER] "
-                          f"{streamer.get('name')} → "
-                          f"{division_id}"
-                      )
+                      else:
+
+                          print(
+                              f"[TIER] "
+                              f"{streamer.get('name')} → "
+                              f"{division_id}"
+                          )
 
                   else:
 
@@ -237,7 +251,6 @@ jobs:
 
                   f.write("\n")
 
-
               print(
                   "FC 데이터가 변경되었습니다."
               )
@@ -248,118 +261,12 @@ jobs:
                   "변경사항이 없습니다."
               )
 
-
-          # =========================================================
-          # TEST: 호날두 최근 공식경기 1대1 매치 확인
-          # =========================================================
-
-          TEST_OUID = "9fa3cdef6848f132aa27a3c0a55aea6e"
-
-          try:
-
-              print("")
-              print("==========================================")
-              print("[TEST] 호날두 최근 공식경기 1대1 매치")
-              print("==========================================")
-
-
-              match_data = nexon_get(
-                  "/fconline/v1/user/match"
-                  "?ouid="
-                  + urllib.parse.quote(
-                      TEST_OUID,
-                      safe=""
-                  )
-                  + "&matchtype=50"
-                  + "&offset=0"
-                  + "&limit=5"
-              )
-
-
-              print(
-                  "[TEST] 최근 매치 ID:"
-              )
-
-
-              if isinstance(match_data, list):
-
-                  for index, match_id in enumerate(
-                      match_data,
-                      start=1
-                  ):
-
-                      print(
-                          f"[TEST] {index}. {match_id}"
-                      )
-
-              else:
-
-                  print(
-                      "[TEST] 예상하지 못한 응답:"
-                  )
-
-                  print(match_data)
-
-
-          except Exception as e:
-
-              print(
-                  "[TEST ERROR]",
-                  e
-              )
-
-
-          print("==========================================")
-          print("")
-
-          # =========================================================
-          # TEST 2: 호날두 최근 경기 상세정보의 division 확인
-          # =========================================================
-
-          TEST_MATCH_ID = "6a83eddbbbf5491b9a5c3e7b"
-
-          try:
-
-              print("")
-              print("==========================================")
-              print("[TEST 2] 호날두 최근 경기 상세정보")
-              print("==========================================")
-
-
-              detail_data = nexon_get(
-                  "/fconline/v1/match-detail"
-                  "?matchid="
-                  + urllib.parse.quote(
-                      TEST_MATCH_ID,
-                      safe=""
-                  )
-              )
-
-
-              print("[TEST 2] 매치 상세정보:")
-
-              print(
-                  json.dumps(
-                      detail_data,
-                      ensure_ascii=False,
-                      indent=2
-                  )
-              )
-
-
-          except Exception as e:
-
-              print(
-                  "[TEST 2 ERROR]",
-                  e
-              )
-
-
-          print("==========================================")
-          print("")
-
-
           PY
+
+
+      # =============================================================
+      # 변경된 streamers.json 커밋
+      # =============================================================
 
       - name: Commit changes
         run: |
