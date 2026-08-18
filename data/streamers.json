@@ -46,5 +46,17 @@
     "crew": "클상도",
     "note": "",
     "active": true
+  },
+    {
+    "id": "hm05082",
+    "name": "임유진",
+    "fcNickname": "잉유진",
+    "fcOuid": null,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "2티어",
+    "crew": "2티어 1황",
+    "note": "",
+    "active": true
   }
 ]
