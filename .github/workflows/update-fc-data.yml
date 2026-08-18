@@ -233,12 +233,78 @@ jobs:
                   "FC 데이터가 변경되었습니다."
               )
 
-          else:
+                    else:
 
               print(
                   "변경사항이 없습니다."
               )
 
+
+          # =========================================================
+          # TEST: 호날두 최근 공식경기 1대1 매치 확인
+          # =========================================================
+
+          TEST_OUID = "9fa3cdef6848f132aa27a3c0a55aea6e"
+
+          try:
+
+              print("")
+              print("==========================================")
+              print("[TEST] 호날두 최근 공식경기 1대1 매치")
+              print("==========================================")
+
+
+              match_data = nexon_get(
+                  "/fconline/v1/user/match"
+                  "?ouid="
+                  + urllib.parse.quote(
+                      TEST_OUID,
+                      safe=""
+                  )
+                  + "&matchtype=50"
+                  + "&offset=0"
+                  + "&limit=5"
+              )
+
+
+              print(
+                  "[TEST] 최근 매치 ID:"
+              )
+
+
+              if isinstance(match_data, list):
+
+                  for index, match_id in enumerate(
+                      match_data,
+                      start=1
+                  ):
+
+                      print(
+                          f"[TEST] {index}. {match_id}"
+                      )
+
+              else:
+
+                  print(
+                      "[TEST] 예상하지 못한 응답:"
+                  )
+
+                  print(match_data)
+
+
+          except Exception as e:
+
+              print(
+                  "[TEST ERROR]",
+                  e
+              )
+
+
+          print("==========================================")
+          print("")
+
+
+          PY
           PY
 
       - name: Commit changes
