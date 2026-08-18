@@ -312,6 +312,52 @@ jobs:
           print("==========================================")
           print("")
 
+          # =========================================================
+          # TEST 2: 호날두 최근 경기 상세정보의 division 확인
+          # =========================================================
+
+          TEST_MATCH_ID = "6a83eddbbbf5491b9a5c3e7b"
+
+          try:
+
+              print("")
+              print("==========================================")
+              print("[TEST 2] 호날두 최근 경기 상세정보")
+              print("==========================================")
+
+
+              detail_data = nexon_get(
+                  "/fconline/v1/match-detail"
+                  "?matchid="
+                  + urllib.parse.quote(
+                      TEST_MATCH_ID,
+                      safe=""
+                  )
+              )
+
+
+              print("[TEST 2] 매치 상세정보:")
+
+              print(
+                  json.dumps(
+                      detail_data,
+                      ensure_ascii=False,
+                      indent=2
+                  )
+              )
+
+
+          except Exception as e:
+
+              print(
+                  "[TEST 2 ERROR]",
+                  e
+              )
+
+
+          print("==========================================")
+          print("")
+
 
           PY
 
