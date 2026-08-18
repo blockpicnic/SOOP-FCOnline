@@ -22,12 +22,12 @@
     "crew": "신길동요리왕",
     "note": "",
     "active": true
-  }
+  },
   {
     "id": "townboy",
     "name": "스맵임",
     "fcNickname": "바르셀리아",
-    "fcOuid": "null",
+    "fcOuid": null,
     "tier": null,
     "divisionId": null,
     "soopTier": "2티어",
