@@ -18,7 +18,9 @@ async function getDivisionMap() {
     return divisionCache;
   }
 
-  const response = await fetch(DIVISION_META_URL);
+  const response = await fetch(
+    DIVISION_META_URL
+  );
 
   if (!response.ok) {
     throw new Error(
@@ -30,9 +32,11 @@ async function getDivisionMap() {
 
   divisionCache = {};
 
-  for (const item of data) {
-    divisionCache[item.divisionId] =
-      item.divisionName;
+  if (Array.isArray(data)) {
+    for (const item of data) {
+      divisionCache[item.divisionId] =
+        item.divisionName;
+    }
   }
 
   return divisionCache;
@@ -40,10 +44,13 @@ async function getDivisionMap() {
 
 
 /* ============================================================
-   Nexon API
+   Nexon API 호출
 ============================================================ */
 
-async function nexonFetch(path, apiKey) {
+async function nexonFetch(
+  path,
+  apiKey
+) {
   const response = await fetch(
     `${NEXON_BASE}${path}`,
     {
@@ -55,7 +62,9 @@ async function nexonFetch(path, apiKey) {
 
   if (!response.ok) {
     const text =
-      await response.text().catch(() => "");
+      await response.text().catch(
+        () => ""
+      );
 
     throw new Error(
       `Nexon API ${response.status}: ${text}`
@@ -90,7 +99,7 @@ async function getLatestMatchId(
 
 
 /* ============================================================
-   경기 상세정보
+   경기 상세
 ============================================================ */
 
 async function getMatchDetail(
@@ -107,10 +116,10 @@ async function getMatchDetail(
 
 
 /* ============================================================
-   최근 경기의 division 찾기
+   division 추출
 ============================================================ */
 
-function getDivisionFromMatch(
+function extractDivision(
   detail,
   ouid
 ) {
@@ -119,41 +128,57 @@ function getDivisionFromMatch(
       ? detail.matchInfo
       : [];
 
-  if (matchInfo.length === 0) {
+  if (
+    matchInfo.length === 0
+  ) {
     return null;
   }
 
+
   /*
-   * 해당 OUID의 플레이어 정보를 우선 찾습니다.
+   * 우선 해당 OUID의 경기 정보를 찾습니다.
    */
   const player =
     matchInfo.find(
       (item) =>
         String(item?.ouid) ===
         String(ouid)
-    ) || null;
+    );
+
 
   if (!player) {
     return null;
   }
 
+
   /*
-   * Nexon FC Online match-detail의
-   * division 값을 사용합니다.
+   * 2026년 현재 매치 상세에서
+   * 경기 당시 등급 식별자를 우선 확인합니다.
    */
-  return (
+  const division =
     player.division ??
     player.divisionId ??
-    null
-  );
+    null;
+
+
+  if (
+    division === null ||
+    division === undefined ||
+    division === ""
+  ) {
+    return null;
+  }
+
+
+  return Number(division);
 }
 
 
 /* ============================================================
-   최근 경기 티어 조회
+   최근 경기 티어
 ============================================================ */
 
-async function getLatestTier(
+async function getLatestDivision(
   ouid,
   apiKey
 ) {
@@ -163,6 +188,7 @@ async function getLatestTier(
       apiKey
     );
 
+
   if (!matchId) {
     return {
       matchId: null,
@@ -170,27 +196,76 @@ async function getLatestTier(
     };
   }
 
+
   const detail =
     await getMatchDetail(
       matchId,
       apiKey
     );
 
-  console.log(
-  "MATCH DETAIL:",
-  JSON.stringify(detail, null, 2)
-);
-  
+
   const divisionId =
-    getDivisionFromMatch(
+    extractDivision(
       detail,
       ouid
     );
+
 
   return {
     matchId,
     divisionId,
   };
+}
+
+
+/* ============================================================
+   streamers.json 읽기
+============================================================ */
+
+async function loadStreamers(
+  req
+) {
+  const protocol =
+    req.headers[
+      "x-forwarded-proto"
+    ] || "https";
+
+  const host =
+    req.headers.host;
+
+
+  if (!host) {
+    return [];
+  }
+
+
+  const url =
+    `${protocol}://${host}/data/streamers.json`;
+
+
+  const response =
+    await fetch(
+      url,
+      {
+        cache: "no-store",
+      }
+    );
+
+
+  if (!response.ok) {
+    throw new Error(
+      `streamers.json ${response.status}`
+    );
+  }
+
+
+  const data =
+    await response.json();
+
+
+  return Array.isArray(data)
+    ? data
+    : [];
 }
 
 
@@ -205,6 +280,7 @@ export default async function handler(
   const apiKey =
     process.env.NEXON_API_KEY;
 
+
   if (!apiKey) {
     return res.status(500).json({
       error:
@@ -213,16 +289,24 @@ export default async function handler(
   }
 
 
+  /*
+   * nicknames=닉네임1,닉네임2
+   */
   const nicknames =
     String(
       req.query.nicknames || ""
     )
       .split(",")
-      .map((value) => value.trim())
+      .map(
+        (value) =>
+          value.trim()
+      )
       .filter(Boolean);
 
 
-  if (nicknames.length === 0) {
+  if (
+    nicknames.length === 0
+  ) {
     return res.status(400).json({
       error:
         "nicknames가 필요합니다.",
@@ -230,146 +314,218 @@ export default async function handler(
   }
 
 
-  const divisionMap =
-    await getDivisionMap().catch(
-      () => ({})
-    );
+  /* ----------------------------------------------------------
+     Division 이름
+  ---------------------------------------------------------- */
 
-
-  /*
-   * streamers.json
-   *
-   * 기존 프로젝트의 데이터 구조를 사용합니다.
-   */
-  let streamers = [];
+  let divisionMap = {};
 
   try {
-    const protocol =
-      req.headers["x-forwarded-proto"] ||
-      "https";
-
-    const host =
-      req.headers.host;
-
-    const response =
-      await fetch(
-        `${protocol}://${host}/data/streamers.json`,
-        {
-          cache: "no-store",
-        }
-      );
-
-    if (response.ok) {
-      streamers =
-        await response.json();
-    }
+    divisionMap =
+      await getDivisionMap();
   } catch (error) {
-    console.error(
-      "streamers.json 로드 실패:",
-      error
+    console.warn(
+      "division metadata 조회 실패:",
+      error.message
     );
   }
 
 
+  /* ----------------------------------------------------------
+     streamers.json
+  ---------------------------------------------------------- */
+
+  let streamers = [];
+
+  try {
+    streamers =
+      await loadStreamers(req);
+  } catch (error) {
+    console.warn(
+      "streamers.json 조회 실패:",
+      error.message
+    );
+  }
+
+
+  /*
+   * fcNickname → streamer
+   */
   const streamerMap = {};
 
-  if (Array.isArray(streamers)) {
-    for (const streamer of streamers) {
-      if (!streamer?.fcNickname) {
-        continue;
-      }
 
-      streamerMap[
-        streamer.fcNickname
-      ] = streamer;
+  for (
+    const streamer of streamers
+  ) {
+    if (
+      !streamer?.fcNickname
+    ) {
+      continue;
     }
+
+
+    streamerMap[
+      streamer.fcNickname
+    ] = streamer;
   }
 
 
   const results = {};
 
 
-  /*
-   * 스트리머별 최근 경기 조회
-   */
-  for (const nickname of nicknames) {
-    try {
-      const streamer =
-        streamerMap[nickname];
+  /* ----------------------------------------------------------
+     스트리머별 처리
+  ---------------------------------------------------------- */
+
+  for (
+    const nickname of nicknames
+  ) {
+    const streamer =
+      streamerMap[nickname];
 
 
-      /*
-       * streamers.json에 fcOuid가 있으면
-       * 그것을 그대로 사용합니다.
-       */
-      const ouid =
-        streamer?.fcOuid;
+    /*
+     * --------------------------------------------------------
+     * fallback divisionId
+     *
+     * streamers.json에 이미 입력되어 있는 값
+     * --------------------------------------------------------
+     */
+
+    const fallbackDivisionId =
+      streamer?.divisionId != null
+        ? Number(
+            streamer.divisionId
+          )
+        : null;
 
 
-      if (!ouid) {
-        results[nickname] = {
-          error:
-            "streamers.json에 fcOuid가 없습니다.",
-        };
-
-        continue;
-      }
+    /*
+     * fcOuid가 없으면 API 조회 자체를 하지 않고
+     * streamers.json의 divisionId를 사용합니다.
+     */
+    const ouid =
+      streamer?.fcOuid;
 
 
-      /*
-       * 핵심:
-       *
-       * 1. user/match
-       * 2. 가장 최근 공식경기 1개
-       * 3. match-detail
-       * 4. 해당 OUID의 division
-       */
-      const latest =
-        await getLatestTier(
-          ouid,
-          apiKey
-        );
-
-
+    if (!ouid) {
       const divisionId =
-        latest.divisionId;
+        fallbackDivisionId;
 
 
       results[nickname] = {
-        ouid,
+        ouid: null,
 
         divisionId,
 
         divisionName:
           divisionId != null
             ? (
-                divisionMap[divisionId] ||
+                divisionMap[
+                  divisionId
+                ] ||
                 `등급 ${divisionId}`
               )
             : null,
 
-        latestMatchId:
-          latest.matchId,
+        latestMatchId: null,
+
+        source:
+          "streamers.json",
       };
+
+
+      continue;
+    }
+
+
+    /*
+     * --------------------------------------------------------
+     * 기본값은 streamers.json
+     *
+     * Nexon API가 실패하더라도 null로 만들지 않습니다.
+     * --------------------------------------------------------
+     */
+
+    let divisionId =
+      fallbackDivisionId;
+
+    let latestMatchId =
+      null;
+
+    let source =
+      "streamers.json";
+
+
+    try {
+      /*
+       * 최근 공식경기 1개 조회
+       */
+      const latest =
+        await getLatestDivision(
+          ouid,
+          apiKey
+        );
+
+
+      latestMatchId =
+        latest.matchId;
+
+
+      /*
+       * 최근 경기에서 division을 찾았으면
+       * 그것을 최우선으로 사용합니다.
+       */
+      if (
+        latest.divisionId != null
+      ) {
+        divisionId =
+          latest.divisionId;
+
+        source =
+          "latest-match";
+      }
 
 
     } catch (error) {
-      console.error(
-        `티어 조회 실패: ${nickname}`,
-        error
+      /*
+       * 429 / API 오류 등이 발생해도
+       * fallback divisionId를 유지합니다.
+       */
+      console.warn(
+        `최근 경기 티어 조회 실패 (${nickname}):`,
+        error.message
       );
-
-      results[nickname] = {
-        error:
-          error?.message ||
-          String(error),
-      };
     }
+
+
+    /* --------------------------------------------------------
+       최종 결과
+    -------------------------------------------------------- */
+
+    results[nickname] = {
+      ouid,
+
+      divisionId,
+
+      divisionName:
+        divisionId != null
+          ? (
+              divisionMap[
+                divisionId
+              ] ||
+              `등급 ${divisionId}`
+            )
+          : null,
+
+      latestMatchId,
+
+      source,
+    };
   }
 
 
   /*
-   * 너무 오래된 결과를 사용하지 않도록
    * 1분 캐시
    */
   res.setHeader(
