@@ -106,5 +106,53 @@
     "crew": "클상도",
     "note": "오일",
     "active": true
-  }
+  },
+  {
+    "id": "chachki",
+    "name": "차쯔키",
+    "fcNickname": "감차쯔키",
+    "fcOuid": null, 
+    "tier": null,
+    "divisionId": 900,
+    "soopTier": "?티어",
+    "crew": "어인섬",
+    "note": null,
+    "active": true
+  },
+  {
+    "id": "chachki",
+    "name": "차쯔키",
+    "fcNickname": "감차쯔키",
+    "fcOuid": null, 
+    "tier": null,
+    "divisionId": 900,
+    "soopTier": "?티어",
+    "crew": "어인섬",
+    "note": null,
+    "active": true
+  },
+  {
+    "id": "bach023",
+    "name": "울산큰고래",
+    "fcNickname": "케빈울브라위너",
+    "fcOuid": null, 
+    "tier": null,
+    "divisionId": 900,
+    "soopTier": "?티어",
+    "crew": "고래상사",
+    "note": null,
+    "active": true
+  },
+  {
+    "id": "chachki",
+    "name": "차쯔키",
+    "fcNickname": "감차쯔키",
+    "fcOuid": null, 
+    "tier": null,
+    "divisionId": 900,
+    "soopTier": "?티어",
+    "crew": "어인섬",
+    "note": null,
+    "active": true
+  },
 ]
