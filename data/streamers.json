@@ -113,18 +113,6 @@
     "fcNickname": "감차쯔키",
     "fcOuid": null, 
     "tier": null,
-    "divisionId": 900,
-    "soopTier": "?티어",
-    "crew": "어인섬",
-    "note": null,
-    "active": true
-  },
-  {
-    "id": "chachki",
-    "name": "차쯔키",
-    "fcNickname": "감차쯔키",
-    "fcOuid": null, 
-    "tier": null,
     "divisionId": null,
     "soopTier": "?티어",
     "crew": "어인섬",
