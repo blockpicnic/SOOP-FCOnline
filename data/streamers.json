@@ -152,7 +152,7 @@
     "divisionId": null,
     "soopTier": "100티어",
     "crew": "95즈",
-    "note": 30황,
+    "note": "30황",
     "active": true
   },
   {
@@ -164,7 +164,7 @@
     "divisionId": null,
     "soopTier": "100티어",
     "crew": "95즈",
-    "note": 30황,
+    "note": "30황",
     "active": true
-  },
+  }
 ]
