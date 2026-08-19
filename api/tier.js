@@ -176,6 +176,11 @@ async function getLatestTier(
       apiKey
     );
 
+  console.log(
+  "MATCH DETAIL:",
+  JSON.stringify(detail, null, 2)
+);
+  
   const divisionId =
     getDivisionFromMatch(
       detail,
