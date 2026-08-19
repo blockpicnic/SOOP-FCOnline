@@ -415,19 +415,37 @@ async function loadStreamers(){
     );
   }
 
-  STREAMERS = data.map(s => ({
+  STREAMERS = data.map(s => {
+
+  const divisionId =
+    s.divisionId ?? null;
+
+  return {
     id: s.id || '',
     name: s.name || s.id || '',
     fcNickname: s.fcNickname || '',
-    tier: s.tier || null,
-    divisionId: s.divisionId ?? null,
+
+    /*
+     * 저장된 tier가 있으면 사용
+     * 없고 divisionId가 있으면 임시로 표시
+     */
+    tier:
+      s.tier ||
+      (
+        divisionId != null
+          ? `등급 ${divisionId}`
+          : null
+      ),
+
+    divisionId,
+
     soopTier: s.soopTier || null,
     crew: s.crew || null,
     note: s.note || '',
     live: false
-  }));
-}
+  };
 
+});
 
 /* ============================================================
    SOOP 방송 상태
@@ -514,40 +532,103 @@ async function refreshTierStatus(){
 
       const info = data[s.fcNickname];
 
-      if(info && !info.error){
+      if(info){
 
-  // 현재 FC온라인 닉네임으로 자동 갱신
-  if(info.currentNickname){
-    s.fcNickname = info.currentNickname;
-  }
+        /*
+         * 현재 FC온라인 닉네임
+         */
+        if(info.currentNickname){
+          s.fcNickname = info.currentNickname;
+        }
 
-  // 현재 공식경기 1on1 티어
-  s.tier = info.divisionName;
-  s.divisionId = info.divisionId;
 
-}else if(info && info.error){
+        /*
+         * ----------------------------------------------------
+         * divisionId
+         *
+         * API 값이 있으면 API 값
+         * 없으면 streamers.json에 저장된 기존 값 유지
+         * ----------------------------------------------------
+         */
+        if(info.divisionId != null){
 
-  console.warn(
-    `${s.name}(${s.fcNickname}) 티어 조회 실패, 기존 티어 유지:`,
-    info.error
-  );
+          s.divisionId =
+            Number(info.divisionId);
 
-}
+        }
+
+
+        /*
+         * ----------------------------------------------------
+         * tier
+         *
+         * 1순위 : API의 divisionName
+         * 2순위 : 기존 streamers.json의 tier
+         * 3순위 : divisionId를 이용한 임시 표시
+         * ----------------------------------------------------
+         */
+        if(
+          info.divisionName &&
+          info.divisionName !== 'null'
+        ){
+
+          s.tier =
+            info.divisionName;
+
+        }else if(
+          !s.tier &&
+          s.divisionId != null
+        ){
+
+          /*
+           * API가 divisionName을 주지 않는 경우에도
+           * tier가 null로 남지 않도록 합니다.
+           *
+           * 현재 API의 divisionName을 받지 못한 경우
+           * divisionId 자체를 표시합니다.
+           */
+          s.tier =
+            `등급 ${s.divisionId}`;
+
+        }
+
+      }
 
     });
+
 
   }catch(err){
 
     console.warn(
-      '티어 갱신 실패, 이전 상태 유지:',
+      '티어 갱신 실패, 기존 데이터 유지:',
       err
     );
 
+
+    /*
+     * API 자체가 실패하더라도
+     * streamers.json의 divisionId가 있으면
+     * tier를 만들어줍니다.
+     */
+    STREAMERS.forEach(s => {
+
+      if(
+        !s.tier &&
+        s.divisionId != null
+      ){
+
+        s.tier =
+          `등급 ${s.divisionId}`;
+
+      }
+
+    });
+
   }
+
 
   render();
 }
-
 
 /* ============================================================
    티어 정렬
