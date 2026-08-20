@@ -7,6 +7,7 @@
 <title>FC온라인 스트리머 티어보드</title>
 
 <style>
+
 /* ============================================================
    ROOT
 ============================================================ */
@@ -426,20 +427,26 @@ main{
 }
 
 @keyframes pulse{
-  0%,100%{opacity:1;}
-  50%{opacity:.35;}
+  0%,100%{
+    opacity:1;
+  }
+
+  50%{
+    opacity:.35;
+  }
 }
 
 
 /* ============================================================
    STREAMER GRID
+   PC = 3명
 ============================================================ */
 
 .streamer-grid{
   display:grid;
 
   grid-template-columns:
-    repeat(4,minmax(0,1fr));
+    repeat(3,minmax(0,1fr));
 
   gap:12px;
 }
@@ -462,7 +469,7 @@ main{
 
   display:flex;
 
-  align-items:center;
+  align-items:flex-start;
 
   gap:11px;
 
@@ -474,6 +481,12 @@ main{
     border-color .15s,
     transform .15s,
     background .15s;
+
+  /*
+    카드 안의 텍스트가 너무 길어도
+    레이아웃이 깨지지 않게 함
+  */
+  min-height:132px;
 }
 
 .card:hover{
@@ -532,6 +545,8 @@ main{
   font-weight:700;
 
   white-space:nowrap;
+
+  cursor:pointer;
 }
 
 
@@ -609,6 +624,9 @@ main{
 
   flex:1;
 
+  /*
+    SOOP 티어와 이름 영역이 겹치지 않게
+  */
   padding-right:42px;
 
   text-align:left;
@@ -623,7 +641,11 @@ main{
 
   gap:6px;
 
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
+
+  min-width:0;
+
+  padding-right:0;
 }
 
 .name{
@@ -632,6 +654,10 @@ main{
   font-size:16px;
 
   transition:color .15s;
+
+  white-space:nowrap;
+
+  overflow:visible;
 }
 
 .streamer-link:hover .name{
@@ -639,6 +665,8 @@ main{
 }
 
 .live-badge{
+  flex-shrink:0;
+
   font-family:var(--font-mono);
 
   font-size:9px;
@@ -682,15 +710,25 @@ main{
 
   white-space:nowrap;
 
-  overflow:hidden;
+  overflow:visible;
 
-  text-overflow:ellipsis;
+  text-overflow:clip;
 }
 
 .fc-ball{
   font-size:12px;
 
   line-height:1;
+
+  flex-shrink:0;
+}
+
+.fc-nickname > span:last-child{
+  white-space:nowrap;
+
+  overflow:visible;
+
+  text-overflow:clip;
 }
 
 .id-line{
@@ -704,9 +742,72 @@ main{
 
   white-space:nowrap;
 
-  overflow:hidden;
+  overflow:visible;
 
-  text-overflow:ellipsis;
+  text-overflow:clip;
+}
+
+
+/* ============================================================
+   BOTTOM INFO
+   순서:
+   CREW → DIVISION → NOTE
+
+   무조건 왼쪽 정렬 / 가로 한 줄
+============================================================ */
+
+.bottom-info{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:flex-start;
+
+  gap:5px;
+
+  margin-top:8px;
+
+  width:100%;
+
+  min-width:0;
+
+  white-space:nowrap;
+
+  overflow:visible;
+}
+
+.bottom-info-item{
+  display:inline-flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  flex-shrink:0;
+
+  min-width:0;
+
+  border:1px solid rgba(155,255,92,.25);
+
+  background:rgba(155,255,92,.08);
+
+  color:var(--turf);
+
+  border-radius:7px;
+
+  padding:4px 7px;
+
+  font-size:9px;
+
+  font-weight:700;
+
+  line-height:1;
+
+  white-space:nowrap;
+
+  overflow:visible;
+
+  text-overflow:clip;
 }
 
 
@@ -727,14 +828,10 @@ main{
 
   gap:5px;
 
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
+
+  white-space:nowrap;
 }
-
-
-/*
- * 색상을 모두 통일
- * FC / SOOP / CREW 모두 동일한 그린 계열
- */
 
 .filter-badge{
   border:1px solid rgba(155,255,92,.25);
@@ -866,7 +963,7 @@ footer code{
 
   .streamer-grid{
     grid-template-columns:
-      repeat(3,minmax(0,1fr));
+      repeat(2,minmax(0,1fr));
   }
 
 }
@@ -907,6 +1004,8 @@ footer code{
     padding:11px 8px 11px;
 
     gap:8px;
+
+    min-height:128px;
   }
 
   .avatar{
@@ -947,6 +1046,16 @@ footer code{
     padding:4px 6px;
   }
 
+  .bottom-info{
+    gap:4px;
+  }
+
+  .bottom-info-item{
+    font-size:8px;
+
+    padding:4px 5px;
+  }
+
 }
 
 
@@ -962,6 +1071,8 @@ footer code{
 
   .card{
     padding:14px 12px;
+
+    min-height:132px;
   }
 
   .avatar{
@@ -970,6 +1081,7 @@ footer code{
   }
 
 }
+
 </style>
 </head>
 
@@ -2285,11 +2397,17 @@ function render(){
           s.note || ''
         ).toLowerCase();
 
+      const crew =
+        String(
+          s.crew || ''
+        ).toLowerCase();
+
       return (
         name.includes(q) ||
         id.includes(q) ||
         fcNickname.includes(q) ||
-        note.includes(q)
+        note.includes(q) ||
+        crew.includes(q)
       );
 
     });
@@ -2415,6 +2533,14 @@ function renderCard(s){
     );
 
 
+  /*
+    SOOP ID URL
+  */
+
+  const channelUrl =
+    `https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}`;
+
+
   return `
 
     <article
@@ -2422,7 +2548,7 @@ function renderCard(s){
     >
 
 
-      <!-- SOOP TIER -->
+      <!-- SOOP TIER : 우측 상단 -->
 
       <button
         type="button"
@@ -2439,7 +2565,7 @@ function renderCard(s){
 
       <a
         class="streamer-link"
-        href="https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}"
+        href="${channelUrl}"
         target="_blank"
         rel="noopener"
         aria-label="${name} 방송국 열기"
@@ -2465,7 +2591,7 @@ function renderCard(s){
 
           <a
             class="streamer-link"
-            href="https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}"
+            href="${channelUrl}"
             target="_blank"
             rel="noopener"
           >
@@ -2516,67 +2642,79 @@ function renderCard(s){
         }
 
 
-        <!-- SOOP ID / NOTE -->
+        <!-- SOOP ID -->
 
         <div class="id-line">
 
           @${id}
 
-          ${
-            note
-              ? ` · ${note}`
-              : ''
-          }
-
         </div>
 
 
-        <!-- 티어 / 크루 -->
+        <!-- ====================================================
+             아래 정보
 
-        <div class="tier-wrap">
+             순서:
+             CREW → DIVISION → NOTE
 
-          <div class="badge-row">
+             왼쪽 정렬
+             한 줄
+        ==================================================== -->
 
-
-            <!-- FC ONLINE -->
-
-            <button
-              type="button"
-              class="filter-badge ${tierClass(s.divisionId)}"
-              data-filter-type="fcTier"
-              data-filter-value="${safeTier}"
-              title="이 FC온라인 티어만 보기"
-            >
-
-              ${safeTier}
-
-            </button>
+        <div class="bottom-info">
 
 
-            <!-- CREW -->
+          <!-- CREW -->
 
-            ${
-              s.crew
-                ? `
+          ${
+            s.crew
+              ? `
 
-                  <button
-                    type="button"
-                    class="filter-badge crew-badge ${crewClass(s.crew)}"
-                    data-filter-type="crew"
-                    data-filter-value="${crew}"
-                    title="이 크루만 보기"
-                  >
+                <button
+                  type="button"
+                  class="bottom-info-item crew-badge ${crewClass(s.crew)}"
+                  data-filter-type="crew"
+                  data-filter-value="${crew}"
+                  title="이 크루만 보기"
+                >
+                  ${crew}
+                </button>
 
-                    ${crew}
-
-                  </button>
-
-                `
-                : ''
-            }
+              `
+              : ''
+          }
 
 
-          </div>
+          <!-- DIVISION -->
+
+          <button
+            type="button"
+            class="bottom-info-item ${tierClass(s.divisionId)}"
+            data-filter-type="fcTier"
+            data-filter-value="${safeTier}"
+            title="이 FC온라인 티어만 보기"
+          >
+            ${safeTier}
+          </button>
+
+
+          <!-- NOTE -->
+
+          ${
+            s.note
+              ? `
+
+                <span
+                  class="bottom-info-item"
+                  title="${note}"
+                >
+                  ${note}
+                </span>
+
+              `
+              : ''
+          }
+
 
         </div>
 
@@ -2599,7 +2737,7 @@ function bindCardFilterButtons(){
 
   document
     .querySelectorAll(
-      '.card .filter-badge, .card .card-soop-tier'
+      '.card .filter-badge, .card .card-soop-tier, .card .bottom-info-item[data-filter-type]'
     )
     .forEach(button => {
 
