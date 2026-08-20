@@ -7,7 +7,6 @@
 <title>FC온라인 스트리머 티어보드</title>
 
 <style>
-
 /* ============================================================
    ROOT
 ============================================================ */
@@ -24,11 +23,6 @@
 
   --text:#eef5ee;
   --text-dim:#93a89c;
-
-  --plat:#7fe8d4;
-  --gold:#f0c34c;
-  --silver:#c7d0cd;
-  --bronze:#c98b4e;
 
   --unranked:#5c6b64;
 
@@ -100,7 +94,9 @@ header{
 }
 
 
-/* FC ONLINE VISUAL HEADER */
+/* ============================================================
+   FC ONLINE VISUAL HEADER
+============================================================ */
 
 .hero{
   position:relative;
@@ -268,6 +264,8 @@ select{
   display:flex;
 
   align-items:center;
+
+  justify-content:flex-start;
 
   gap:7px;
 
@@ -460,17 +458,13 @@ main{
 
   border-radius:var(--card-radius);
 
-  padding:16px 12px 14px;
+  padding:12px;
 
   display:flex;
 
-  flex-direction:column;
-
   align-items:center;
 
-  text-align:center;
-
-  gap:8px;
+  gap:11px;
 
   position:relative;
 
@@ -510,6 +504,38 @@ main{
 
 
 /* ============================================================
+   SOOP TIER - 우측 상단
+============================================================ */
+
+.card-soop-tier{
+  position:absolute;
+
+  top:10px;
+  right:10px;
+
+  z-index:2;
+
+  border:1px solid rgba(155,255,92,.25);
+
+  background:rgba(155,255,92,.08);
+
+  color:var(--turf);
+
+  border-radius:7px;
+
+  padding:3px 6px;
+
+  font-family:var(--font-body);
+
+  font-size:9px;
+
+  font-weight:700;
+
+  white-space:nowrap;
+}
+
+
+/* ============================================================
    AVATAR
 ============================================================ */
 
@@ -523,6 +549,8 @@ main{
   border-radius:12px;
 
   outline:none;
+
+  flex-shrink:0;
 }
 
 .avatar{
@@ -530,7 +558,7 @@ main{
 
   height:68px;
 
-  border-radius:14px;
+  border-radius:12px;
 
   background:
     linear-gradient(
@@ -579,7 +607,11 @@ main{
 .meta{
   min-width:0;
 
-  width:100%;
+  flex:1;
+
+  padding-right:42px;
+
+  text-align:left;
 }
 
 .name-row{
@@ -587,7 +619,7 @@ main{
 
   align-items:center;
 
-  justify-content:center;
+  justify-content:flex-start;
 
   gap:6px;
 
@@ -628,23 +660,23 @@ main{
 ============================================================ */
 
 .fc-nickname{
-  margin-top:6px;
+  margin-top:5px;
 
   display:flex;
 
   align-items:center;
 
-  justify-content:center;
+  justify-content:flex-start;
 
   gap:4px;
 
-  color:var(--turf);
+  color:var(--text);
 
-  font-size:16px;
+  font-size:13px;
 
   line-height:1.25;
 
-  font-weight:900;
+  font-weight:700;
 
   letter-spacing:-.015em;
 
@@ -656,7 +688,7 @@ main{
 }
 
 .fc-ball{
-  font-size:14px;
+  font-size:12px;
 
   line-height:1;
 }
@@ -664,11 +696,11 @@ main{
 .id-line{
   font-family:var(--font-mono);
 
-  font-size:10px;
+  font-size:9px;
 
   color:var(--text-dim);
 
-  margin-top:4px;
+  margin-top:3px;
 
   white-space:nowrap;
 
@@ -683,9 +715,7 @@ main{
 ============================================================ */
 
 .tier-wrap{
-  width:100%;
-
-  margin-top:3px;
+  margin-top:7px;
 }
 
 .badge-row{
@@ -693,27 +723,39 @@ main{
 
   align-items:center;
 
-  justify-content:center;
+  justify-content:flex-start;
 
   gap:5px;
 
   flex-wrap:wrap;
 }
 
+
+/*
+ * 색상을 모두 통일
+ * FC / SOOP / CREW 모두 동일한 그린 계열
+ */
+
 .filter-badge{
-  border:0;
+  border:1px solid rgba(155,255,92,.25);
+
+  background:rgba(155,255,92,.08);
+
+  color:var(--turf);
 
   cursor:pointer;
 
-  font-family:var(--font-display);
+  font-family:var(--font-body);
 
-  font-size:10px;
+  font-size:9px;
 
-  letter-spacing:.02em;
+  font-weight:700;
 
-  padding:5px 8px;
+  letter-spacing:.01em;
 
-  border-radius:8px;
+  padding:4px 7px;
+
+  border-radius:7px;
 
   white-space:nowrap;
 
@@ -722,6 +764,8 @@ main{
 
 .filter-badge:hover{
   filter:brightness(1.15);
+
+  border-color:rgba(155,255,92,.45);
 
   transform:translateY(-1px);
 }
@@ -732,153 +776,31 @@ main{
 
 
 /* ============================================================
-   FC ONLINE TIER COLORS
+   FC / SOOP / CREW 색상 통일
 ============================================================ */
 
-.tier-top{
-  background:rgba(127,232,212,.14);
-
-  color:var(--plat);
-
-  border:1px solid rgba(127,232,212,.35);
-}
-
-.tier-high{
-  background:rgba(140,170,255,.14);
-
-  color:#a9bcff;
-
-  border:1px solid rgba(140,170,255,.35);
-}
-
-.tier-mid{
-  background:rgba(240,195,76,.15);
-
-  color:var(--gold);
-
-  border:1px solid rgba(240,195,76,.4);
-}
-
-.tier-low{
-  background:rgba(199,208,205,.12);
-
-  color:var(--silver);
-
-  border:1px solid rgba(199,208,205,.3);
-}
-
-.tier-basic{
-  background:rgba(201,139,78,.15);
-
-  color:var(--bronze);
-
-  border:1px solid rgba(201,139,78,.4);
-}
-
-.tier-unranked{
-  background:rgba(92,107,100,.15);
-
-  color:var(--unranked);
-
-  border:1px solid rgba(92,107,100,.3);
-}
-
-
-/* ============================================================
-   SOOP COLORS
-============================================================ */
-
-.soop-badge{
-  background:rgba(155,255,92,.10);
-
-  color:var(--turf);
-
-  border:1px solid rgba(155,255,92,.30);
-}
-
-.soop-2{
-  background:rgba(127,232,212,.13);
-
-  color:#7fe8d4;
-
-  border-color:rgba(127,232,212,.35);
-}
-
-.soop-6{
-  background:rgba(240,195,76,.13);
-
-  color:#f0c34c;
-
-  border-color:rgba(240,195,76,.35);
-}
-
-.soop-100{
-  background:rgba(201,139,78,.13);
-
-  color:#e5a466;
-
-  border-color:rgba(201,139,78,.35);
-}
-
-.soop-other{
+.tier-top,
+.tier-high,
+.tier-mid,
+.tier-low,
+.tier-basic,
+.tier-unranked,
+.soop-badge,
+.soop-2,
+.soop-6,
+.soop-100,
+.soop-other,
+.crew-badge,
+.crew-0,
+.crew-1,
+.crew-2,
+.crew-3,
+.crew-4{
   background:rgba(155,255,92,.08);
 
   color:var(--turf);
 
   border-color:rgba(155,255,92,.25);
-}
-
-
-/* ============================================================
-   CREW COLORS
-============================================================ */
-
-.crew-badge{
-  background:rgba(190,160,255,.10);
-
-  color:#cdb7ff;
-
-  border:1px solid rgba(190,160,255,.30);
-}
-
-.crew-0{
-  background:rgba(190,160,255,.10);
-
-  color:#cdb7ff;
-
-  border-color:rgba(190,160,255,.30);
-}
-
-.crew-1{
-  background:rgba(255,150,190,.10);
-
-  color:#ff9fc0;
-
-  border-color:rgba(255,150,190,.30);
-}
-
-.crew-2{
-  background:rgba(100,190,255,.10);
-
-  color:#7fc9ff;
-
-  border-color:rgba(100,190,255,.30);
-}
-
-.crew-3{
-  background:rgba(255,190,100,.10);
-
-  color:#ffc56f;
-
-  border-color:rgba(255,190,100,.30);
-}
-
-.crew-4{
-  background:rgba(130,220,160,.10);
-
-  color:#8ee0a6;
-
-  border-color:rgba(130,220,160,.30);
 }
 
 
@@ -982,26 +904,47 @@ footer code{
   }
 
   .card{
-    padding:14px 8px 12px;
+    padding:11px 8px 11px;
+
+    gap:8px;
   }
 
   .avatar{
-    width:60px;
-    height:60px;
+    width:56px;
+    height:56px;
+
+    border-radius:10px;
+  }
+
+  .meta{
+    padding-right:34px;
   }
 
   .name{
-    font-size:14px;
+    font-size:13px;
   }
 
   .fc-nickname{
-    font-size:14px;
+    font-size:12px;
+  }
+
+  .id-line{
+    font-size:8px;
+  }
+
+  .card-soop-tier{
+    top:8px;
+    right:8px;
+
+    font-size:8px;
+
+    padding:3px 5px;
   }
 
   .filter-badge{
-    font-size:9px;
+    font-size:8px;
 
-    padding:5px 6px;
+    padding:4px 6px;
   }
 
 }
@@ -1018,16 +961,15 @@ footer code{
   }
 
   .card{
-    padding:18px 12px;
+    padding:14px 12px;
   }
 
   .avatar{
-    width:68px;
-    height:68px;
+    width:64px;
+    height:64px;
   }
 
 }
-
 </style>
 </head>
 
@@ -1130,7 +1072,6 @@ footer code{
 ============================================================ -->
 
 <div class="filter-panel">
-
 
   <!-- SOOP TIER FILTER -->
 
@@ -2192,10 +2133,8 @@ function sortList(list){
   const mode =
     sortSel.value;
 
-
   const soopMode =
     soopSort.value;
-
 
   const fcMode =
     fcSort.value;
@@ -2483,6 +2422,19 @@ function renderCard(s){
     >
 
 
+      <!-- SOOP TIER -->
+
+      <button
+        type="button"
+        class="card-soop-tier"
+        data-filter-type="soopTier"
+        data-filter-value="${soopTier}"
+        title="이 SOOP 티어만 보기"
+      >
+        ${soopTier}
+      </button>
+
+
       <!-- 썸네일 -->
 
       <a
@@ -2501,6 +2453,8 @@ function renderCard(s){
 
       </a>
 
+
+      <!-- 스트리머 정보 -->
 
       <div class="meta">
 
@@ -2577,70 +2531,55 @@ function renderCard(s){
         </div>
 
 
-      </div>
+        <!-- 티어 / 크루 -->
+
+        <div class="tier-wrap">
+
+          <div class="badge-row">
 
 
-      <!-- FILTER BADGES -->
+            <!-- FC ONLINE -->
 
-      <div class="tier-wrap">
+            <button
+              type="button"
+              class="filter-badge ${tierClass(s.divisionId)}"
+              data-filter-type="fcTier"
+              data-filter-value="${safeTier}"
+              title="이 FC온라인 티어만 보기"
+            >
 
-        <div class="badge-row">
+              ${safeTier}
 
-
-          <!-- FC ONLINE -->
-
-          <button
-            type="button"
-            class="filter-badge ${tierClass(s.divisionId)}"
-            data-filter-type="fcTier"
-            data-filter-value="${safeTier}"
-            title="이 FC온라인 티어만 보기"
-          >
-
-            ${safeTier}
-
-          </button>
+            </button>
 
 
-          <!-- SOOP -->
+            <!-- CREW -->
 
-          <button
-            type="button"
-            class="filter-badge soop-badge ${soopTierClass(normalizedSoopTier)}"
-            data-filter-type="soopTier"
-            data-filter-value="${soopTier}"
-            title="이 SOOP 티어만 보기"
-          >
+            ${
+              s.crew
+                ? `
 
-            ${soopTier}
+                  <button
+                    type="button"
+                    class="filter-badge crew-badge ${crewClass(s.crew)}"
+                    data-filter-type="crew"
+                    data-filter-value="${crew}"
+                    title="이 크루만 보기"
+                  >
 
-          </button>
+                    ${crew}
+
+                  </button>
+
+                `
+                : ''
+            }
 
 
-          <!-- CREW -->
-
-          ${
-            s.crew
-              ? `
-
-                <button
-                  type="button"
-                  class="filter-badge crew-badge ${crewClass(s.crew)}"
-                  data-filter-type="crew"
-                  data-filter-value="${crew}"
-                  title="이 크루만 보기"
-                >
-
-                  ${crew}
-
-                </button>
-
-              `
-              : ''
-          }
-
+          </div>
 
         </div>
+
 
       </div>
 
@@ -2660,7 +2599,7 @@ function bindCardFilterButtons(){
 
   document
     .querySelectorAll(
-      '.card .filter-badge'
+      '.card .filter-badge, .card .card-soop-tier'
     )
     .forEach(button => {
 
