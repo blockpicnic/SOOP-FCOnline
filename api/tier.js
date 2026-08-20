@@ -153,44 +153,38 @@ async function getDivisionMap() {
 
     if (Array.isArray(data)) {
 
-      for (const item of data) {
+  for (const item of data) {
 
-        if (
-          item &&
-          item.divisionId != null
-        ) {
-
-          map[
-            String(item.divisionId)
-          ] =
-            item.divisionName || null;
-
-        }
-
-      }
-
+    if (!item) {
+      continue;
     }
 
+    const divisionId =
+      normalizeDivisionId(
+        item.divisionId ??
+        item.divisionID ??
+        item.id
+      );
 
-    divisionMapCache =
-      map;
+    const divisionName =
+      item.divisionName ??
+      item.name ??
+      item.division_name ??
+      null;
 
+    if (
+      divisionId !== null &&
+      divisionName
+    ) {
 
-    return map;
+      map[String(divisionId)] =
+        String(divisionName);
 
-  } catch (error) {
-
-    console.warn(
-      "division metadata 조회 실패:",
-      error.message
-    );
-
-    return {};
+    }
 
   }
 
 }
-
 
 /* ============================================================
    Nexon API
