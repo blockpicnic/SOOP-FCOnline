@@ -8,1268 +8,1025 @@
 
 <style>
 
-  :root{
-    --bg:#0c1210;
-    --bg-elev:#121a17;
-    --bg-elev-2:#17211d;
+/* ============================================================
+   ROOT
+============================================================ */
 
-    --pitch-line:#22332c;
+:root{
+  --bg:#0c1210;
+  --bg-elev:#121a17;
+  --bg-elev-2:#17211d;
 
-    --turf:#9bff5c;
-    --turf-dim:#6fbf3f;
+  --pitch-line:#22332c;
 
-    --text:#eef5ee;
-    --text-dim:#93a89c;
+  --turf:#9bff5c;
+  --turf-dim:#6fbf3f;
 
-    --plat:#7fe8d4;
-    --gold:#f0c34c;
-    --silver:#c7d0cd;
-    --bronze:#c98b4e;
+  --text:#eef5ee;
+  --text-dim:#93a89c;
 
-    --unranked:#5c6b64;
+  --plat:#7fe8d4;
+  --gold:#f0c34c;
+  --silver:#c7d0cd;
+  --bronze:#c98b4e;
 
-    --card-radius:16px;
+  --unranked:#5c6b64;
 
-    --font-display:
-      'Archivo Black',
-      'Pretendard',
-      system-ui,
-      sans-serif;
+  --card-radius:14px;
 
-    --font-body:
-      'Pretendard',
-      -apple-system,
-      'Noto Sans KR',
-      system-ui,
-      sans-serif;
+  --font-display:
+    'Archivo Black',
+    'Pretendard',
+    system-ui,
+    sans-serif;
 
-    --font-mono:
-      'JetBrains Mono',
-      'Roboto Mono',
-      monospace;
-  }
+  --font-body:
+    'Pretendard',
+    -apple-system,
+    'Noto Sans KR',
+    system-ui,
+    sans-serif;
 
-
-  *{
-    box-sizing:border-box;
-  }
-
-
-  html{
-    background:var(--bg);
-  }
+  --font-mono:
+    'JetBrains Mono',
+    'Roboto Mono',
+    monospace;
+}
 
 
-  body{
-    margin:0;
+/* ============================================================
+   RESET
+============================================================ */
 
-    min-height:100vh;
+*{
+  box-sizing:border-box;
+}
 
-    background:
-      radial-gradient(
-        circle at 15% -10%,
-        rgba(155,255,92,0.10),
-        transparent 42%
-      ),
-      radial-gradient(
-        circle at 85% 20%,
-        rgba(127,232,212,0.045),
-        transparent 35%
-      ),
-      var(--bg);
+body{
+  margin:0;
 
-    color:var(--text);
+  background:
+    radial-gradient(
+      circle at 15% -10%,
+      rgba(155,255,92,.10),
+      transparent 45%
+    ),
+    var(--bg);
 
-    font-family:var(--font-body);
+  color:var(--text);
 
-    padding-bottom:60px;
-  }
+  font-family:var(--font-body);
 
-
-
-  /* ============================================================
-     HEADER
-  ============================================================ */
-
-  header{
-    padding:36px 20px 22px;
-
-    border-bottom:1px solid var(--pitch-line);
-
-    position:sticky;
-    top:0;
-    z-index:20;
-
-    background:rgba(12,18,16,0.94);
-
-    backdrop-filter:blur(12px);
-
-    overflow:hidden;
-  }
+  padding-bottom:60px;
+}
 
 
-  /*
-   * FC ONLINE 메인 이미지 / 로고 워터마크
-   *
-   * 실제 이미지가 제목 뒤에 크게 깔리도록 구성
-   */
+/* ============================================================
+   HEADER
+============================================================ */
 
-  header::after{
-    content:"";
+header{
+  padding:28px 20px 20px;
 
-    position:absolute;
+  border-bottom:1px solid var(--pitch-line);
 
-    width:480px;
-    height:220px;
+  position:sticky;
+  top:0;
+  z-index:20;
 
-    right:-70px;
-    top:-45px;
+  background:rgba(12,18,16,.95);
 
-    background-image:url(
-      "https://storage.ko-fi.com/cdn/useruploads/display/7cede8b0-c8fd-4b2f-8c98-10a86e8eeaeb_fco.png"
+  backdrop-filter:blur(10px);
+}
+
+
+/* FC ONLINE VISUAL HEADER */
+
+.hero{
+  position:relative;
+
+  max-width:1000px;
+
+  margin:0 auto;
+
+  padding:28px 24px 24px;
+
+  overflow:hidden;
+
+  border-radius:16px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(12,18,16,.97),
+      rgba(12,18,16,.82),
+      rgba(12,18,16,.94)
+    ),
+    url('/assets/fconline-bg.jpg')
+    center/cover no-repeat;
+
+  border:1px solid rgba(155,255,92,.12);
+}
+
+.hero::after{
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  pointer-events:none;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(155,255,92,.08),
+      transparent 45%
+    );
+}
+
+.hero-content{
+  position:relative;
+  z-index:1;
+}
+
+.eyebrow{
+  font-family:var(--font-mono);
+
+  font-size:11px;
+
+  letter-spacing:.18em;
+
+  color:var(--turf);
+
+  text-transform:uppercase;
+
+  margin:0 0 6px;
+}
+
+h1{
+  font-family:var(--font-display);
+
+  font-size:clamp(24px,6vw,36px);
+
+  letter-spacing:-.02em;
+
+  margin:0 0 5px;
+
+  line-height:1.05;
+}
+
+.sub{
+  color:var(--text-dim);
+
+  font-size:13px;
+
+  margin:0;
+}
+
+
+/* ============================================================
+   CONTROLS
+============================================================ */
+
+.controls{
+  display:flex;
+
+  gap:8px;
+
+  margin:14px auto 0;
+
+  max-width:1000px;
+
+  flex-wrap:wrap;
+
+  justify-content:flex-start;
+}
+
+.controls input[type=text]{
+  flex:1;
+
+  min-width:180px;
+
+  background:var(--bg-elev);
+
+  border:1px solid var(--pitch-line);
+
+  color:var(--text);
+
+  padding:10px 12px;
+
+  border-radius:10px;
+
+  font-family:var(--font-body);
+
+  font-size:14px;
+
+  outline:none;
+}
+
+.controls input[type=text]:focus{
+  border-color:rgba(155,255,92,.45);
+}
+
+select{
+  background:var(--bg-elev);
+
+  border:1px solid var(--pitch-line);
+
+  color:var(--text);
+
+  padding:10px 12px;
+
+  border-radius:10px;
+
+  font-size:13px;
+
+  font-family:var(--font-body);
+
+  outline:none;
+
+  cursor:pointer;
+}
+
+
+/* ============================================================
+   FILTER PANEL
+============================================================ */
+
+.filter-panel{
+  max-width:1000px;
+
+  margin:0 auto;
+
+  padding:14px 20px 0;
+
+  text-align:left;
+}
+
+.filter-row{
+  display:flex;
+
+  align-items:center;
+
+  gap:7px;
+
+  overflow-x:auto;
+
+  scrollbar-width:none;
+
+  padding-bottom:3px;
+}
+
+.filter-row::-webkit-scrollbar{
+  display:none;
+}
+
+.filter-btn{
+  flex-shrink:0;
+
+  border:1px solid var(--pitch-line);
+
+  background:var(--bg-elev);
+
+  color:var(--text-dim);
+
+  border-radius:9px;
+
+  padding:7px 11px;
+
+  font-size:11px;
+
+  font-family:var(--font-body);
+
+  cursor:pointer;
+
+  transition:.15s;
+}
+
+.filter-btn:hover{
+  border-color:rgba(155,255,92,.35);
+
+  color:var(--text);
+}
+
+.filter-btn.active{
+  background:rgba(155,255,92,.10);
+
+  border-color:rgba(155,255,92,.45);
+
+  color:var(--turf);
+
+  font-weight:700;
+}
+
+
+/* ============================================================
+   ACTIVE FILTER
+============================================================ */
+
+.active-filters{
+  display:none;
+
+  align-items:center;
+
+  gap:6px;
+
+  flex-wrap:wrap;
+
+  margin-top:10px;
+}
+
+.active-filters.has-filter{
+  display:flex;
+}
+
+.filter-label{
+  font-size:10px;
+
+  color:var(--text-dim);
+
+  font-family:var(--font-mono);
+}
+
+.active-chip{
+  display:inline-flex;
+
+  align-items:center;
+
+  gap:5px;
+
+  border-radius:7px;
+
+  padding:4px 7px;
+
+  border:1px solid rgba(155,255,92,.25);
+
+  background:rgba(155,255,92,.07);
+
+  color:var(--turf);
+
+  font-size:10px;
+
+  cursor:pointer;
+}
+
+.clear-filters{
+  border:0;
+
+  background:transparent;
+
+  color:var(--text-dim);
+
+  font-size:10px;
+
+  cursor:pointer;
+}
+
+
+/* ============================================================
+   MAIN
+============================================================ */
+
+main{
+  max-width:1000px;
+
+  margin:0 auto;
+
+  padding:18px 20px 0;
+}
+
+.live-strip{
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  font-family:var(--font-mono);
+
+  font-size:11px;
+
+  color:var(--text-dim);
+
+  margin:8px 2px 16px;
+
+  letter-spacing:.04em;
+}
+
+.dot{
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+
+  background:#ff5c5c;
+
+  box-shadow:0 0 8px #ff5c5c;
+
+  animation:pulse 1.6s infinite;
+}
+
+@keyframes pulse{
+  0%,100%{opacity:1;}
+  50%{opacity:.35;}
+}
+
+
+/* ============================================================
+   STREAMER GRID
+============================================================ */
+
+.streamer-grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:12px;
+}
+
+
+/* ============================================================
+   CARD
+============================================================ */
+
+.card{
+  min-width:0;
+
+  background:var(--bg-elev);
+
+  border:1px solid var(--pitch-line);
+
+  border-radius:var(--card-radius);
+
+  padding:16px 12px 14px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  text-align:center;
+
+  gap:8px;
+
+  position:relative;
+
+  overflow:hidden;
+
+  transition:
+    border-color .15s,
+    transform .15s,
+    background .15s;
+}
+
+.card:hover{
+  border-color:#30463b;
+
+  background:#141e1a;
+
+  transform:translateY(-2px);
+}
+
+.card.live{
+  border-color:rgba(255,92,92,.5);
+}
+
+.card.live::before{
+  content:"";
+
+  position:absolute;
+
+  left:0;
+  right:0;
+  top:0;
+
+  height:3px;
+
+  background:#ff5c5c;
+}
+
+
+/* ============================================================
+   AVATAR
+============================================================ */
+
+.streamer-link{
+  display:block;
+
+  color:inherit;
+
+  text-decoration:none;
+
+  border-radius:12px;
+
+  outline:none;
+}
+
+.avatar{
+  width:68px;
+
+  height:68px;
+
+  border-radius:14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--pitch-line),
+      #1c2822
     );
 
-    background-size:contain;
-    background-repeat:no-repeat;
-    background-position:center;
+  display:flex;
 
-    opacity:0.075;
+  align-items:center;
 
-    filter:grayscale(15%);
+  justify-content:center;
 
-    pointer-events:none;
+  font-family:var(--font-display);
+
+  font-size:20px;
+
+  color:var(--turf-dim);
+
+  overflow:hidden;
+
+  border:1px solid transparent;
+
+  transition:.15s;
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+}
+
+.streamer-link:hover .avatar{
+  border-color:rgba(155,255,92,.45);
+
+  transform:translateY(-1px);
+}
+
+
+/* ============================================================
+   META
+============================================================ */
+
+.meta{
+  min-width:0;
+
+  width:100%;
+}
+
+.name-row{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:6px;
+
+  flex-wrap:wrap;
+}
+
+.name{
+  font-weight:800;
+
+  font-size:16px;
+
+  transition:color .15s;
+}
+
+.streamer-link:hover .name{
+  color:var(--turf);
+}
+
+.live-badge{
+  font-family:var(--font-mono);
+
+  font-size:9px;
+
+  background:#ff5c5c;
+
+  color:#1a0a0a;
+
+  padding:2px 6px;
+
+  border-radius:5px;
+
+  font-weight:700;
+}
+
+
+/* ============================================================
+   FC NICKNAME
+============================================================ */
+
+.fc-nickname{
+  margin-top:6px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:4px;
+
+  color:var(--turf);
+
+  font-size:16px;
+
+  line-height:1.25;
+
+  font-weight:900;
+
+  letter-spacing:-.015em;
+
+  white-space:nowrap;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+}
+
+.fc-ball{
+  font-size:14px;
+
+  line-height:1;
+}
+
+.id-line{
+  font-family:var(--font-mono);
+
+  font-size:10px;
+
+  color:var(--text-dim);
+
+  margin-top:4px;
+
+  white-space:nowrap;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+}
+
+
+/* ============================================================
+   BADGES
+============================================================ */
+
+.tier-wrap{
+  width:100%;
+
+  margin-top:3px;
+}
+
+.badge-row{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:5px;
+
+  flex-wrap:wrap;
+}
+
+.filter-badge{
+  border:0;
+
+  cursor:pointer;
+
+  font-family:var(--font-display);
+
+  font-size:10px;
+
+  letter-spacing:.02em;
+
+  padding:5px 8px;
+
+  border-radius:8px;
+
+  white-space:nowrap;
+
+  transition:.12s;
+}
+
+.filter-badge:hover{
+  filter:brightness(1.15);
+
+  transform:translateY(-1px);
+}
+
+.filter-badge:active{
+  transform:scale(.97);
+}
+
+
+/* ============================================================
+   FC ONLINE TIER COLORS
+============================================================ */
+
+.tier-top{
+  background:rgba(127,232,212,.14);
+
+  color:var(--plat);
+
+  border:1px solid rgba(127,232,212,.35);
+}
+
+.tier-high{
+  background:rgba(140,170,255,.14);
+
+  color:#a9bcff;
+
+  border:1px solid rgba(140,170,255,.35);
+}
+
+.tier-mid{
+  background:rgba(240,195,76,.15);
+
+  color:var(--gold);
+
+  border:1px solid rgba(240,195,76,.4);
+}
+
+.tier-low{
+  background:rgba(199,208,205,.12);
+
+  color:var(--silver);
+
+  border:1px solid rgba(199,208,205,.3);
+}
+
+.tier-basic{
+  background:rgba(201,139,78,.15);
+
+  color:var(--bronze);
+
+  border:1px solid rgba(201,139,78,.4);
+}
+
+.tier-unranked{
+  background:rgba(92,107,100,.15);
+
+  color:var(--unranked);
+
+  border:1px solid rgba(92,107,100,.3);
+}
+
+
+/* ============================================================
+   SOOP COLORS
+============================================================ */
+
+.soop-badge{
+  background:rgba(155,255,92,.10);
+
+  color:var(--turf);
+
+  border:1px solid rgba(155,255,92,.30);
+}
+
+.soop-2{
+  background:rgba(127,232,212,.13);
+
+  color:#7fe8d4;
+
+  border-color:rgba(127,232,212,.35);
+}
+
+.soop-6{
+  background:rgba(240,195,76,.13);
+
+  color:#f0c34c;
+
+  border-color:rgba(240,195,76,.35);
+}
+
+.soop-100{
+  background:rgba(201,139,78,.13);
+
+  color:#e5a466;
+
+  border-color:rgba(201,139,78,.35);
+}
+
+.soop-other{
+  background:rgba(155,255,92,.08);
+
+  color:var(--turf);
+
+  border-color:rgba(155,255,92,.25);
+}
+
+
+/* ============================================================
+   CREW COLORS
+============================================================ */
+
+.crew-badge{
+  background:rgba(190,160,255,.10);
+
+  color:#cdb7ff;
+
+  border:1px solid rgba(190,160,255,.30);
+}
+
+.crew-0{
+  background:rgba(190,160,255,.10);
+
+  color:#cdb7ff;
+
+  border-color:rgba(190,160,255,.30);
+}
+
+.crew-1{
+  background:rgba(255,150,190,.10);
+
+  color:#ff9fc0;
+
+  border-color:rgba(255,150,190,.30);
+}
+
+.crew-2{
+  background:rgba(100,190,255,.10);
+
+  color:#7fc9ff;
+
+  border-color:rgba(100,190,255,.30);
+}
+
+.crew-3{
+  background:rgba(255,190,100,.10);
+
+  color:#ffc56f;
+
+  border-color:rgba(255,190,100,.30);
+}
+
+.crew-4{
+  background:rgba(130,220,160,.10);
+
+  color:#8ee0a6;
+
+  border-color:rgba(130,220,160,.30);
+}
+
+
+/* ============================================================
+   EMPTY
+============================================================ */
+
+.empty{
+  grid-column:1/-1;
+
+  text-align:center;
+
+  padding:50px 20px;
+
+  color:var(--text-dim);
+
+  font-size:13px;
+}
+
+.empty strong{
+  display:block;
+
+  color:var(--text);
+
+  margin-bottom:5px;
+}
+
+
+/* ============================================================
+   FOOTER
+============================================================ */
+
+footer{
+  max-width:1000px;
+
+  margin:28px auto 0;
+
+  padding:0 20px;
+
+  font-family:var(--font-mono);
+
+  font-size:11px;
+
+  color:var(--text-dim);
+
+  line-height:1.6;
+}
+
+footer code{
+  background:var(--bg-elev);
+
+  padding:1px 5px;
+
+  border-radius:4px;
+}
+
+
+/* ============================================================
+   TABLET
+============================================================ */
+
+@media(max-width:850px){
+
+  .streamer-grid{
+    grid-template-columns:
+      repeat(3,minmax(0,1fr));
   }
 
+}
 
-  .header-inner{
-    position:relative;
 
-    z-index:1;
+/* ============================================================
+   MOBILE
+============================================================ */
 
-    max-width:1400px;
+@media(max-width:620px){
 
-    margin:0 auto;
-
-    text-align:center;
+  header{
+    padding:18px 12px 14px;
   }
 
-
-  .eyebrow{
-    font-family:var(--font-mono);
-
-    font-size:11px;
-
-    letter-spacing:0.18em;
-
-    color:var(--turf);
-
-    text-transform:uppercase;
-
-    margin:0 0 8px;
+  .hero{
+    padding:22px 16px;
   }
-
-
-  h1{
-    font-family:var(--font-display);
-
-    font-size:clamp(25px,4vw,38px);
-
-    letter-spacing:-0.02em;
-
-    margin:0 0 6px;
-
-    line-height:1.05;
-  }
-
-
-  .sub{
-    color:var(--text-dim);
-
-    font-size:13px;
-
-    margin:0;
-  }
-
-
-
-  /* ============================================================
-     CONTROLS
-  ============================================================ */
-
-  .controls{
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    gap:8px;
-
-    margin:18px auto 0;
-
-    flex-wrap:wrap;
-
-    max-width:700px;
-  }
-
-
-  .controls input[type=text]{
-    width:320px;
-
-    min-width:220px;
-
-    background:var(--bg-elev);
-
-    border:1px solid var(--pitch-line);
-
-    color:var(--text);
-
-    padding:11px 14px;
-
-    border-radius:10px;
-
-    font-family:var(--font-body);
-
-    font-size:14px;
-
-    outline:none;
-
-    text-align:center;
-
-    transition:
-      border-color .15s,
-      background .15s;
-  }
-
-
-  .controls input[type=text]:focus{
-    border-color:rgba(155,255,92,0.45);
-
-    background:var(--bg-elev-2);
-  }
-
-
-  select{
-    background:var(--bg-elev);
-
-    border:1px solid var(--pitch-line);
-
-    color:var(--text);
-
-    padding:11px 13px;
-
-    border-radius:10px;
-
-    font-size:13px;
-
-    font-family:var(--font-body);
-
-    outline:none;
-
-    cursor:pointer;
-  }
-
-
-
-  /* ============================================================
-     FILTER AREA
-  ============================================================ */
 
   .filter-panel{
-    width:100%;
-
-    max-width:1400px;
-
-    margin:0 auto;
-
-    padding:16px 20px 0;
-
-    text-align:center;
+    padding-left:12px;
+    padding-right:12px;
   }
-
-
-  .filter-scroll{
-    display:flex;
-
-    justify-content:center;
-
-    gap:7px;
-
-    overflow-x:auto;
-
-    padding:2px 2px 4px;
-
-    scrollbar-width:none;
-  }
-
-
-  .filter-scroll::-webkit-scrollbar{
-    display:none;
-  }
-
-
-  .filter-btn{
-    flex-shrink:0;
-
-    border:1px solid var(--pitch-line);
-
-    background:var(--bg-elev);
-
-    color:var(--text-dim);
-
-    border-radius:9px;
-
-    padding:7px 11px;
-
-    font-size:11px;
-
-    font-family:var(--font-body);
-
-    cursor:pointer;
-
-    transition:
-      background .15s,
-      border-color .15s,
-      color .15s,
-      transform .15s;
-  }
-
-
-  .filter-btn:hover{
-    border-color:rgba(155,255,92,0.35);
-
-    color:var(--text);
-
-    transform:translateY(-1px);
-  }
-
-
-  .filter-btn.active{
-    background:rgba(155,255,92,0.10);
-
-    border-color:rgba(155,255,92,0.45);
-
-    color:var(--turf);
-
-    font-weight:700;
-  }
-
-
-
-  /* ============================================================
-     ACTIVE FILTERS
-  ============================================================ */
-
-  .active-filters{
-    display:none;
-
-    justify-content:center;
-
-    align-items:center;
-
-    gap:6px;
-
-    flex-wrap:wrap;
-
-    margin-top:10px;
-  }
-
-
-  .active-filters.has-filter{
-    display:flex;
-  }
-
-
-  .filter-label{
-    font-size:10px;
-
-    color:var(--text-dim);
-
-    font-family:var(--font-mono);
-  }
-
-
-  .active-chip{
-    display:inline-flex;
-
-    align-items:center;
-
-    gap:5px;
-
-    border-radius:7px;
-
-    padding:4px 7px;
-
-    border:1px solid rgba(155,255,92,0.25);
-
-    background:rgba(155,255,92,0.07);
-
-    color:var(--turf);
-
-    font-size:10px;
-
-    cursor:pointer;
-  }
-
-
-  .active-chip:hover{
-    background:rgba(155,255,92,0.12);
-  }
-
-
-  .active-chip .x{
-    opacity:.65;
-
-    font-size:10px;
-  }
-
-
-  .clear-filters{
-    border:0;
-
-    background:transparent;
-
-    color:var(--text-dim);
-
-    font-size:10px;
-
-    cursor:pointer;
-
-    padding:4px 5px;
-  }
-
-
-  .clear-filters:hover{
-    color:var(--text);
-  }
-
-
-
-  /* ============================================================
-     MAIN
-  ============================================================ */
 
   main{
-    width:100%;
-
-    max-width:1400px;
-
-    margin:0 auto;
-
-    padding:14px 20px 0;
+    padding-left:12px;
+    padding-right:12px;
   }
 
-
-  .live-strip{
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    gap:8px;
-
-    font-family:var(--font-mono);
-
-    font-size:11px;
-
-    color:var(--text-dim);
-
-    margin:12px 0 20px;
-
-    letter-spacing:0.04em;
-  }
-
-
-  .dot{
-    width:7px;
-
-    height:7px;
-
-    border-radius:50%;
-
-    background:#ff5c5c;
-
-    box-shadow:0 0 8px #ff5c5c;
-
-    animation:pulse 1.6s infinite;
-  }
-
-
-  @keyframes pulse{
-
-    0%,100%{
-      opacity:1;
-    }
-
-    50%{
-      opacity:0.35;
-    }
-
-  }
-
-
-
-  /* ============================================================
-     GROUP HEADER
-  ============================================================ */
-
-  .group{
-    margin-bottom:30px;
-  }
-
-
-  .group-header{
-    display:flex;
-
-    align-items:flex-end;
-
-    justify-content:center;
-
-    gap:10px;
-
-    margin:0 auto 12px;
-
-    padding-bottom:9px;
-
-    border-bottom:1px solid var(--pitch-line);
-
-    max-width:100%;
-  }
-
-
-  .group-title{
-    font-family:var(--font-display);
-
-    font-size:17px;
-
-    color:var(--text);
-
-    letter-spacing:-0.01em;
-
-    text-align:center;
-  }
-
-
-  .group-title .accent{
-    color:var(--turf);
-  }
-
-
-  .group-count{
-    color:var(--text-dim);
-
-    font-family:var(--font-mono);
-
-    font-size:10px;
-  }
-
-
-
-  /* ============================================================
-     GRID
-  ============================================================ */
-
-  .grid{
-    display:grid;
-
+  .streamer-grid{
     grid-template-columns:
-      repeat(4,minmax(0,1fr));
+      repeat(2,minmax(0,1fr));
 
-    gap:14px;
-
-    width:100%;
+    gap:9px;
   }
-
-
-
-  /* ============================================================
-     CARD
-  ============================================================ */
 
   .card{
-    background:
-      linear-gradient(
-        180deg,
-        rgba(23,33,29,0.92),
-        rgba(18,26,23,0.96)
-      );
-
-    border:1px solid var(--pitch-line);
-
-    border-radius:var(--card-radius);
-
-    padding:20px 16px 17px;
-
-    min-height:245px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    align-items:center;
-
-    justify-content:flex-start;
-
-    text-align:center;
-
-    text-decoration:none;
-
-    color:inherit;
-
-    transition:
-      border-color .15s,
-      transform .15s,
-      background .15s,
-      box-shadow .15s;
-
-    position:relative;
-
-    overflow:hidden;
+    padding:14px 8px 12px;
   }
-
-
-  .card:hover{
-    border-color:#30463b;
-
-    background:
-      linear-gradient(
-        180deg,
-        rgba(27,40,34,0.98),
-        rgba(20,30,26,0.98)
-      );
-
-    transform:translateY(-2px);
-
-    box-shadow:
-      0 10px 28px rgba(0,0,0,0.18);
-  }
-
-
-  .card:active{
-    transform:scale(0.99);
-  }
-
-
-  .card.live{
-    border-color:rgba(255,92,92,0.5);
-  }
-
-
-  .card.live::before{
-    content:"";
-
-    position:absolute;
-
-    left:0;
-
-    right:0;
-
-    top:0;
-
-    height:3px;
-
-    background:#ff5c5c;
-  }
-
-
-
-  /* ============================================================
-     AVATAR / BROADCAST LINK
-  ============================================================ */
-
-  .streamer-link{
-    display:block;
-
-    color:inherit;
-
-    text-decoration:none;
-
-    border-radius:12px;
-
-    outline:none;
-  }
-
-
-  .streamer-link:hover .avatar{
-    border-color:rgba(155,255,92,0.55);
-
-    transform:translateY(-1px);
-  }
-
-
-  .streamer-link:hover .name{
-    color:var(--turf);
-  }
-
 
   .avatar{
-    width:66px;
-
-    height:66px;
-
-    border-radius:14px;
-
-    background:
-      linear-gradient(
-        135deg,
-        var(--pitch-line),
-        #1c2822
-      );
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    font-family:var(--font-display);
-
-    font-size:22px;
-
-    color:var(--turf-dim);
-
-    overflow:hidden;
-
-    flex-shrink:0;
-
-    border:1px solid transparent;
-
-    transition:
-      border-color .15s,
-      transform .15s;
-
-    margin-bottom:10px;
+    width:60px;
+    height:60px;
   }
-
-
-  .avatar img{
-    width:100%;
-
-    height:100%;
-
-    object-fit:cover;
-  }
-
-
-
-  /* ============================================================
-     META
-  ============================================================ */
-
-  .meta{
-    min-width:0;
-
-    width:100%;
-
-    display:flex;
-
-    flex-direction:column;
-
-    align-items:center;
-  }
-
-
-  .name-row{
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:6px;
-
-    flex-wrap:wrap;
-
-    width:100%;
-  }
-
 
   .name{
-    font-weight:800;
-
-    font-size:17px;
-
-    transition:color .15s;
-
-    line-height:1.2;
+    font-size:14px;
   }
-
-
-  .live-badge{
-    font-family:var(--font-mono);
-
-    font-size:9px;
-
-    letter-spacing:0.06em;
-
-    background:#ff5c5c;
-
-    color:#1a0a0a;
-
-    padding:3px 6px;
-
-    border-radius:5px;
-
-    font-weight:700;
-
-    flex-shrink:0;
-  }
-
-
-
-  /* ============================================================
-     FC NICKNAME
-  ============================================================ */
 
   .fc-nickname{
-    margin-top:9px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:5px;
-
-    color:var(--turf);
-
-    font-size:17px;
-
-    line-height:1.25;
-
-    font-weight:900;
-
-    letter-spacing:-0.015em;
-
-    white-space:nowrap;
-
-    max-width:100%;
-
-    overflow:hidden;
-
-    text-overflow:ellipsis;
+    font-size:14px;
   }
-
-
-  .fc-ball{
-    font-size:15px;
-
-    line-height:1;
-
-    flex-shrink:0;
-  }
-
-
-
-  /* ============================================================
-     SOOP ID / NOTE
-  ============================================================ */
-
-  .id-line{
-    font-family:var(--font-mono);
-
-    font-size:10.5px;
-
-    color:var(--text-dim);
-
-    margin-top:7px;
-
-    white-space:nowrap;
-
-    max-width:100%;
-
-    overflow:hidden;
-
-    text-overflow:ellipsis;
-  }
-
-
-
-  /* ============================================================
-     BADGES
-  ============================================================ */
-
-  .tier-wrap{
-    width:100%;
-
-    margin-top:auto;
-
-    padding-top:15px;
-  }
-
-
-  .badge-row{
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:5px;
-
-    flex-wrap:wrap;
-  }
-
 
   .filter-badge{
-    border:0;
+    font-size:9px;
 
-    cursor:pointer;
-
-    font-family:var(--font-display);
-
-    font-size:10px;
-
-    letter-spacing:0.02em;
-
-    padding:5px 9px;
-
-    border-radius:8px;
-
-    display:inline-block;
-
-    white-space:nowrap;
-
-    transition:
-      transform .12s,
-      filter .12s,
-      background .12s;
+    padding:5px 6px;
   }
 
+}
 
-  .filter-badge:hover{
-    filter:brightness(1.15);
 
-    transform:translateY(-1px);
+/* ============================================================
+   SMALL MOBILE
+============================================================ */
+
+@media(max-width:390px){
+
+  .streamer-grid{
+    grid-template-columns:1fr;
   }
 
-
-  .filter-badge:active{
-    transform:scale(.97);
+  .card{
+    padding:18px 12px;
   }
 
-
-
-  /* ============================================================
-     FC ONLINE TIER COLORS
-  ============================================================ */
-
-  .tier-top{
-    background:rgba(127,232,212,0.14);
-
-    color:var(--plat);
-
-    border:1px solid rgba(127,232,212,0.35);
+  .avatar{
+    width:68px;
+    height:68px;
   }
 
-
-  .tier-high{
-    background:rgba(140,170,255,0.14);
-
-    color:#a9bcff;
-
-    border:1px solid rgba(140,170,255,0.35);
-  }
-
-
-  .tier-mid{
-    background:rgba(240,195,76,0.15);
-
-    color:var(--gold);
-
-    border:1px solid rgba(240,195,76,0.4);
-  }
-
-
-  .tier-low{
-    background:rgba(199,208,205,0.12);
-
-    color:var(--silver);
-
-    border:1px solid rgba(199,208,205,0.3);
-  }
-
-
-  .tier-basic{
-    background:rgba(201,139,78,0.15);
-
-    color:var(--bronze);
-
-    border:1px solid rgba(201,139,78,0.4);
-  }
-
-
-  .tier-unranked{
-    background:rgba(92,107,100,0.15);
-
-    color:var(--unranked);
-
-    border:1px solid rgba(92,107,100,0.3);
-  }
-
-
-
-  /* ============================================================
-     SOOP TIER COLORS
-  ============================================================ */
-
-  .soop-badge{
-    background:rgba(155,255,92,0.10);
-
-    color:var(--turf);
-
-    border:1px solid rgba(155,255,92,0.30);
-  }
-
-
-  .soop-2{
-    background:rgba(127,232,212,0.13);
-
-    color:#7fe8d4;
-
-    border-color:rgba(127,232,212,0.35);
-  }
-
-
-  .soop-6{
-    background:rgba(240,195,76,0.13);
-
-    color:#f0c34c;
-
-    border-color:rgba(240,195,76,0.35);
-  }
-
-
-  .soop-100{
-    background:rgba(201,139,78,0.13);
-
-    color:#e5a466;
-
-    border-color:rgba(201,139,78,0.35);
-  }
-
-
-  .soop-other{
-    background:rgba(155,255,92,0.08);
-
-    color:var(--turf);
-
-    border-color:rgba(155,255,92,0.25);
-  }
-
-
-
-  /* ============================================================
-     CREW COLORS
-  ============================================================ */
-
-  .crew-badge{
-    background:rgba(190,160,255,0.10);
-
-    color:#cdb7ff;
-
-    border:1px solid rgba(190,160,255,0.30);
-  }
-
-
-  .crew-0{
-    background:rgba(190,160,255,0.10);
-
-    color:#cdb7ff;
-
-    border-color:rgba(190,160,255,0.30);
-  }
-
-
-  .crew-1{
-    background:rgba(255,150,190,0.10);
-
-    color:#ff9fc0;
-
-    border-color:rgba(255,150,190,0.30);
-  }
-
-
-  .crew-2{
-    background:rgba(100,190,255,0.10);
-
-    color:#7fc9ff;
-
-    border-color:rgba(100,190,255,0.30);
-  }
-
-
-  .crew-3{
-    background:rgba(255,190,100,0.10);
-
-    color:#ffc56f;
-
-    border-color:rgba(255,190,100,0.30);
-  }
-
-
-  .crew-4{
-    background:rgba(130,220,160,0.10);
-
-    color:#8ee0a6;
-
-    border-color:rgba(130,220,160,0.30);
-  }
-
-
-
-  /* ============================================================
-     EMPTY
-  ============================================================ */
-
-  .empty{
-    grid-column:1 / -1;
-
-    text-align:center;
-
-    padding:50px 20px;
-
-    color:var(--text-dim);
-
-    font-size:13px;
-  }
-
-
-  .empty strong{
-    display:block;
-
-    color:var(--text);
-
-    margin-bottom:5px;
-  }
-
-
-
-  /* ============================================================
-     FOOTER
-  ============================================================ */
-
-  footer{
-    max-width:1400px;
-
-    margin:34px auto 0;
-
-    padding:0 20px;
-
-    text-align:center;
-
-    font-family:var(--font-mono);
-
-    font-size:11px;
-
-    color:var(--text-dim);
-
-    line-height:1.6;
-  }
-
-
-  footer code{
-    background:var(--bg-elev);
-
-    padding:1px 5px;
-
-    border-radius:4px;
-  }
-
-
-
-  /* ============================================================
-     TABLET
-  ============================================================ */
-
-  @media(max-width:1050px){
-
-    .grid{
-      grid-template-columns:
-        repeat(2,minmax(0,1fr));
-    }
-
-  }
-
-
-
-  /* ============================================================
-     MOBILE
-  ============================================================ */
-
-  @media(max-width:600px){
-
-    header{
-      padding:28px 14px 18px;
-    }
-
-
-    header::after{
-      width:330px;
-
-      height:170px;
-
-      right:-80px;
-
-      top:-30px;
-
-      opacity:0.055;
-    }
-
-
-    .filter-panel{
-      padding-left:12px;
-
-      padding-right:12px;
-    }
-
-
-    .filter-scroll{
-      justify-content:flex-start;
-    }
-
-
-    main{
-      padding-left:12px;
-
-      padding-right:12px;
-    }
-
-
-    .grid{
-      grid-template-columns:1fr;
-
-      gap:11px;
-    }
-
-
-    .card{
-      min-height:235px;
-
-      padding:19px 14px 17px;
-    }
-
-
-    .avatar{
-      width:62px;
-
-      height:62px;
-    }
-
-
-    .fc-nickname{
-      font-size:16px;
-    }
-
-
-    .name{
-      font-size:16px;
-    }
-
-  }
-
+}
 
 </style>
 </head>
@@ -1284,52 +1041,88 @@
 
 <header>
 
-  <div class="header-inner">
+  <div class="hero">
 
-    <p class="eyebrow">
-      SOOP · FC ONLINE
-    </p>
+    <div class="hero-content">
 
-    <h1>
-      스트리머 티어보드
-    </h1>
+      <p class="eyebrow">
+        SOOP · FC ONLINE
+      </p>
 
-    <p class="sub">
-      FC온라인 카테고리 스트리머 실력 랭킹
-    </p>
+      <h1>
+        스트리머 티어보드
+      </h1>
 
-
-    <div class="controls">
-
-      <input
-        type="text"
-        id="search"
-        placeholder="스트리머 이름 검색"
-      >
-
-
-      <select id="sortSel">
-
-        <option value="tier">
-          티어순
-        </option>
-
-        <option value="name">
-          이름순
-        </option>
-
-        <option value="live">
-          방송중 우선
-        </option>
-
-      </select>
+      <p class="sub">
+        FC온라인 카테고리 스트리머 실력 랭킹
+      </p>
 
     </div>
 
   </div>
 
-</header>
 
+  <div class="controls">
+
+    <input
+      type="text"
+      id="search"
+      placeholder="스트리머 이름 · FC닉네임 · SOOP ID 검색"
+    >
+
+    <select id="soopSort">
+
+      <option value="default">
+        SOOP TIER순
+      </option>
+
+      <option value="soop-asc">
+        SOOP TIER 높은순
+      </option>
+
+      <option value="soop-desc">
+        SOOP TIER 낮은순
+      </option>
+
+    </select>
+
+
+    <select id="fcSort">
+
+      <option value="default">
+        FC ONLINE 티어순
+      </option>
+
+      <option value="fc-asc">
+        FC ONLINE 높은순
+      </option>
+
+      <option value="fc-desc">
+        FC ONLINE 낮은순
+      </option>
+
+    </select>
+
+
+    <select id="sortSel">
+
+      <option value="tier">
+        기본 정렬
+      </option>
+
+      <option value="name">
+        이름순
+      </option>
+
+      <option value="live">
+        방송중 우선
+      </option>
+
+    </select>
+
+  </div>
+
+</header>
 
 
 <!-- ============================================================
@@ -1339,33 +1132,33 @@
 <div class="filter-panel">
 
 
-  <!-- SOOP TIER -->
+  <!-- SOOP TIER FILTER -->
 
   <div
-    class="filter-scroll"
+    class="filter-row"
     id="soopFilters"
   ></div>
 
 
-  <!-- FC TIER -->
+  <!-- FC ONLINE FILTER -->
 
   <div
-    class="filter-scroll"
+    class="filter-row"
     id="fcFilters"
     style="margin-top:7px;"
   ></div>
 
 
-  <!-- CREW -->
+  <!-- CREW FILTER -->
 
   <div
-    class="filter-scroll"
+    class="filter-row"
     id="crewFilters"
     style="margin-top:7px;"
   ></div>
 
 
-  <!-- ACTIVE FILTERS -->
+  <!-- ACTIVE FILTER -->
 
   <div
     class="active-filters"
@@ -1375,13 +1168,11 @@
 </div>
 
 
-
 <!-- ============================================================
      MAIN
 ============================================================ -->
 
 <main>
-
 
   <div class="live-strip">
 
@@ -1395,13 +1186,11 @@
 
 
   <div
-    class="grid"
+    class="streamer-grid"
     id="grid"
   ></div>
 
-
 </main>
-
 
 
 <footer>
@@ -1420,9 +1209,7 @@
 </footer>
 
 
-
 <script>
-
 
 /* ============================================================
    DATA
@@ -1430,11 +1217,9 @@
 
 let STREAMERS = [];
 
-
 const LIVE_REFRESH_MS = 60000;
 
 const TIER_REFRESH_MS = 300000;
-
 
 
 /* ============================================================
@@ -1452,46 +1237,43 @@ const FILTERS = {
 };
 
 
-
 /* ============================================================
-   HTML ELEMENTS
+   ELEMENTS
 ============================================================ */
 
 const grid =
   document.getElementById('grid');
 
-
 const search =
   document.getElementById('search');
-
 
 const sortSel =
   document.getElementById('sortSel');
 
+const soopSort =
+  document.getElementById('soopSort');
+
+const fcSort =
+  document.getElementById('fcSort');
 
 const liveCount =
   document.getElementById('liveCount');
 
-
 const soopFilters =
   document.getElementById('soopFilters');
-
 
 const fcFilters =
   document.getElementById('fcFilters');
 
-
 const crewFilters =
   document.getElementById('crewFilters');
-
 
 const activeFilters =
   document.getElementById('activeFilters');
 
 
-
 /* ============================================================
-   ESCAPE HTML
+   ESCAPE
 ============================================================ */
 
 function escapeHtml(value){
@@ -1506,9 +1288,32 @@ function escapeHtml(value){
 }
 
 
+/* ============================================================
+   NORMALIZE SOOP TIER
+============================================================ */
+
+function normalizeSoopTier(value){
+
+  const text =
+    String(value || '').trim();
+
+  if(
+    !text ||
+    text === '?티어' ||
+    text === '100티어'
+  ){
+
+    return '티어없음';
+
+  }
+
+  return text;
+
+}
+
 
 /* ============================================================
-   STREAMERS.JSON
+   LOAD STREAMERS
 ============================================================ */
 
 async function loadStreamers(){
@@ -1521,7 +1326,6 @@ async function loadStreamers(){
       }
     );
 
-
   if(!res.ok){
 
     throw new Error(
@@ -1530,10 +1334,8 @@ async function loadStreamers(){
 
   }
 
-
   const data =
     await res.json();
-
 
   if(!Array.isArray(data)){
 
@@ -1542,7 +1344,6 @@ async function loadStreamers(){
     );
 
   }
-
 
   STREAMERS =
     data
@@ -1555,7 +1356,6 @@ async function loadStreamers(){
 
         const divisionId =
           s.divisionId ?? null;
-
 
         return {
 
@@ -1582,8 +1382,9 @@ async function loadStreamers(){
             null,
 
           soopTier:
-            s.soopTier ||
-            null,
+            normalizeSoopTier(
+              s.soopTier
+            ),
 
           crew:
             s.crew ||
@@ -1602,7 +1403,6 @@ async function loadStreamers(){
 }
 
 
-
 /* ============================================================
    LIVE STATUS
 ============================================================ */
@@ -1617,7 +1417,6 @@ async function refreshLiveStatus(){
 
   }
 
-
   const ids =
     STREAMERS
 
@@ -1629,14 +1428,12 @@ async function refreshLiveStatus(){
 
       .join(',');
 
-
   try{
 
     const res =
       await fetch(
         `/api/live-status?ids=${encodeURIComponent(ids)}`
       );
-
 
     if(!res.ok){
 
@@ -1646,10 +1443,8 @@ async function refreshLiveStatus(){
 
     }
 
-
     const data =
       await res.json();
-
 
     STREAMERS.forEach(s => {
 
@@ -1662,21 +1457,18 @@ async function refreshLiveStatus(){
 
     });
 
-
   }catch(err){
 
     console.warn(
-      '실시간 상태 갱신 실패, 이전 상태 유지:',
+      '실시간 상태 갱신 실패:',
       err
     );
 
   }
 
-
   render();
 
 }
-
 
 
 /* ============================================================
@@ -1696,7 +1488,6 @@ async function refreshTierStatus(){
 
       .join(',');
 
-
   if(!nicknames){
 
     render();
@@ -1705,14 +1496,12 @@ async function refreshTierStatus(){
 
   }
 
-
   try{
 
     const res =
       await fetch(
         `/api/tier?nicknames=${encodeURIComponent(nicknames)}`
       );
-
 
     if(!res.ok){
 
@@ -1722,10 +1511,8 @@ async function refreshTierStatus(){
 
     }
 
-
     const data =
       await res.json();
-
 
     STREAMERS.forEach(s => {
 
@@ -1735,17 +1522,14 @@ async function refreshTierStatus(){
 
       }
 
-
       const info =
         data[s.fcNickname];
-
 
       if(!info){
 
         return;
 
       }
-
 
       if(info.currentNickname){
 
@@ -1754,14 +1538,12 @@ async function refreshTierStatus(){
 
       }
 
-
       if(info.divisionId != null){
 
         s.divisionId =
           Number(info.divisionId);
 
       }
-
 
       if(
         info.divisionName &&
@@ -1776,7 +1558,6 @@ async function refreshTierStatus(){
 
       }
 
-
       if(
         !s.tier &&
         s.divisionName
@@ -1786,7 +1567,6 @@ async function refreshTierStatus(){
           s.divisionName;
 
       }
-
 
       if(
         !s.tier &&
@@ -1799,50 +1579,21 @@ async function refreshTierStatus(){
       }
 
     });
-
 
   }catch(err){
 
     console.warn(
-      '티어 갱신 실패, 기존 데이터 유지:',
+      '티어 갱신 실패:',
       err
     );
 
-
-    STREAMERS.forEach(s => {
-
-      if(
-        !s.tier &&
-        s.divisionName
-      ){
-
-        s.tier =
-          s.divisionName;
-
-      }
-
-
-      if(
-        !s.tier &&
-        s.divisionId != null
-      ){
-
-        s.tier =
-          `등급 ${s.divisionId}`;
-
-      }
-
-    });
-
   }
-
 
   buildFilterButtons();
 
   render();
 
 }
-
 
 
 /* ============================================================
@@ -1858,9 +1609,35 @@ function divisionRank(s){
 }
 
 
+/* ============================================================
+   SOOP RANK
+============================================================ */
+
+function soopRank(s){
+
+  const value =
+    String(
+      normalizeSoopTier(
+        s.soopTier
+      )
+    );
+
+  const match =
+    value.match(/\d+/);
+
+  if(!match){
+
+    return Infinity;
+
+  }
+
+  return Number(match[0]);
+
+}
+
 
 /* ============================================================
-   FC TIER CLASS
+   TIER CLASS
 ============================================================ */
 
 function tierClass(divisionId){
@@ -1868,55 +1645,44 @@ function tierClass(divisionId){
   if(divisionId == null)
     return 'tier-unranked';
 
-
   if(divisionId <= 1300)
     return 'tier-top';
-
 
   if(divisionId <= 1900)
     return 'tier-high';
 
-
   if(divisionId <= 2200)
     return 'tier-mid';
 
-
   if(divisionId <= 2500)
     return 'tier-low';
-
 
   return 'tier-basic';
 
 }
 
 
-
 /* ============================================================
-   SOOP TIER CLASS
+   SOOP CLASS
 ============================================================ */
 
 function soopTierClass(tier){
 
   const value =
-    String(tier || '').toLowerCase();
-
+    String(tier || '');
 
   if(value.includes('2티어'))
     return 'soop-2';
 
-
   if(value.includes('6티어'))
     return 'soop-6';
-
 
   if(value.includes('100티어'))
     return 'soop-100';
 
-
   return 'soop-other';
 
 }
-
 
 
 /* ============================================================
@@ -1926,7 +1692,6 @@ function soopTierClass(tier){
 const crewColorMap =
   new Map();
 
-
 function crewClass(crew){
 
   if(!crew){
@@ -1934,7 +1699,6 @@ function crewClass(crew){
     return 'crew-0';
 
   }
-
 
   if(!crewColorMap.has(crew)){
 
@@ -1945,15 +1709,13 @@ function crewClass(crew){
 
   }
 
-
   return `crew-${crewColorMap.get(crew)}`;
 
 }
 
 
-
 /* ============================================================
-   UNIQUE SORTED VALUES
+   UNIQUE VALUES
 ============================================================ */
 
 function uniqueValues(key){
@@ -1965,7 +1727,19 @@ function uniqueValues(key){
       STREAMERS
 
         .map(
-          s => s[key]
+          s => {
+
+            if(key === 'soopTier'){
+
+              return normalizeSoopTier(
+                s.soopTier
+              );
+
+            }
+
+            return s[key];
+
+          }
         )
 
         .filter(
@@ -1979,7 +1753,6 @@ function uniqueValues(key){
   ];
 
 }
-
 
 
 /* ============================================================
@@ -1999,10 +1772,20 @@ function buildFilterButtons(){
   }
 
 
-  /* SOOP TIER */
+  /* SOOP */
 
   const soopValues =
-    uniqueValues('soopTier');
+    uniqueValues('soopTier')
+      .sort(
+        (a,b) =>
+          soopRank({
+            soopTier:a
+          })
+          -
+          soopRank({
+            soopTier:b
+          })
+      );
 
 
   soopFilters.innerHTML = `
@@ -2036,10 +1819,30 @@ function buildFilterButtons(){
   `;
 
 
-  /* FC TIER */
+  /* FC */
 
   const fcValues =
-    uniqueValues('tier');
+    uniqueValues('tier')
+      .sort(
+        (a,b) => {
+
+          const sa =
+            STREAMERS.find(
+              s => s.tier === a
+            );
+
+          const sb =
+            STREAMERS.find(
+              s => s.tier === b
+            );
+
+          return (
+            divisionRank(sa || {}) -
+            divisionRank(sb || {})
+          );
+
+        }
+      );
 
 
   fcFilters.innerHTML = `
@@ -2076,7 +1879,15 @@ function buildFilterButtons(){
   /* CREW */
 
   const crewValues =
-    uniqueValues('crew');
+    uniqueValues('crew')
+      .sort(
+        (a,b) =>
+          String(a)
+            .localeCompare(
+              String(b),
+              'ko'
+            )
+      );
 
 
   crewFilters.innerHTML = `
@@ -2115,15 +1926,16 @@ function buildFilterButtons(){
 }
 
 
-
 /* ============================================================
-   FILTER BUTTON EVENTS
+   FILTER EVENTS
 ============================================================ */
 
 function bindFilterButtons(){
 
   document
-    .querySelectorAll('.filter-btn')
+    .querySelectorAll(
+      '.filter-btn'
+    )
     .forEach(button => {
 
       button.addEventListener(
@@ -2133,10 +1945,8 @@ function bindFilterButtons(){
           const type =
             button.dataset.filterType;
 
-
           const value =
             button.dataset.filterValue;
-
 
           if(type === 'soopTier'){
 
@@ -2145,7 +1955,6 @@ function bindFilterButtons(){
 
           }
 
-
           if(type === 'fcTier'){
 
             FILTERS.fcTier =
@@ -2153,14 +1962,12 @@ function bindFilterButtons(){
 
           }
 
-
           if(type === 'crew'){
 
             FILTERS.crew =
               value || null;
 
           }
-
 
           buildFilterButtons();
 
@@ -2174,9 +1981,8 @@ function bindFilterButtons(){
 }
 
 
-
 /* ============================================================
-   ACTIVE FILTER DISPLAY
+   ACTIVE FILTERS
 ============================================================ */
 
 function renderActiveFilters(){
@@ -2187,18 +1993,14 @@ function renderActiveFilters(){
 
   }
 
-
   const filters = [];
 
 
   if(FILTERS.soopTier){
 
     filters.push({
-
       type:'soopTier',
-
       label:`SOOP ${FILTERS.soopTier}`
-
     });
 
   }
@@ -2207,11 +2009,8 @@ function renderActiveFilters(){
   if(FILTERS.fcTier){
 
     filters.push({
-
       type:'fcTier',
-
       label:`FC ${FILTERS.fcTier}`
-
     });
 
   }
@@ -2220,11 +2019,8 @@ function renderActiveFilters(){
   if(FILTERS.crew){
 
     filters.push({
-
       type:'crew',
-
       label:`CREW ${FILTERS.crew}`
-
     });
 
   }
@@ -2264,7 +2060,7 @@ function renderActiveFilters(){
               data-active-type="${filter.type}"
             >
               ${escapeHtml(filter.label)}
-              <span class="x">×</span>
+              <span>×</span>
             </button>
 
           `
@@ -2290,12 +2086,9 @@ function renderActiveFilters(){
         'click',
         () => {
 
-          const type =
-            button.dataset.activeType;
-
-
-          FILTERS[type] = null;
-
+          FILTERS[
+            button.dataset.activeType
+          ] = null;
 
           buildFilterButtons();
 
@@ -2312,7 +2105,6 @@ function renderActiveFilters(){
       'clearFilters'
     );
 
-
   if(clear){
 
     clear.addEventListener(
@@ -2323,7 +2115,6 @@ function renderActiveFilters(){
   }
 
 }
-
 
 
 /* ============================================================
@@ -2338,7 +2129,6 @@ function clearAllFilters(){
 
   FILTERS.crew = null;
 
-
   buildFilterButtons();
 
   render();
@@ -2346,19 +2136,19 @@ function clearAllFilters(){
 }
 
 
-
 /* ============================================================
-   FILTER STREAMERS
+   APPLY FILTERS
 ============================================================ */
 
 function applyFilters(list){
 
   return list.filter(s => {
 
-
     if(
       FILTERS.soopTier &&
-      s.soopTier !== FILTERS.soopTier
+      normalizeSoopTier(
+        s.soopTier
+      ) !== FILTERS.soopTier
     ){
 
       return false;
@@ -2393,7 +2183,6 @@ function applyFilters(list){
 }
 
 
-
 /* ============================================================
    SORT
 ============================================================ */
@@ -2403,6 +2192,16 @@ function sortList(list){
   const mode =
     sortSel.value;
 
+
+  const soopMode =
+    soopSort.value;
+
+
+  const fcMode =
+    fcSort.value;
+
+
+  /* 이름순 */
 
   if(mode === 'name'){
 
@@ -2420,6 +2219,8 @@ function sortList(list){
   }
 
 
+  /* 방송중 우선 */
+
   if(mode === 'live'){
 
     list.sort(
@@ -2433,6 +2234,62 @@ function sortList(list){
   }
 
 
+  /* SOOP TIER 명시 정렬 */
+
+  if(soopMode === 'soop-asc'){
+
+    list.sort(
+      (a,b) =>
+        soopRank(a) - soopRank(b)
+    );
+
+    return;
+
+  }
+
+
+  if(soopMode === 'soop-desc'){
+
+    list.sort(
+      (a,b) =>
+        soopRank(b) - soopRank(a)
+    );
+
+    return;
+
+  }
+
+
+  /* FC ONLINE 명시 정렬 */
+
+  if(fcMode === 'fc-asc'){
+
+    list.sort(
+      (a,b) =>
+        divisionRank(a) -
+        divisionRank(b)
+    );
+
+    return;
+
+  }
+
+
+  if(fcMode === 'fc-desc'){
+
+    list.sort(
+      (a,b) =>
+        divisionRank(b) -
+        divisionRank(a)
+    );
+
+    return;
+
+  }
+
+
+  /* 기본 */
+
   list.sort(
     (a,b) =>
       (Number(b.live) - Number(a.live)) ||
@@ -2440,153 +2297,6 @@ function sortList(list){
   );
 
 }
-
-
-
-/* ============================================================
-   SOOP GROUPING
-============================================================ */
-
-function getGroupInfo(list){
-
-  if(FILTERS.soopTier){
-
-    return [
-
-      {
-
-        title:
-          `SOOP TIER · ${FILTERS.soopTier}`,
-
-        items:list
-
-      }
-
-    ];
-
-  }
-
-
-  const groups = new Map();
-
-  const noTier = [];
-
-
-  list.forEach(s => {
-
-    const tier =
-      s.soopTier;
-
-
-    if(!tier){
-
-      noTier.push(s);
-
-      return;
-
-    }
-
-
-    if(!groups.has(tier)){
-
-      groups.set(
-        tier,
-        []
-      );
-
-    }
-
-
-    groups
-      .get(tier)
-      .push(s);
-
-  });
-
-
-  const result = [];
-
-
-  const sortedKeys =
-    [...groups.keys()]
-      .sort(
-        (a,b) => {
-
-          const na =
-            parseInt(
-              String(a).replace(/\D/g,''),
-              10
-            );
-
-          const nb =
-            parseInt(
-              String(b).replace(/\D/g,''),
-              10
-            );
-
-
-          if(
-            Number.isNaN(na) &&
-            Number.isNaN(nb)
-          ){
-
-            return String(a)
-              .localeCompare(
-                String(b),
-                'ko'
-              );
-
-          }
-
-
-          if(Number.isNaN(na))
-            return 1;
-
-
-          if(Number.isNaN(nb))
-            return -1;
-
-
-          return na - nb;
-
-        }
-      );
-
-
-  sortedKeys.forEach(key => {
-
-    result.push({
-
-      title:
-        `SOOP TIER · ${key}`,
-
-      items:
-        groups.get(key)
-
-    });
-
-  });
-
-
-  if(noTier.length){
-
-    result.push({
-
-      title:
-        'SOOP TIER · 미분류',
-
-      items:
-        noTier
-
-    });
-
-  }
-
-
-  return result;
-
-}
-
 
 
 /* ============================================================
@@ -2601,10 +2311,6 @@ function render(){
     !sortSel ||
     !liveCount
   ){
-
-    console.error(
-      '화면 요소를 찾지 못했습니다.'
-    );
 
     return;
 
@@ -2625,35 +2331,26 @@ function render(){
           s.name || ''
         ).toLowerCase();
 
-
       const id =
         String(
           s.id || ''
         ).toLowerCase();
-
 
       const fcNickname =
         String(
           s.fcNickname || ''
         ).toLowerCase();
 
-
       const note =
         String(
           s.note || ''
         ).toLowerCase();
 
-
       return (
-
         name.includes(q) ||
-
         id.includes(q) ||
-
         fcNickname.includes(q) ||
-
         note.includes(q)
-
       );
 
     });
@@ -2670,13 +2367,10 @@ function render(){
 
 
   liveCount.textContent =
-
     STREAMERS.filter(
       s => s.live
     ).length +
-
-    '명 방송 중 (60초마다 자동 갱신)';
-
+    '명 방송 중 · 60초마다 자동 갱신';
 
 
   if(!list.length){
@@ -2700,62 +2394,10 @@ function render(){
   }
 
 
-
-  /* ==========================================================
-     SOOP GROUPS
-  ========================================================== */
-
-  const groups =
-    getGroupInfo(list);
-
-
   grid.innerHTML =
-    groups
+    list
       .map(
-        group => {
-
-          return `
-
-            <section class="group">
-
-              <div class="group-header">
-
-                <div class="group-title">
-
-                  <span class="accent">
-                    ${escapeHtml(group.title.split('·')[0])}
-                  </span>
-
-                  ${
-                    group.title.includes('·')
-                      ? ` · ${escapeHtml(group.title.split('·').slice(1).join('·').trim())}`
-                      : ''
-                  }
-
-                </div>
-
-                <div class="group-count">
-                  ${group.items.length}명
-                </div>
-
-              </div>
-
-
-              <div class="grid">
-
-                ${group.items
-                  .map(
-                    renderCard
-                  )
-                  .join('')}
-
-              </div>
-
-            </section>
-
-          `;
-
-        }
+        renderCard
       )
       .join('');
 
@@ -2765,12 +2407,17 @@ function render(){
 }
 
 
-
 /* ============================================================
-   CARD RENDER
+   CARD
 ============================================================ */
 
 function renderCard(s){
+
+  const normalizedSoopTier =
+    normalizeSoopTier(
+      s.soopTier
+    );
+
 
   const tierLabel =
     s.tier ||
@@ -2795,7 +2442,7 @@ function renderCard(s){
 
   const soopTier =
     escapeHtml(
-      s.soopTier
+      normalizedSoopTier
     );
 
 
@@ -2836,10 +2483,7 @@ function renderCard(s){
     >
 
 
-      <!-- ======================================================
-           썸네일
-           클릭 시 방송국
-      ======================================================= -->
+      <!-- 썸네일 -->
 
       <a
         class="streamer-link"
@@ -2858,14 +2502,10 @@ function renderCard(s){
       </a>
 
 
-
       <div class="meta">
 
 
-        <!-- ==================================================
-             스트리머 이름
-             클릭 시 방송국
-        =================================================== -->
+        <!-- 스트리머 이름 -->
 
         <div class="name-row">
 
@@ -2896,10 +2536,7 @@ function renderCard(s){
         </div>
 
 
-
-        <!-- ==================================================
-             FC NICKNAME
-        =================================================== -->
+        <!-- FC 닉네임 -->
 
         ${
           s.fcNickname
@@ -2925,10 +2562,7 @@ function renderCard(s){
         }
 
 
-
-        <!-- ==================================================
-             SOOP ID + NOTE
-        =================================================== -->
+        <!-- SOOP ID / NOTE -->
 
         <div class="id-line">
 
@@ -2946,17 +2580,14 @@ function renderCard(s){
       </div>
 
 
-
-      <!-- ======================================================
-           FILTER BADGES
-      ======================================================= -->
+      <!-- FILTER BADGES -->
 
       <div class="tier-wrap">
 
         <div class="badge-row">
 
 
-          <!-- FC ONLINE TIER -->
+          <!-- FC ONLINE -->
 
           <button
             type="button"
@@ -2971,29 +2602,19 @@ function renderCard(s){
           </button>
 
 
+          <!-- SOOP -->
 
-          <!-- SOOP TIER -->
+          <button
+            type="button"
+            class="filter-badge soop-badge ${soopTierClass(normalizedSoopTier)}"
+            data-filter-type="soopTier"
+            data-filter-value="${soopTier}"
+            title="이 SOOP 티어만 보기"
+          >
 
-          ${
-            s.soopTier
-              ? `
+            ${soopTier}
 
-                <button
-                  type="button"
-                  class="filter-badge soop-badge ${soopTierClass(s.soopTier)}"
-                  data-filter-type="soopTier"
-                  data-filter-value="${soopTier}"
-                  title="이 SOOP 티어만 보기"
-                >
-
-                  ${soopTier}
-
-                </button>
-
-              `
-              : ''
-          }
-
+          </button>
 
 
           <!-- CREW -->
@@ -3031,9 +2652,8 @@ function renderCard(s){
 }
 
 
-
 /* ============================================================
-   CARD FILTER BUTTON EVENTS
+   CARD FILTER BUTTONS
 ============================================================ */
 
 function bindCardFilterButtons(){
@@ -3055,7 +2675,6 @@ function bindCardFilterButtons(){
 
           const type =
             button.dataset.filterType;
-
 
           const value =
             button.dataset.filterValue;
@@ -3103,7 +2722,6 @@ function bindCardFilterButtons(){
 }
 
 
-
 /* ============================================================
    SEARCH
 ============================================================ */
@@ -3112,7 +2730,6 @@ search.addEventListener(
   'input',
   render
 );
-
 
 
 /* ============================================================
@@ -3124,6 +2741,15 @@ sortSel.addEventListener(
   render
 );
 
+soopSort.addEventListener(
+  'change',
+  render
+);
+
+fcSort.addEventListener(
+  'change',
+  render
+);
 
 
 /* ============================================================
@@ -3135,7 +2761,6 @@ async function init(){
   try{
 
     await loadStreamers();
-
 
     buildFilterButtons();
 
@@ -3191,7 +2816,6 @@ async function init(){
   }
 
 }
-
 
 
 init();
