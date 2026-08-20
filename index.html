@@ -1058,10 +1058,6 @@
 <body>
 
 
-<!-- ============================================================
-     HEADER
-============================================================ -->
-
 <header>
 
   <p class="eyebrow">
@@ -1108,22 +1104,13 @@
 
 
 
-<!-- ============================================================
-     FILTERS
-============================================================ -->
-
 <div class="filter-panel">
-
-
-  <!-- SOOP TIER -->
 
   <div
     class="filter-scroll"
     id="soopFilters"
   ></div>
 
-
-  <!-- FC TIER -->
 
   <div
     class="filter-scroll"
@@ -1132,16 +1119,12 @@
   ></div>
 
 
-  <!-- CREW -->
-
   <div
     class="filter-scroll"
     id="crewFilters"
     style="margin-top:7px;"
   ></div>
 
-
-  <!-- ACTIVE FILTERS -->
 
   <div
     class="active-filters"
@@ -1152,12 +1135,7 @@
 
 
 
-<!-- ============================================================
-     MAIN
-============================================================ -->
-
 <main>
-
 
   <div class="live-strip">
 
@@ -1174,7 +1152,6 @@
     class="grid"
     id="grid"
   ></div>
-
 
 </main>
 
@@ -1206,7 +1183,6 @@
 
 let STREAMERS = [];
 
-
 const LIVE_REFRESH_MS = 60000;
 
 const TIER_REFRESH_MS = 300000;
@@ -1236,30 +1212,23 @@ const FILTERS = {
 const grid =
   document.getElementById('grid');
 
-
 const search =
   document.getElementById('search');
-
 
 const sortSel =
   document.getElementById('sortSel');
 
-
 const liveCount =
   document.getElementById('liveCount');
-
 
 const soopFilters =
   document.getElementById('soopFilters');
 
-
 const fcFilters =
   document.getElementById('fcFilters');
 
-
 const crewFilters =
   document.getElementById('crewFilters');
-
 
 const activeFilters =
   document.getElementById('activeFilters');
@@ -1278,6 +1247,128 @@ function escapeHtml(value){
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+
+}
+
+
+
+/* ============================================================
+   SOOP TIER NORMALIZE
+============================================================ */
+
+function normalizeSoopTier(value){
+
+  if(value == null){
+
+    return null;
+
+  }
+
+
+  const text =
+    String(value).trim();
+
+
+  if(
+    !text ||
+    text === '?티어' ||
+    text === '100티어' ||
+    text.includes('?티어')
+  ){
+
+    return '티어없음';
+
+  }
+
+
+  return text;
+
+}
+
+
+
+/* ============================================================
+   SOOP TIER RANK
+============================================================ */
+
+function soopTierRank(value){
+
+  const normalized =
+    normalizeSoopTier(value);
+
+
+  if(
+    !normalized ||
+    normalized === '티어없음'
+  ){
+
+    return Infinity;
+
+  }
+
+
+  const match =
+    String(normalized)
+      .match(/(\d+)/);
+
+
+  if(!match){
+
+    return Infinity;
+
+  }
+
+
+  return Number(match[1]);
+
+}
+
+
+
+/* ============================================================
+   FC DIVISION LABEL
+============================================================ */
+
+function getDivisionLabel(s){
+
+  if(
+    s.divisionName &&
+    String(s.divisionName).trim() !== '' &&
+    String(s.divisionName) !== 'null'
+  ){
+
+    return String(s.divisionName).trim();
+
+  }
+
+
+  if(s.tier){
+
+    const tier =
+      String(s.tier).trim();
+
+
+    if(
+      tier !== '100티어' &&
+      tier !== '?티어' &&
+      tier !== '티어없음'
+    ){
+
+      return tier;
+
+    }
+
+  }
+
+
+  if(s.divisionId != null){
+
+    return `등급 ${s.divisionId}`;
+
+  }
+
+
+  return '티어없음';
 
 }
 
@@ -1348,7 +1439,8 @@ async function loadStreamers(){
             '',
 
           tier:
-            s.tier || null,
+            s.tier ||
+            null,
 
           divisionId:
             divisionId,
@@ -1358,8 +1450,9 @@ async function loadStreamers(){
             null,
 
           soopTier:
-            s.soopTier ||
-            null,
+            normalizeSoopTier(
+              s.soopTier
+            ),
 
           crew:
             s.crew ||
@@ -1592,32 +1685,6 @@ async function refreshTierStatus(){
       err
     );
 
-
-    STREAMERS.forEach(s => {
-
-      if(
-        !s.tier &&
-        s.divisionName
-      ){
-
-        s.tier =
-          s.divisionName;
-
-      }
-
-
-      if(
-        !s.tier &&
-        s.divisionId != null
-      ){
-
-        s.tier =
-          `등급 ${s.divisionId}`;
-
-      }
-
-    });
-
   }
 
 
@@ -1631,13 +1698,25 @@ async function refreshTierStatus(){
 
 /* ============================================================
    DIVISION RANK
+   낮은 divisionId = 높은 티어
 ============================================================ */
 
 function divisionRank(s){
 
-  return s.divisionId == null
-    ? Infinity
-    : Number(s.divisionId);
+  if(s.divisionId == null){
+
+    return Infinity;
+
+  }
+
+
+  const value =
+    Number(s.divisionId);
+
+
+  return Number.isFinite(value)
+    ? value
+    : Infinity;
 
 }
 
@@ -1649,24 +1728,39 @@ function divisionRank(s){
 
 function tierClass(divisionId){
 
-  if(divisionId == null)
+  if(divisionId == null){
+
     return 'tier-unranked';
 
+  }
 
-  if(divisionId <= 1300)
+
+  if(divisionId <= 1300){
+
     return 'tier-top';
 
+  }
 
-  if(divisionId <= 1900)
+
+  if(divisionId <= 1900){
+
     return 'tier-high';
 
+  }
 
-  if(divisionId <= 2200)
+
+  if(divisionId <= 2200){
+
     return 'tier-mid';
 
+  }
 
-  if(divisionId <= 2500)
+
+  if(divisionId <= 2500){
+
     return 'tier-low';
+
+  }
 
 
   return 'tier-basic';
@@ -1682,19 +1776,34 @@ function tierClass(divisionId){
 function soopTierClass(tier){
 
   const value =
-    String(tier || '').toLowerCase();
+    normalizeSoopTier(tier);
 
 
-  if(value.includes('2티어'))
+  if(value === '티어없음'){
+
+    return 'soop-other';
+
+  }
+
+
+  if(
+    String(value)
+      .includes('2티어')
+  ){
+
     return 'soop-2';
 
+  }
 
-  if(value.includes('6티어'))
+
+  if(
+    String(value)
+      .includes('6티어')
+  ){
+
     return 'soop-6';
 
-
-  if(value.includes('100티어'))
-    return 'soop-100';
+  }
 
 
   return 'soop-other';
@@ -1737,10 +1846,164 @@ function crewClass(crew){
 
 
 /* ============================================================
-   UNIQUE SORTED VALUES
+   UNIQUE SOOP VALUES
 ============================================================ */
 
-function uniqueValues(key){
+function uniqueSoopValues(){
+
+  const values =
+    [
+      ...new Set(
+        STREAMERS
+          .map(
+            s => normalizeSoopTier(
+              s.soopTier
+            )
+          )
+          .filter(Boolean)
+      )
+    ];
+
+
+  return values.sort(
+    (a,b) => {
+
+      const rankA =
+        soopTierRank(a);
+
+      const rankB =
+        soopTierRank(b);
+
+
+      if(rankA !== rankB){
+
+        return rankA - rankB;
+
+      }
+
+
+      return String(a)
+        .localeCompare(
+          String(b),
+          'ko'
+        );
+
+    }
+  );
+
+}
+
+
+
+/* ============================================================
+   UNIQUE FC VALUES
+   divisionId 기준으로 정렬
+============================================================ */
+
+function uniqueFcValues(){
+
+  const map =
+    new Map();
+
+
+  STREAMERS.forEach(s => {
+
+    const label =
+      getDivisionLabel(s);
+
+
+    if(!label){
+
+      return;
+
+    }
+
+
+    /*
+     * 같은 divisionName을 가진 사람은
+     * 하나의 필터로 묶음
+     */
+
+    if(!map.has(label)){
+
+      map.set(
+        label,
+        {
+          label,
+          divisionId:
+            s.divisionId
+        }
+      );
+
+    }
+
+
+    /*
+     * 동일 이름인데 divisionId가 다르면
+     * 더 높은 티어(작은 ID)를 사용
+     */
+
+    const current =
+      map.get(label);
+
+
+    if(
+      current.divisionId == null ||
+      (
+        s.divisionId != null &&
+        Number(s.divisionId) <
+        Number(current.divisionId)
+      )
+    ){
+
+      current.divisionId =
+        s.divisionId;
+
+    }
+
+  });
+
+
+  return [...map.values()]
+    .sort(
+      (a,b) => {
+
+        const rankA =
+          a.divisionId == null
+            ? Infinity
+            : Number(a.divisionId);
+
+        const rankB =
+          b.divisionId == null
+            ? Infinity
+            : Number(b.divisionId);
+
+
+        if(rankA !== rankB){
+
+          return rankA - rankB;
+
+        }
+
+
+        return String(a.label)
+          .localeCompare(
+            String(b.label),
+            'ko'
+          );
+
+      }
+    );
+
+}
+
+
+
+/* ============================================================
+   UNIQUE CREW VALUES
+============================================================ */
+
+function uniqueCrewValues(){
 
   return [
     ...new Set(
@@ -1748,7 +2011,7 @@ function uniqueValues(key){
       STREAMERS
 
         .map(
-          s => s[key]
+          s => s.crew
         )
 
         .filter(
@@ -1758,7 +2021,13 @@ function uniqueValues(key){
         )
 
     )
-  ];
+  ].sort(
+    (a,b) =>
+      String(a).localeCompare(
+        String(b),
+        'ko'
+      )
+  );
 
 }
 
@@ -1781,18 +2050,22 @@ function buildFilterButtons(){
   }
 
 
-  /* ----------------------------------------------------------
+  /* ==========================================================
      SOOP TIER
-  ---------------------------------------------------------- */
+  ========================================================== */
 
   const soopValues =
-    uniqueValues('soopTier');
+    uniqueSoopValues();
 
 
   soopFilters.innerHTML = `
 
     <button
-      class="filter-btn ${FILTERS.soopTier === null ? 'active' : ''}"
+      class="filter-btn ${
+        FILTERS.soopTier === null
+          ? 'active'
+          : ''
+      }"
       data-filter-type="soopTier"
       data-filter-value=""
     >
@@ -1801,37 +2074,44 @@ function buildFilterButtons(){
 
     ${
       soopValues
-        .map(
-          value => `
+        .map(value => `
 
-            <button
-              class="filter-btn ${FILTERS.soopTier === value ? 'active' : ''}"
-              data-filter-type="soopTier"
-              data-filter-value="${escapeHtml(value)}"
-            >
-              ${escapeHtml(value)}
-            </button>
+          <button
+            class="filter-btn ${
+              FILTERS.soopTier === value
+                ? 'active'
+                : ''
+            }"
+            data-filter-type="soopTier"
+            data-filter-value="${escapeHtml(value)}"
+          >
+            ${escapeHtml(value)}
+          </button>
 
-          `
-        )
+        `)
         .join('')
     }
 
   `;
 
 
-  /* ----------------------------------------------------------
-     FC TIER
-  ---------------------------------------------------------- */
+
+  /* ==========================================================
+     FC ONLINE TIER
+  ========================================================== */
 
   const fcValues =
-    uniqueValues('tier');
+    uniqueFcValues();
 
 
   fcFilters.innerHTML = `
 
     <button
-      class="filter-btn ${FILTERS.fcTier === null ? 'active' : ''}"
+      class="filter-btn ${
+        FILTERS.fcTier === null
+          ? 'active'
+          : ''
+      }"
       data-filter-type="fcTier"
       data-filter-value=""
     >
@@ -1840,37 +2120,44 @@ function buildFilterButtons(){
 
     ${
       fcValues
-        .map(
-          value => `
+        .map(item => `
 
-            <button
-              class="filter-btn ${FILTERS.fcTier === value ? 'active' : ''}"
-              data-filter-type="fcTier"
-              data-filter-value="${escapeHtml(value)}"
-            >
-              ${escapeHtml(value)}
-            </button>
+          <button
+            class="filter-btn ${
+              FILTERS.fcTier === item.label
+                ? 'active'
+                : ''
+            }"
+            data-filter-type="fcTier"
+            data-filter-value="${escapeHtml(item.label)}"
+          >
+            ${escapeHtml(item.label)}
+          </button>
 
-          `
-        )
+        `)
         .join('')
     }
 
   `;
 
 
-  /* ----------------------------------------------------------
+
+  /* ==========================================================
      CREW
-  ---------------------------------------------------------- */
+  ========================================================== */
 
   const crewValues =
-    uniqueValues('crew');
+    uniqueCrewValues();
 
 
   crewFilters.innerHTML = `
 
     <button
-      class="filter-btn ${FILTERS.crew === null ? 'active' : ''}"
+      class="filter-btn ${
+        FILTERS.crew === null
+          ? 'active'
+          : ''
+      }"
       data-filter-type="crew"
       data-filter-value=""
     >
@@ -1879,19 +2166,21 @@ function buildFilterButtons(){
 
     ${
       crewValues
-        .map(
-          value => `
+        .map(value => `
 
-            <button
-              class="filter-btn ${FILTERS.crew === value ? 'active' : ''}"
-              data-filter-type="crew"
-              data-filter-value="${escapeHtml(value)}"
-            >
-              ${escapeHtml(value)}
-            </button>
+          <button
+            class="filter-btn ${
+              FILTERS.crew === value
+                ? 'active'
+                : ''
+            }"
+            data-filter-type="crew"
+            data-filter-value="${escapeHtml(value)}"
+          >
+            ${escapeHtml(value)}
+          </button>
 
-          `
-        )
+        `)
         .join('')
     }
 
@@ -1950,8 +2239,6 @@ function bindFilterButtons(){
           }
 
 
-          buildFilterButtons();
-
           render();
 
         }
@@ -1985,7 +2272,8 @@ function renderActiveFilters(){
 
       type:'soopTier',
 
-      label:`SOOP ${FILTERS.soopTier}`
+      label:
+        `SOOP ${FILTERS.soopTier}`
 
     });
 
@@ -1998,7 +2286,8 @@ function renderActiveFilters(){
 
       type:'fcTier',
 
-      label:`FC ${FILTERS.fcTier}`
+      label:
+        `FC ${FILTERS.fcTier}`
 
     });
 
@@ -2011,7 +2300,8 @@ function renderActiveFilters(){
 
       type:'crew',
 
-      label:`CREW ${FILTERS.crew}`
+      label:
+        `CREW ${FILTERS.crew}`
 
     });
 
@@ -2044,19 +2334,22 @@ function renderActiveFilters(){
 
     ${
       filters
-        .map(
-          filter => `
+        .map(filter => `
 
-            <button
-              class="active-chip"
-              data-active-type="${filter.type}"
-            >
-              ${escapeHtml(filter.label)}
-              <span class="x">×</span>
-            </button>
+          <button
+            class="active-chip"
+            data-active-type="${filter.type}"
+          >
 
-          `
-        )
+            ${escapeHtml(filter.label)}
+
+            <span class="x">
+              ×
+            </span>
+
+          </button>
+
+        `)
         .join('')
     }
 
@@ -2144,38 +2437,62 @@ function applyFilters(list){
   return list.filter(s => {
 
 
-    /* SOOP Tier */
+    /* SOOP TIER */
 
-    if(
-      FILTERS.soopTier &&
-      s.soopTier !== FILTERS.soopTier
-    ){
+    if(FILTERS.soopTier){
 
-      return false;
-
-    }
+      const streamerSoopTier =
+        normalizeSoopTier(
+          s.soopTier
+        );
 
 
-    /* FC Tier */
+      if(
+        streamerSoopTier !==
+        FILTERS.soopTier
+      ){
 
-    if(
-      FILTERS.fcTier &&
-      s.tier !== FILTERS.fcTier
-    ){
+        return false;
 
-      return false;
+      }
 
     }
 
 
-    /* Crew */
 
-    if(
-      FILTERS.crew &&
-      s.crew !== FILTERS.crew
-    ){
+    /* FC TIER */
 
-      return false;
+    if(FILTERS.fcTier){
+
+      const streamerFcTier =
+        getDivisionLabel(s);
+
+
+      if(
+        streamerFcTier !==
+        FILTERS.fcTier
+      ){
+
+        return false;
+
+      }
+
+    }
+
+
+
+    /* CREW */
+
+    if(FILTERS.crew){
+
+      if(
+        s.crew !==
+        FILTERS.crew
+      ){
+
+        return false;
+
+      }
 
     }
 
@@ -2215,26 +2532,31 @@ function sortList(list){
   }
 
 
-  if(mode === 'live'){
-
-    list.sort(
-      (a,b) =>
-        (Number(b.live) - Number(a.live)) ||
-        (divisionRank(a) - divisionRank(b))
-    );
-
-
-    return;
-
-  }
-
-
-  /* 기본: 티어순 */
+  /*
+   * 방송중 우선
+   * 그 안에서 FC 티어 높은 순
+   */
 
   list.sort(
     (a,b) =>
-      (Number(b.live) - Number(a.live)) ||
-      (divisionRank(a) - divisionRank(b))
+
+      (Number(b.live) -
+       Number(a.live))
+
+      ||
+
+      (
+        divisionRank(a) -
+        divisionRank(b)
+      )
+
+      ||
+
+      (
+        soopTierRank(a.soopTier) -
+        soopTierRank(b.soopTier)
+      )
+
   );
 
 }
@@ -2249,7 +2571,7 @@ function getGroupInfo(list){
 
   /*
    * SOOP Tier 필터가 선택되어 있으면
-   * 그 Tier를 하나의 서브 헤더로 표시
+   * 선택된 Tier 하나만 표시
    */
 
   if(FILTERS.soopTier){
@@ -2270,29 +2592,21 @@ function getGroupInfo(list){
   }
 
 
+
   /*
-   * SOOP Tier 필터가 없으면
-   * 전체를 SOOP Tier별로 그룹화
+   * SOOP Tier별 그룹
    */
 
-  const groups = new Map();
-
-  const noTier = [];
+  const groups =
+    new Map();
 
 
   list.forEach(s => {
 
     const tier =
-      s.soopTier;
-
-
-    if(!tier){
-
-      noTier.push(s);
-
-      return;
-
-    }
+      normalizeSoopTier(
+        s.soopTier
+      ) || '티어없음';
 
 
     if(!groups.has(tier)){
@@ -2312,11 +2626,12 @@ function getGroupInfo(list){
   });
 
 
+
   const result = [];
 
 
   /*
-   * 숫자가 작은 SOOP Tier를 먼저 표시
+   * SOOP Tier 높은 순
    */
 
   const sortedKeys =
@@ -2324,45 +2639,29 @@ function getGroupInfo(list){
       .sort(
         (a,b) => {
 
-          const na =
-            parseInt(
-              String(a).replace(/\D/g,''),
-              10
-            );
+          const rankA =
+            soopTierRank(a);
 
-          const nb =
-            parseInt(
-              String(b).replace(/\D/g,''),
-              10
-            );
+          const rankB =
+            soopTierRank(b);
 
 
-          if(
-            Number.isNaN(na) &&
-            Number.isNaN(nb)
-          ){
+          if(rankA !== rankB){
 
-            return String(a)
-              .localeCompare(
-                String(b),
-                'ko'
-              );
+            return rankA - rankB;
 
           }
 
 
-          if(Number.isNaN(na))
-            return 1;
-
-
-          if(Number.isNaN(nb))
-            return -1;
-
-
-          return na - nb;
+          return String(a)
+            .localeCompare(
+              String(b),
+              'ko'
+            );
 
         }
       );
+
 
 
   sortedKeys.forEach(key => {
@@ -2378,21 +2677,6 @@ function getGroupInfo(list){
     });
 
   });
-
-
-  if(noTier.length){
-
-    result.push({
-
-      title:
-        'SOOP TIER · 미분류',
-
-      items:
-        noTier
-
-    });
-
-  }
 
 
   return result;
@@ -2456,6 +2740,26 @@ function render(){
         ).toLowerCase();
 
 
+      const crew =
+        String(
+          s.crew || ''
+        ).toLowerCase();
+
+
+      const divisionName =
+        String(
+          getDivisionLabel(s) || ''
+        ).toLowerCase();
+
+
+      const soopTier =
+        String(
+          normalizeSoopTier(
+            s.soopTier
+          ) || ''
+        ).toLowerCase();
+
+
       return (
 
         name.includes(q) ||
@@ -2464,17 +2768,25 @@ function render(){
 
         fcNickname.includes(q) ||
 
-        note.includes(q)
+        note.includes(q) ||
+
+        crew.includes(q) ||
+
+        divisionName.includes(q) ||
+
+        soopTier.includes(q)
 
       );
 
     });
 
 
-  /* 필터 적용 */
+
+  /* 필터 */
 
   list =
     applyFilters(list);
+
 
 
   /* 정렬 */
@@ -2482,9 +2794,11 @@ function render(){
   sortList(list);
 
 
-  /* 필터 상태 */
+
+  /* 활성 필터 */
 
   renderActiveFilters();
+
 
 
   /* LIVE */
@@ -2523,9 +2837,7 @@ function render(){
 
 
 
-  /* ==========================================================
-     SOOP GROUPS
-  ========================================================== */
+  /* SOOP GROUP */
 
   const groups =
     getGroupInfo(list);
@@ -2533,56 +2845,65 @@ function render(){
 
   grid.innerHTML =
     groups
-      .map(
-        group => {
+      .map(group => {
 
-          return `
+        return `
 
-            <section class="group">
+          <section class="group">
 
-              <div class="group-header">
+            <div class="group-header">
 
-                <div class="group-title">
+              <div class="group-title">
 
-                  <span class="accent">
-                    ${escapeHtml(group.title.split('·')[0])}
-                  </span>
+                <span class="accent">
+                  ${escapeHtml(
+                    group.title
+                      .split('·')[0]
+                  )}
+                </span>
 
-                  ${
-                    group.title.includes('·')
-                      ? ` · ${escapeHtml(group.title.split('·').slice(1).join('·').trim())}`
-                      : ''
-                  }
-
-                </div>
-
-                <div class="group-count">
-
-                  ${group.items.length}명
-
-                </div>
-
-              </div>
-
-
-              <div class="grid">
-
-                ${group.items
-                  .map(
-                    renderCard
-                  )
-                  .join('')}
+                ${
+                  group.title.includes('·')
+                    ? `
+                      ·
+                      ${escapeHtml(
+                        group.title
+                          .split('·')
+                          .slice(1)
+                          .join('·')
+                          .trim()
+                      )}
+                    `
+                    : ''
+                }
 
               </div>
 
-            </section>
+              <div class="group-count">
 
-          `;
+                ${group.items.length}명
 
-        }
-      )
+              </div>
+
+            </div>
+
+
+            <div class="grid">
+
+              ${group.items
+                .map(
+                  renderCard
+                )
+                .join('')}
+
+            </div>
+
+          </section>
+
+        `;
+
+      })
       .join('');
-
 
 
   bindCardFilterButtons();
@@ -2598,12 +2919,7 @@ function render(){
 function renderCard(s){
 
   const tierLabel =
-    s.tier ||
-    (
-      s.divisionId != null
-        ? `등급 ${s.divisionId}`
-        : '불러오는 중…'
-    );
+    getDivisionLabel(s);
 
 
   const firstLetter =
@@ -2618,9 +2934,15 @@ function renderCard(s){
     );
 
 
+  const normalizedSoopTier =
+    normalizeSoopTier(
+      s.soopTier
+    );
+
+
   const soopTier =
     escapeHtml(
-      s.soopTier
+      normalizedSoopTier
     );
 
 
@@ -2661,10 +2983,7 @@ function renderCard(s){
     >
 
 
-      <!-- ======================================================
-           방송국 이동 영역
-           썸네일 + 스트리머 이름만 링크
-      ======================================================= -->
+      <!-- 썸네일 -->
 
       <a
         class="streamer-link"
@@ -2687,10 +3006,7 @@ function renderCard(s){
       <div class="meta">
 
 
-        <!-- ==================================================
-             스트리머 이름
-             이름도 방송국 이동
-        =================================================== -->
+        <!-- 스트리머 이름 -->
 
         <div class="name-row">
 
@@ -2722,10 +3038,7 @@ function renderCard(s){
 
 
 
-        <!-- ==================================================
-             FC NICKNAME
-             형광 초록 + Bold + 한 단계 크게
-        =================================================== -->
+        <!-- FC NICKNAME -->
 
         ${
           s.fcNickname
@@ -2752,9 +3065,7 @@ function renderCard(s){
 
 
 
-        <!-- ==================================================
-             SOOP ID + NOTE
-        =================================================== -->
+        <!-- SOOP ID + NOTE -->
 
         <div class="id-line">
 
@@ -2773,13 +3084,9 @@ function renderCard(s){
 
 
 
-      <!-- ======================================================
-           오른쪽 필터 배지
-           클릭하면 방송국으로 가지 않고 필터 적용
-      ======================================================= -->
+      <!-- 필터 배지 -->
 
       <div class="tier-wrap">
-
 
         <div class="badge-row">
 
@@ -2803,12 +3110,12 @@ function renderCard(s){
           <!-- SOOP TIER -->
 
           ${
-            s.soopTier
+            normalizedSoopTier
               ? `
 
                 <button
                   type="button"
-                  class="filter-badge soop-badge ${soopTierClass(s.soopTier)}"
+                  class="filter-badge soop-badge ${soopTierClass(normalizedSoopTier)}"
                   data-filter-type="soopTier"
                   data-filter-value="${soopTier}"
                   title="이 SOOP 티어만 보기"
@@ -2849,7 +3156,6 @@ function renderCard(s){
 
         </div>
 
-
       </div>
 
 
@@ -2877,11 +3183,6 @@ function bindCardFilterButtons(){
         'click',
         event => {
 
-          /*
-           * 카드/링크 클릭 이벤트가
-           * 방송국으로 전달되지 않도록 차단
-           */
-
           event.preventDefault();
 
           event.stopPropagation();
@@ -2896,10 +3197,6 @@ function bindCardFilterButtons(){
 
 
           if(type === 'soopTier'){
-
-            /*
-             * 같은 필터를 다시 누르면 해제
-             */
 
             FILTERS.soopTier =
               FILTERS.soopTier === value
@@ -2975,34 +3272,16 @@ async function init(){
     await loadStreamers();
 
 
-    /*
-     * 데이터가 로드되면
-     * 필터 버튼 먼저 생성
-     */
-
     buildFilterButtons();
-
 
     render();
 
 
-    /*
-     * 방송 상태
-     */
-
     await refreshLiveStatus();
 
 
-    /*
-     * FC온라인 티어
-     */
-
     await refreshTierStatus();
 
-
-    /*
-     * 이후 주기적 갱신
-     */
 
     setInterval(
       refreshLiveStatus,
@@ -3035,7 +3314,9 @@ async function init(){
           </strong>
 
           <small>
-            ${escapeHtml(err.message)}
+            ${escapeHtml(
+              err.message
+            )}
           </small>
 
         </div>
