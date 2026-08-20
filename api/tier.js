@@ -12,9 +12,17 @@
  * 5. 성공하면 latest-match
  * 6. 실패하면 streamers.json의 divisionId fallback
  *
- * 중요:
- * /user/maxdivision 사용 안 함
- * → 역대 최고 티어를 사용하지 않음
+ * 중요
+ * - /user/maxdivision 사용 안 함
+ * - 역대 최고 티어 사용 안 함
+ * - 최근 공식경기 당시 divisionId 사용
+ *
+ * 추가 개선
+ * - 신규 스트리머 OUID 자동 조회
+ * - 429 Rate Limit 재시도
+ * - 429 발생 시 다음 스트리머 조회로 계속 진행
+ * - 매치 상세의 여러 division 필드 대응
+ * - division 메타데이터 캐시
  */
 
 const fs = require("fs");
@@ -30,31 +38,70 @@ const OFFICIAL_MATCH_TYPE = 50;
 
 
 /* ============================================================
+   설정
+============================================================ */
+
+const MAX_RETRIES = 3;
+
+/*
+ * 429 발생 시
+ *
+ * 1차: 1.5초
+ * 2차: 3초
+ * 3차: 6초
+ */
+const RETRY_BASE_DELAY = 1500;
+
+
+/* ============================================================
+   sleep
+============================================================ */
+
+function sleep(ms) {
+
+  return new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
+
+}
+
+
+/* ============================================================
    streamers.json
 ============================================================ */
 
 function loadStreamers() {
 
-  const filePath = path.join(
-    process.cwd(),
-    "data",
-    "streamers.json"
-  );
+  const filePath =
+    path.join(
+      process.cwd(),
+      "data",
+      "streamers.json"
+    );
 
-  const text = fs.readFileSync(
-    filePath,
-    "utf8"
-  );
 
-  const data = JSON.parse(text);
+  const text =
+    fs.readFileSync(
+      filePath,
+      "utf8"
+    );
+
+
+  const data =
+    JSON.parse(text);
+
 
   if (!Array.isArray(data)) {
+
     throw new Error(
       "streamers.json must be an array"
     );
+
   }
 
+
   return data;
+
 }
 
 
@@ -64,28 +111,45 @@ function loadStreamers() {
 
 let divisionMapCache = null;
 
+
 async function getDivisionMap() {
 
   if (divisionMapCache) {
+
     return divisionMapCache;
+
   }
+
 
   try {
 
-    const response = await fetch(
-      DIVISION_META_URL,
-      {
-        cache: "no-store"
-      }
-    );
+    const response =
+      await fetch(
+        DIVISION_META_URL,
+        {
+          cache: "no-store"
+        }
+      );
+
 
     if (!response.ok) {
+
+      console.warn(
+        "Division metadata HTTP:",
+        response.status
+      );
+
       return {};
+
     }
 
-    const data = await response.json();
+
+    const data =
+      await response.json();
+
 
     const map = {};
+
 
     if (Array.isArray(data)) {
 
@@ -96,7 +160,9 @@ async function getDivisionMap() {
           item.divisionId != null
         ) {
 
-          map[String(item.divisionId)] =
+          map[
+            String(item.divisionId)
+          ] =
             item.divisionName || null;
 
         }
@@ -105,7 +171,10 @@ async function getDivisionMap() {
 
     }
 
-    divisionMapCache = map;
+
+    divisionMapCache =
+      map;
+
 
     return map;
 
@@ -117,7 +186,9 @@ async function getDivisionMap() {
     );
 
     return {};
+
   }
+
 }
 
 
@@ -127,22 +198,73 @@ async function getDivisionMap() {
 
 async function nexonFetch(
   endpoint,
-  apiKey
+  apiKey,
+  retryCount = 0
 ) {
 
-  const response = await fetch(
-    `${NEXON_BASE}${endpoint}`,
-    {
-      method: "GET",
-      headers: {
-        "x-nxopen-api-key": apiKey,
-        "Accept": "application/json"
-      },
-      cache: "no-store"
-    }
-  );
+  const response =
+    await fetch(
+      `${NEXON_BASE}${endpoint}`,
+      {
+        method: "GET",
 
-  const text = await response.text();
+        headers: {
+          "x-nxopen-api-key": apiKey,
+          "Accept": "application/json"
+        },
+
+        cache: "no-store"
+      }
+    );
+
+
+  const text =
+    await response.text();
+
+
+  /* ==========================================================
+     429 Rate Limit
+  ========================================================== */
+
+  if (response.status === 429) {
+
+    if (retryCount < MAX_RETRIES) {
+
+      const delay =
+        RETRY_BASE_DELAY *
+        Math.pow(
+          2,
+          retryCount
+        );
+
+
+      console.warn(
+        `[NEXON 429] ${endpoint} → ${delay}ms 후 재시도 (${retryCount + 1}/${MAX_RETRIES})`
+      );
+
+
+      await sleep(delay);
+
+
+      return nexonFetch(
+        endpoint,
+        apiKey,
+        retryCount + 1
+      );
+
+    }
+
+
+    throw new Error(
+      `Nexon API 429: ${text || "Rate Limit"}`
+    );
+
+  }
+
+
+  /* ==========================================================
+     기타 HTTP 오류
+  ========================================================== */
 
   if (!response.ok) {
 
@@ -152,9 +274,21 @@ async function nexonFetch(
 
   }
 
+
+  /* ==========================================================
+     빈 응답
+  ========================================================== */
+
   if (!text) {
+
     return null;
+
   }
+
+
+  /* ==========================================================
+     JSON
+  ========================================================== */
 
   try {
 
@@ -167,6 +301,7 @@ async function nexonFetch(
     );
 
   }
+
 }
 
 
@@ -181,19 +316,28 @@ function normalizeDivisionId(value) {
     value === undefined ||
     value === ""
   ) {
+
     return null;
+
   }
 
-  const number = Number(value);
+
+  const number =
+    Number(value);
+
 
   if (
     !Number.isFinite(number) ||
     number <= 0
   ) {
+
     return null;
+
   }
 
+
   return number;
+
 }
 
 
@@ -207,21 +351,27 @@ async function getOuidByNickname(
 ) {
 
   if (!nickname) {
+
     return null;
+
   }
 
-  const data = await nexonFetch(
-    `/id?nickname=${encodeURIComponent(nickname)}`,
-    apiKey
-  );
+
+  const data =
+    await nexonFetch(
+      `/id?nickname=${encodeURIComponent(nickname)}`,
+      apiKey
+    );
+
 
   /*
-   * 정상 응답:
+   * 정상 응답
    *
    * {
    *   "ouid": "..."
    * }
    */
+
 
   if (
     data &&
@@ -232,7 +382,9 @@ async function getOuidByNickname(
 
   }
 
+
   return null;
+
 }
 
 
@@ -252,21 +404,53 @@ async function getLatestMatchId(
     `&offset=0` +
     `&limit=1`;
 
-  const data = await nexonFetch(
-    endpoint,
-    apiKey
-  );
+
+  const data =
+    await nexonFetch(
+      endpoint,
+      apiKey
+    );
+
+
+  /*
+   * 일반적인 응답
+   *
+   * [
+   *   "matchId"
+   * ]
+   */
+
 
   if (
     Array.isArray(data) &&
     data.length > 0
   ) {
 
+    /*
+     * 혹시 객체 형태가 반환되는 경우도 대응
+     */
+
+    if (
+      typeof data[0] === "object" &&
+      data[0] !== null
+    ) {
+
+      return (
+        data[0].matchId ||
+        data[0].matchid ||
+        null
+      );
+
+    }
+
+
     return data[0];
 
   }
 
+
   return null;
+
 }
 
 
@@ -278,6 +462,13 @@ async function getMatchDetail(
   matchId,
   apiKey
 ) {
+
+  if (!matchId) {
+
+    return null;
+
+  }
+
 
   return nexonFetch(
     `/match-detail?matchid=${encodeURIComponent(matchId)}`,
@@ -305,11 +496,24 @@ function findUserMatchInfo(
 
   }
 
+
   return (
     detail.matchInfo.find(
-      player =>
-        String(player?.ouid) ===
-        String(ouid)
+      player => {
+
+        if (!player) {
+
+          return false;
+
+        }
+
+
+        return (
+          String(player.ouid) ===
+          String(ouid)
+        );
+
+      }
     ) || null
   );
 
@@ -331,16 +535,25 @@ function extractDivisionId(
       ouid
     );
 
+
   if (!player) {
+
     return null;
+
   }
 
+
   /*
-   * API 응답 구조 변화에 대비하여
-   * 가능한 필드를 순서대로 검사
+   * 2026년 매치 상세 API에서 추가된
+   * 당시 등급 식별자 대응
+   *
+   * API 구조 변화에 대비하여
+   * 여러 이름을 순서대로 확인
    */
 
   const candidates = [
+
+    /* 현재/공식 필드 */
 
     player.division,
 
@@ -350,19 +563,44 @@ function extractDivisionId(
 
     player.division_id,
 
+    /* 호환 필드 */
+
     player.matchDivision,
 
     player.matchDivisionId,
 
     player.matchDivisionID,
 
+    player.match_division,
+
+    player.match_division_id,
+
     player.rankDivision,
 
     player.rankDivisionId,
 
-    player.rankDivisionID
+    player.rankDivisionID,
+
+    player.rank_division,
+
+    player.rank_division_id,
+
+    /* 혹시 객체 형태인 경우 */
+
+    player.division?.divisionId,
+
+    player.division?.id,
+
+    player.matchDivision?.divisionId,
+
+    player.matchDivision?.id,
+
+    player.rankDivision?.divisionId,
+
+    player.rankDivision?.id
 
   ];
+
 
   for (
     const value of candidates
@@ -370,6 +608,7 @@ function extractDivisionId(
 
     const divisionId =
       normalizeDivisionId(value);
+
 
     if (
       divisionId !== null
@@ -381,7 +620,9 @@ function extractDivisionId(
 
   }
 
+
   return null;
+
 }
 
 
@@ -394,24 +635,38 @@ async function getLatestTier(
   apiKey
 ) {
 
+  /*
+   * 1. 최근 공식경기
+   */
+
   const latestMatchId =
     await getLatestMatchId(
       ouid,
       apiKey
     );
 
+
   if (!latestMatchId) {
 
     return {
+
       success: false,
+
       latestMatchId: null,
+
       divisionId: null,
+
       reason:
         "최근 공식경기 ID가 없습니다."
+
     };
 
   }
 
+
+  /*
+   * 2. 경기 상세
+   */
 
   const detail =
     await getMatchDetail(
@@ -419,6 +674,10 @@ async function getLatestTier(
       apiKey
     );
 
+
+  /*
+   * 3. 해당 유저의 당시 divisionId
+   */
 
   const divisionId =
     extractDivisionId(
@@ -432,22 +691,61 @@ async function getLatestTier(
   ) {
 
     return {
+
       success: false,
+
       latestMatchId,
+
       divisionId: null,
+
       reason:
         "최근 경기 상세정보에서 divisionId를 찾지 못했습니다."
+
     };
 
   }
 
 
   return {
+
     success: true,
+
     latestMatchId,
+
     divisionId,
+
     reason: null
+
   };
+
+}
+
+
+/* ============================================================
+   divisionName
+============================================================ */
+
+function getDivisionName(
+  divisionId,
+  divisionMap
+) {
+
+  if (
+    divisionId === null ||
+    divisionId === undefined
+  ) {
+
+    return null;
+
+  }
+
+
+  return (
+    divisionMap[
+      String(divisionId)
+    ] ||
+    `등급 ${divisionId}`
+  );
 
 }
 
@@ -468,8 +766,10 @@ export default async function handler(
   if (!apiKey) {
 
     return res.status(500).json({
+
       error:
         "NEXON_API_KEY가 설정되어 있지 않습니다."
+
     });
 
   }
@@ -483,12 +783,15 @@ export default async function handler(
    * /api/tier?nicknames=메시연,감차쯔키
    */
 
+
   const rawNicknames =
     req.query?.nicknames;
 
 
   const nicknames =
-    String(rawNicknames || "")
+    String(
+      rawNicknames || ""
+    )
       .split(",")
       .map(
         nickname =>
@@ -502,18 +805,21 @@ export default async function handler(
   ) {
 
     return res.status(400).json({
+
       error:
         "nicknames가 필요합니다."
+
     });
 
   }
 
 
   /* ==========================================================
-     streamers.json 직접 읽기
+     streamers.json
   ========================================================== */
 
   let streamers;
+
 
   try {
 
@@ -523,18 +829,21 @@ export default async function handler(
   } catch (error) {
 
     return res.status(500).json({
+
       error:
         "streamers.json을 읽지 못했습니다.",
+
       detail:
         error.message
+
     });
 
   }
 
 
-  /*
-   * fcNickname → streamer
-   */
+  /* ==========================================================
+     fcNickname → streamer
+  ========================================================== */
 
   const streamerMap =
     new Map();
@@ -548,21 +857,29 @@ export default async function handler(
       streamer?.fcNickname
     ) {
 
-      streamerMap.set(
+      const nickname =
         String(
           streamer.fcNickname
-        ).trim(),
-        streamer
-      );
+        ).trim();
+
+
+      if (nickname) {
+
+        streamerMap.set(
+          nickname,
+          streamer
+        );
+
+      }
 
     }
 
   }
 
 
-  /*
-   * Division 이름
-   */
+  /* ==========================================================
+     Division 메타
+  ========================================================== */
 
   const divisionMap =
     await getDivisionMap();
@@ -580,12 +897,14 @@ export default async function handler(
   ) {
 
     const streamer =
-      streamerMap.get(nickname);
+      streamerMap.get(
+        nickname
+      );
 
 
-    /*
-     * streamers.json에 없는 경우
-     */
+    /* ========================================================
+       streamers.json에 없는 경우
+    ======================================================== */
 
     if (!streamer) {
 
@@ -606,21 +925,26 @@ export default async function handler(
 
       };
 
+
       continue;
 
     }
 
 
-    /*
-     * 기존 OUID
-     */
+    /* ========================================================
+       기존 OUID
+    ======================================================== */
 
     let ouid =
-      streamer.fcOuid || null;
+      streamer.fcOuid ||
+      null;
 
 
     /*
-     * fallback divisionId
+     * fallback
+     *
+     * 기존에 저장된 divisionId가 있으면
+     * Nexon API 실패 시 사용할 수 있음
      */
 
     const fallbackDivisionId =
@@ -648,7 +972,8 @@ export default async function handler(
 
 
     /* ========================================================
-       OUID가 없는 신규 스트리머
+       신규 스트리머
+       OUID 자동 조회
     ======================================================== */
 
     if (!ouid) {
@@ -656,8 +981,9 @@ export default async function handler(
       try {
 
         console.log(
-          `[FC TIER] OUID 조회: ${nickname}`
+          `[FC TIER] OUID 조회 시작: ${nickname}`
         );
+
 
         ouid =
           await getOuidByNickname(
@@ -665,11 +991,27 @@ export default async function handler(
             apiKey
           );
 
+
+        if (ouid) {
+
+          console.log(
+            `[FC TIER] OUID 조회 성공: ${nickname} → ${ouid}`
+          );
+
+        } else {
+
+          console.warn(
+            `[FC TIER] OUID 조회 결과 없음: ${nickname}`
+          );
+
+        }
+
       } catch (errorObject) {
 
         error =
           errorObject?.message ||
           String(errorObject);
+
 
         console.warn(
           `[FC TIER] ${nickname} OUID 조회 실패:`,
@@ -681,9 +1023,9 @@ export default async function handler(
     }
 
 
-    /*
-     * OUID를 찾지 못한 경우
-     */
+    /* ========================================================
+       OUID 없음
+    ======================================================== */
 
     if (!ouid) {
 
@@ -694,14 +1036,10 @@ export default async function handler(
         divisionId,
 
         divisionName:
-          divisionId !== null
-            ? (
-                divisionMap[
-                  String(divisionId)
-                ] ||
-                `등급 ${divisionId}`
-              )
-            : null,
+          getDivisionName(
+            divisionId,
+            divisionMap
+          ),
 
         latestMatchId: null,
 
@@ -717,16 +1055,26 @@ export default async function handler(
 
       };
 
+
+      /*
+       * 다음 스트리머 계속 처리
+       */
+
       continue;
 
     }
 
 
     /* ========================================================
-       OUID 확보 성공
+       최근 공식경기 조회
     ======================================================== */
 
     try {
+
+      console.log(
+        `[FC TIER] 최근 공식경기 조회: ${nickname}`
+      );
+
 
       const latest =
         await getLatestTier(
@@ -739,9 +1087,9 @@ export default async function handler(
         latest.latestMatchId;
 
 
-      /*
-       * 최근 경기 divisionId 성공
-       */
+      /* ======================================================
+         최근 경기 divisionId 성공
+      ====================================================== */
 
       if (
         latest.success &&
@@ -759,17 +1107,27 @@ export default async function handler(
         error =
           null;
 
+
+        console.log(
+          `[FC TIER] 성공: ${nickname} → ${divisionId}`
+        );
+
       } else {
 
         /*
-         * 최근 경기 실패
+         * 최근 경기 조회 실패
          *
-         * 기존 divisionId fallback
+         * 기존 streamers.json divisionId 유지
          */
 
         error =
           latest.reason ||
           "최근 경기 티어 조회 실패";
+
+
+        console.warn(
+          `[FC TIER] ${nickname}: ${error}`
+        );
 
       }
 
@@ -778,6 +1136,7 @@ export default async function handler(
       error =
         errorObject?.message ||
         String(errorObject);
+
 
       console.warn(
         `[FC TIER] ${nickname} 최근 경기 조회 실패:`,
@@ -788,18 +1147,14 @@ export default async function handler(
 
 
     /* ========================================================
-       divisionName
+       최종 divisionName
     ======================================================== */
 
     const divisionName =
-      divisionId !== null
-        ? (
-            divisionMap[
-              String(divisionId)
-            ] ||
-            `등급 ${divisionId}`
-          )
-        : null;
+      getDivisionName(
+        divisionId,
+        divisionMap
+      );
 
 
     /* ========================================================
@@ -825,15 +1180,19 @@ export default async function handler(
   }
 
 
-  /*
-   * 캐시 금지
-   */
+  /* ==========================================================
+     캐시 금지
+  ========================================================== */
 
   res.setHeader(
     "Cache-Control",
     "no-store, max-age=0"
   );
 
+
+  /* ==========================================================
+     응답
+  ========================================================== */
 
   return res.status(200).json(
     results
