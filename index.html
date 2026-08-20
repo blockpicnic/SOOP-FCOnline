@@ -6,6 +6,16 @@
 
 <title>FC온라인 스트리머 티어보드</title>
 
+<!-- ============================================================
+     GOOGLE FONT
+============================================================ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap"
+  rel="stylesheet"
+>
+
 <style>
 
 /* ============================================================
@@ -30,22 +40,16 @@
   --card-radius:14px;
 
   --font-display:
-    'Archivo Black',
-    'Pretendard',
-    system-ui,
+    'Noto Sans KR',
     sans-serif;
 
   --font-body:
-    'Pretendard',
-    -apple-system,
     'Noto Sans KR',
-    system-ui,
     sans-serif;
 
   --font-mono:
-    'JetBrains Mono',
-    'Roboto Mono',
-    monospace;
+    'Noto Sans KR',
+    sans-serif;
 }
 
 
@@ -55,6 +59,10 @@
 
 *{
   box-sizing:border-box;
+}
+
+html{
+  font-family:var(--font-body);
 }
 
 body{
@@ -96,7 +104,7 @@ header{
 
 
 /* ============================================================
-   FC ONLINE VISUAL HEADER
+   HERO
 ============================================================ */
 
 .hero{
@@ -148,17 +156,19 @@ header{
 }
 
 .eyebrow{
-  font-family:var(--font-mono);
+  font-family:var(--font-body);
 
-  font-size:11px;
+  font-size:12px;
 
-  letter-spacing:.18em;
+  letter-spacing:.12em;
 
   color:var(--turf);
 
   text-transform:uppercase;
 
   margin:0 0 6px;
+
+  font-weight:700;
 }
 
 h1{
@@ -166,19 +176,23 @@ h1{
 
   font-size:clamp(24px,6vw,36px);
 
-  letter-spacing:-.02em;
+  letter-spacing:-.03em;
 
   margin:0 0 5px;
 
-  line-height:1.05;
+  line-height:1.1;
+
+  font-weight:900;
 }
 
 .sub{
   color:var(--text-dim);
 
-  font-size:13px;
+  font-size:14px;
 
   margin:0;
+
+  font-weight:500;
 }
 
 
@@ -211,7 +225,7 @@ h1{
 
   color:var(--text);
 
-  padding:10px 12px;
+  padding:11px 13px;
 
   border-radius:10px;
 
@@ -233,7 +247,7 @@ select{
 
   color:var(--text);
 
-  padding:10px 12px;
+  padding:11px 13px;
 
   border-radius:10px;
 
@@ -292,15 +306,17 @@ select{
 
   border-radius:9px;
 
-  padding:7px 11px;
+  padding:8px 12px;
 
-  font-size:11px;
+  font-size:12px;
 
   font-family:var(--font-body);
 
   cursor:pointer;
 
   transition:.15s;
+
+  font-weight:600;
 }
 
 .filter-btn:hover{
@@ -316,7 +332,7 @@ select{
 
   color:var(--turf);
 
-  font-weight:700;
+  font-weight:800;
 }
 
 
@@ -341,11 +357,13 @@ select{
 }
 
 .filter-label{
-  font-size:10px;
+  font-size:11px;
 
   color:var(--text-dim);
 
-  font-family:var(--font-mono);
+  font-family:var(--font-body);
+
+  font-weight:700;
 }
 
 .active-chip{
@@ -357,7 +375,7 @@ select{
 
   border-radius:7px;
 
-  padding:4px 7px;
+  padding:5px 8px;
 
   border:1px solid rgba(155,255,92,.25);
 
@@ -365,9 +383,13 @@ select{
 
   color:var(--turf);
 
-  font-size:10px;
+  font-size:11px;
 
   cursor:pointer;
+
+  font-family:var(--font-body);
+
+  font-weight:600;
 }
 
 .clear-filters{
@@ -377,9 +399,11 @@ select{
 
   color:var(--text-dim);
 
-  font-size:10px;
+  font-size:11px;
 
   cursor:pointer;
+
+  font-family:var(--font-body);
 }
 
 
@@ -402,20 +426,22 @@ main{
 
   gap:8px;
 
-  font-family:var(--font-mono);
+  font-family:var(--font-body);
 
-  font-size:11px;
+  font-size:12px;
 
   color:var(--text-dim);
 
   margin:8px 2px 16px;
 
-  letter-spacing:.04em;
+  letter-spacing:.01em;
+
+  font-weight:600;
 }
 
 .dot{
-  width:7px;
-  height:7px;
+  width:8px;
+  height:8px;
 
   border-radius:50%;
 
@@ -448,7 +474,7 @@ main{
   grid-template-columns:
     repeat(3,minmax(0,1fr));
 
-  gap:12px;
+  gap:14px;
 }
 
 
@@ -465,9 +491,11 @@ main{
 
   border-radius:var(--card-radius);
 
-  padding:12px;
+  padding:13px;
 
   display:flex;
+
+  flex-wrap:wrap;
 
   align-items:flex-start;
 
@@ -481,12 +509,6 @@ main{
     border-color .15s,
     transform .15s,
     background .15s;
-
-  /*
-    카드 안의 텍스트가 너무 길어도
-    레이아웃이 깨지지 않게 함
-  */
-  min-height:132px;
 }
 
 .card:hover{
@@ -536,13 +558,13 @@ main{
 
   border-radius:7px;
 
-  padding:3px 6px;
+  padding:4px 7px;
 
   font-family:var(--font-body);
 
-  font-size:9px;
+  font-size:10px;
 
-  font-weight:700;
+  font-weight:800;
 
   white-space:nowrap;
 
@@ -590,7 +612,7 @@ main{
 
   font-family:var(--font-display);
 
-  font-size:20px;
+  font-size:21px;
 
   color:var(--turf-dim);
 
@@ -599,6 +621,8 @@ main{
   border:1px solid transparent;
 
   transition:.15s;
+
+  font-weight:900;
 }
 
 .avatar img{
@@ -624,10 +648,7 @@ main{
 
   flex:1;
 
-  /*
-    SOOP 티어와 이름 영역이 겹치지 않게
-  */
-  padding-right:42px;
+  padding-right:45px;
 
   text-align:left;
 }
@@ -639,25 +660,25 @@ main{
 
   justify-content:flex-start;
 
-  gap:6px;
+  gap:7px;
 
   flex-wrap:nowrap;
 
   min-width:0;
-
-  padding-right:0;
 }
 
 .name{
-  font-weight:800;
+  font-weight:900;
 
-  font-size:16px;
+  font-size:17px;
 
   transition:color .15s;
 
   white-space:nowrap;
 
-  overflow:visible;
+  overflow:hidden;
+
+  text-overflow:ellipsis;
 }
 
 .streamer-link:hover .name{
@@ -665,21 +686,21 @@ main{
 }
 
 .live-badge{
-  flex-shrink:0;
+  font-family:var(--font-body);
 
-  font-family:var(--font-mono);
-
-  font-size:9px;
+  font-size:10px;
 
   background:#ff5c5c;
 
   color:#1a0a0a;
 
-  padding:2px 6px;
+  padding:3px 7px;
 
   border-radius:5px;
 
-  font-weight:700;
+  font-weight:900;
+
+  flex-shrink:0;
 }
 
 
@@ -688,75 +709,8 @@ main{
 ============================================================ */
 
 .fc-nickname{
-  margin-top:5px;
+  margin-top:6px;
 
-  display:flex;
-
-  align-items:center;
-
-  justify-content:flex-start;
-
-  gap:4px;
-
-  color:var(--text);
-
-  font-size:13px;
-
-  line-height:1.25;
-
-  font-weight:700;
-
-  letter-spacing:-.015em;
-
-  white-space:nowrap;
-
-  overflow:visible;
-
-  text-overflow:clip;
-}
-
-.fc-ball{
-  font-size:12px;
-
-  line-height:1;
-
-  flex-shrink:0;
-}
-
-.fc-nickname > span:last-child{
-  white-space:nowrap;
-
-  overflow:visible;
-
-  text-overflow:clip;
-}
-
-.id-line{
-  font-family:var(--font-mono);
-
-  font-size:9px;
-
-  color:var(--text-dim);
-
-  margin-top:3px;
-
-  white-space:nowrap;
-
-  overflow:visible;
-
-  text-overflow:clip;
-}
-
-
-/* ============================================================
-   BOTTOM INFO
-   순서:
-   CREW → DIVISION → NOTE
-
-   무조건 왼쪽 정렬 / 가로 한 줄
-============================================================ */
-
-.bottom-info{
   display:flex;
 
   align-items:center;
@@ -765,54 +719,57 @@ main{
 
   gap:5px;
 
-  margin-top:8px;
+  color:var(--text);
 
-  width:100%;
+  font-size:14px;
 
-  min-width:0;
+  line-height:1.25;
+
+  font-weight:800;
+
+  letter-spacing:-.015em;
 
   white-space:nowrap;
 
-  overflow:visible;
+  overflow:hidden;
+
+  text-overflow:ellipsis;
 }
 
-.bottom-info-item{
-  display:inline-flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  flex-shrink:0;
-
-  min-width:0;
-
-  border:1px solid rgba(155,255,92,.25);
-
-  background:rgba(155,255,92,.08);
-
-  color:var(--turf);
-
-  border-radius:7px;
-
-  padding:4px 7px;
-
-  font-size:9px;
-
-  font-weight:700;
+.fc-ball{
+  font-size:13px;
 
   line-height:1;
 
-  white-space:nowrap;
-
-  overflow:visible;
-
-  text-overflow:clip;
+  flex-shrink:0;
 }
 
 
 /* ============================================================
-   BADGES
+   SOOP ID
+============================================================ */
+
+.id-line{
+  font-family:var(--font-body);
+
+  font-size:11px;
+
+  color:var(--text-dim);
+
+  margin-top:4px;
+
+  white-space:nowrap;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+
+  font-weight:600;
+}
+
+
+/* ============================================================
+   TIER
 ============================================================ */
 
 .tier-wrap{
@@ -826,12 +783,15 @@ main{
 
   justify-content:flex-start;
 
-  gap:5px;
+  gap:6px;
 
-  flex-wrap:nowrap;
-
-  white-space:nowrap;
+  flex-wrap:wrap;
 }
+
+
+/* ============================================================
+   BADGES
+============================================================ */
 
 .filter-badge{
   border:1px solid rgba(155,255,92,.25);
@@ -844,13 +804,13 @@ main{
 
   font-family:var(--font-body);
 
-  font-size:9px;
+  font-size:10px;
 
-  font-weight:700;
+  font-weight:800;
 
   letter-spacing:.01em;
 
-  padding:4px 7px;
+  padding:5px 8px;
 
   border-radius:7px;
 
@@ -902,6 +862,83 @@ main{
 
 
 /* ============================================================
+   CARD BOTTOM INFO
+   크루명 → Division → Note
+   카드 전체 폭 사용
+============================================================ */
+
+.card-info-row{
+  width:100%;
+
+  min-width:0;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:flex-start;
+
+  gap:7px;
+
+  padding-top:1px;
+
+  border-top:1px solid rgba(34,51,44,.7);
+
+  overflow:hidden;
+}
+
+.card-info-item{
+  min-width:0;
+
+  flex:0 1 auto;
+
+  display:block;
+
+  white-space:nowrap;
+
+  overflow:hidden;
+
+  text-overflow:clip;
+
+  font-size:11px;
+
+  line-height:1.4;
+
+  font-weight:600;
+
+  color:var(--text-dim);
+}
+
+.card-info-item.crew-info{
+  color:var(--turf);
+
+  font-weight:800;
+}
+
+.card-info-item.division-info{
+  color:var(--text);
+}
+
+.card-info-item.note-info{
+  color:var(--text-dim);
+
+  flex:1 1 auto;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+}
+
+.card-info-separator{
+  flex-shrink:0;
+
+  color:#4b5d54;
+
+  font-size:10px;
+}
+
+
+/* ============================================================
    EMPTY
 ============================================================ */
 
@@ -914,7 +951,7 @@ main{
 
   color:var(--text-dim);
 
-  font-size:13px;
+  font-size:14px;
 }
 
 .empty strong{
@@ -923,6 +960,10 @@ main{
   color:var(--text);
 
   margin-bottom:5px;
+}
+
+.empty small{
+  font-size:12px;
 }
 
 
@@ -937,7 +978,7 @@ footer{
 
   padding:0 20px;
 
-  font-family:var(--font-mono);
+  font-family:var(--font-body);
 
   font-size:11px;
 
@@ -1001,11 +1042,9 @@ footer code{
   }
 
   .card{
-    padding:11px 8px 11px;
+    padding:11px 9px 11px;
 
     gap:8px;
-
-    min-height:128px;
   }
 
   .avatar{
@@ -1016,44 +1055,38 @@ footer code{
   }
 
   .meta{
-    padding-right:34px;
+    padding-right:36px;
   }
 
   .name{
-    font-size:13px;
+    font-size:14px;
   }
 
   .fc-nickname{
-    font-size:12px;
+    font-size:13px;
   }
 
   .id-line{
-    font-size:8px;
+    font-size:10px;
   }
 
   .card-soop-tier{
     top:8px;
     right:8px;
 
-    font-size:8px;
+    font-size:9px;
 
-    padding:3px 5px;
+    padding:3px 6px;
   }
 
   .filter-badge{
-    font-size:8px;
+    font-size:9px;
 
-    padding:4px 6px;
+    padding:4px 7px;
   }
 
-  .bottom-info{
-    gap:4px;
-  }
-
-  .bottom-info-item{
-    font-size:8px;
-
-    padding:4px 5px;
+  .card-info-item{
+    font-size:10px;
   }
 
 }
@@ -1071,13 +1104,27 @@ footer code{
 
   .card{
     padding:14px 12px;
-
-    min-height:132px;
   }
 
   .avatar{
     width:64px;
     height:64px;
+  }
+
+  .name{
+    font-size:16px;
+  }
+
+  .fc-nickname{
+    font-size:14px;
+  }
+
+  .id-line{
+    font-size:11px;
+  }
+
+  .card-info-item{
+    font-size:11px;
   }
 
 }
@@ -2402,12 +2449,18 @@ function render(){
           s.crew || ''
         ).toLowerCase();
 
+      const divisionName =
+        String(
+          s.divisionName || ''
+        ).toLowerCase();
+
       return (
         name.includes(q) ||
         id.includes(q) ||
         fcNickname.includes(q) ||
         note.includes(q) ||
-        crew.includes(q)
+        crew.includes(q) ||
+        divisionName.includes(q)
       );
 
     });
@@ -2533,12 +2586,15 @@ function renderCard(s){
     );
 
 
-  /*
-    SOOP ID URL
-  */
-
-  const channelUrl =
-    `https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}`;
+  const divisionName =
+    escapeHtml(
+      s.divisionName ||
+      (
+        s.divisionId != null
+          ? `Division ${s.divisionId}`
+          : ''
+      )
+    );
 
 
   return `
@@ -2548,7 +2604,7 @@ function renderCard(s){
     >
 
 
-      <!-- SOOP TIER : 우측 상단 -->
+      <!-- SOOP TIER -->
 
       <button
         type="button"
@@ -2561,11 +2617,11 @@ function renderCard(s){
       </button>
 
 
-      <!-- 썸네일 -->
+      <!-- 상단 영역 -->
 
       <a
         class="streamer-link"
-        href="${channelUrl}"
+        href="https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}"
         target="_blank"
         rel="noopener"
         aria-label="${name} 방송국 열기"
@@ -2591,7 +2647,7 @@ function renderCard(s){
 
           <a
             class="streamer-link"
-            href="${channelUrl}"
+            href="https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}"
             target="_blank"
             rel="noopener"
           >
@@ -2651,73 +2707,104 @@ function renderCard(s){
         </div>
 
 
-        <!-- ====================================================
-             아래 정보
+        <!-- FC TIER -->
 
-             순서:
-             CREW → DIVISION → NOTE
+        <div class="tier-wrap">
 
-             왼쪽 정렬
-             한 줄
-        ==================================================== -->
+          <div class="badge-row">
 
-        <div class="bottom-info">
+            <button
+              type="button"
+              class="filter-badge ${tierClass(s.divisionId)}"
+              data-filter-type="fcTier"
+              data-filter-value="${safeTier}"
+              title="이 FC온라인 티어만 보기"
+            >
 
+              ${safeTier}
 
-          <!-- CREW -->
+            </button>
 
-          ${
-            s.crew
-              ? `
-
-                <button
-                  type="button"
-                  class="bottom-info-item crew-badge ${crewClass(s.crew)}"
-                  data-filter-type="crew"
-                  data-filter-value="${crew}"
-                  title="이 크루만 보기"
-                >
-                  ${crew}
-                </button>
-
-              `
-              : ''
-          }
-
-
-          <!-- DIVISION -->
-
-          <button
-            type="button"
-            class="bottom-info-item ${tierClass(s.divisionId)}"
-            data-filter-type="fcTier"
-            data-filter-value="${safeTier}"
-            title="이 FC온라인 티어만 보기"
-          >
-            ${safeTier}
-          </button>
-
-
-          <!-- NOTE -->
-
-          ${
-            s.note
-              ? `
-
-                <span
-                  class="bottom-info-item"
-                  title="${note}"
-                >
-                  ${note}
-                </span>
-
-              `
-              : ''
-          }
-
+          </div>
 
         </div>
 
+
+      </div>
+
+
+      <!-- ====================================================
+           하단 정보
+
+           순서:
+           크루명 → Division → Note
+      ==================================================== -->
+
+      <div class="card-info-row">
+
+        ${
+          s.crew
+            ? `
+
+              <button
+                type="button"
+                class="card-info-item crew-info"
+                data-filter-type="crew"
+                data-filter-value="${crew}"
+                title="이 크루만 보기"
+              >
+                ${crew}
+              </button>
+
+              <span class="card-info-separator">
+                ·
+              </span>
+
+            `
+            : ''
+        }
+
+
+        ${
+          divisionName
+            ? `
+
+              <span
+                class="card-info-item division-info"
+                title="${divisionName}"
+              >
+                ${divisionName}
+              </span>
+
+              ${
+                s.note
+                  ? `
+                    <span class="card-info-separator">
+                      ·
+                    </span>
+                  `
+                  : ''
+              }
+
+            `
+            : ''
+        }
+
+
+        ${
+          s.note
+            ? `
+
+              <span
+                class="card-info-item note-info"
+                title="${note}"
+              >
+                ${note}
+              </span>
+
+            `
+            : ''
+        }
 
       </div>
 
@@ -2737,7 +2824,7 @@ function bindCardFilterButtons(){
 
   document
     .querySelectorAll(
-      '.card .filter-badge, .card .card-soop-tier, .card .bottom-info-item[data-filter-type]'
+      '.card .filter-badge, .card .card-soop-tier, .card .crew-info'
     )
     .forEach(button => {
 
