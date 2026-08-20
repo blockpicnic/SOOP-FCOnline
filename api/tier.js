@@ -28,6 +28,11 @@
 const fs = require("fs");
 const path = require("path");
 
+
+/* ============================================================
+   설정
+============================================================ */
+
 const NEXON_BASE =
   "https://open.api.nexon.com/fconline/v1";
 
@@ -36,20 +41,8 @@ const DIVISION_META_URL =
 
 const OFFICIAL_MATCH_TYPE = 50;
 
-
-/* ============================================================
-   설정
-============================================================ */
-
 const MAX_RETRIES = 3;
 
-/*
- * 429 발생 시
- *
- * 1차: 1.5초
- * 2차: 3초
- * 3차: 6초
- */
 const RETRY_BASE_DELAY = 1500;
 
 
@@ -58,11 +51,9 @@ const RETRY_BASE_DELAY = 1500;
 ============================================================ */
 
 function sleep(ms) {
-
   return new Promise(
     resolve => setTimeout(resolve, ms)
   );
-
 }
 
 
@@ -79,17 +70,14 @@ function loadStreamers() {
       "streamers.json"
     );
 
-
   const text =
     fs.readFileSync(
       filePath,
       "utf8"
     );
 
-
   const data =
     JSON.parse(text);
-
 
   if (!Array.isArray(data)) {
 
@@ -99,9 +87,39 @@ function loadStreamers() {
 
   }
 
-
   return data;
+}
 
+
+/* ============================================================
+   divisionId 정규화
+============================================================ */
+
+function normalizeDivisionId(value) {
+
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) {
+
+    return null;
+
+  }
+
+  const number =
+    Number(value);
+
+  if (
+    !Number.isFinite(number) ||
+    number <= 0
+  ) {
+
+    return null;
+
+  }
+
+  return number;
 }
 
 
@@ -111,8 +129,9 @@ function loadStreamers() {
 
 let divisionMapCache = null;
 
-
 async function getDivisionMap() {
+
+  /* 이미 가져온 경우 캐시 사용 */
 
   if (divisionMapCache) {
 
@@ -151,40 +170,138 @@ async function getDivisionMap() {
     const map = {};
 
 
+    /*
+     * Nexon division.json
+     *
+     * 예:
+     *
+     * [
+     *   {
+     *     "divisionId": 800,
+     *     "divisionName": "슈퍼챔피언스"
+     *   }
+     * ]
+     */
+
     if (Array.isArray(data)) {
 
-  for (const item of data) {
+      for (const item of data) {
 
-    if (!item) {
-      continue;
+        if (!item) {
+          continue;
+        }
+
+
+        const divisionId =
+          normalizeDivisionId(
+            item.divisionId ??
+            item.divisionID ??
+            item.id
+          );
+
+
+        const divisionName =
+          item.divisionName ??
+          item.name ??
+          item.division_name ??
+          null;
+
+
+        if (
+          divisionId !== null &&
+          divisionName
+        ) {
+
+          map[String(divisionId)] =
+            String(divisionName);
+
+        }
+
+      }
+
     }
 
-    const divisionId =
-      normalizeDivisionId(
-        item.divisionId ??
-        item.divisionID ??
-        item.id
-      );
 
-    const divisionName =
-      item.divisionName ??
-      item.name ??
-      item.division_name ??
-      null;
+    /*
+     * 혹시 API가 객체 형태로 반환되는 경우 대응
+     */
 
-    if (
-      divisionId !== null &&
-      divisionName
+    else if (
+      data &&
+      typeof data === "object"
     ) {
 
-      map[String(divisionId)] =
-        String(divisionName);
+      for (
+        const [key, value]
+        of Object.entries(data)
+      ) {
+
+        const divisionId =
+          normalizeDivisionId(
+            value?.divisionId ??
+            value?.divisionID ??
+            value?.id ??
+            key
+          );
+
+
+        const divisionName =
+          value?.divisionName ??
+          value?.name ??
+          value?.division_name ??
+          (
+            typeof value === "string"
+              ? value
+              : null
+          );
+
+
+        if (
+          divisionId !== null &&
+          divisionName
+        ) {
+
+          map[String(divisionId)] =
+            String(divisionName);
+
+        }
+
+      }
 
     }
+
+
+    /*
+     * 중요
+     *
+     * 여기서 반드시 캐시에 저장해야 함
+     */
+
+    divisionMapCache =
+      map;
+
+
+    console.log(
+      `[DIVISION] 메타데이터 ${Object.keys(map).length}개 로드`
+    );
+
+
+    return map;
+
+
+  } catch (error) {
+
+    console.warn(
+      "[DIVISION] 메타데이터 조회 실패:",
+      error
+    );
+
+    return {};
 
   }
 
 }
+
 
 /* ============================================================
    Nexon API
@@ -300,42 +417,6 @@ async function nexonFetch(
 
 
 /* ============================================================
-   divisionId 정규화
-============================================================ */
-
-function normalizeDivisionId(value) {
-
-  if (
-    value === null ||
-    value === undefined ||
-    value === ""
-  ) {
-
-    return null;
-
-  }
-
-
-  const number =
-    Number(value);
-
-
-  if (
-    !Number.isFinite(number) ||
-    number <= 0
-  ) {
-
-    return null;
-
-  }
-
-
-  return number;
-
-}
-
-
-/* ============================================================
    닉네임 → OUID
 ============================================================ */
 
@@ -356,15 +437,6 @@ async function getOuidByNickname(
       `/id?nickname=${encodeURIComponent(nickname)}`,
       apiKey
     );
-
-
-  /*
-   * 정상 응답
-   *
-   * {
-   *   "ouid": "..."
-   * }
-   */
 
 
   if (
@@ -406,23 +478,10 @@ async function getLatestMatchId(
     );
 
 
-  /*
-   * 일반적인 응답
-   *
-   * [
-   *   "matchId"
-   * ]
-   */
-
-
   if (
     Array.isArray(data) &&
     data.length > 0
   ) {
-
-    /*
-     * 혹시 객체 형태가 반환되는 경우도 대응
-     */
 
     if (
       typeof data[0] === "object" &&
@@ -538,11 +597,8 @@ function extractDivisionId(
 
 
   /*
-   * 2026년 매치 상세 API에서 추가된
-   * 당시 등급 식별자 대응
-   *
-   * API 구조 변화에 대비하여
-   * 여러 이름을 순서대로 확인
+   * 매치 상세에서 division 정보가
+   * 어떤 형태로 오는지 대비해서 여러 필드 확인
    */
 
   const candidates = [
@@ -557,6 +613,7 @@ function extractDivisionId(
 
     player.division_id,
 
+
     /* 호환 필드 */
 
     player.matchDivision,
@@ -569,6 +626,7 @@ function extractDivisionId(
 
     player.match_division_id,
 
+
     player.rankDivision,
 
     player.rankDivisionId,
@@ -579,17 +637,24 @@ function extractDivisionId(
 
     player.rank_division_id,
 
-    /* 혹시 객체 형태인 경우 */
+
+    /* 객체 형태 */
 
     player.division?.divisionId,
+
+    player.division?.divisionID,
 
     player.division?.id,
 
     player.matchDivision?.divisionId,
 
+    player.matchDivision?.divisionID,
+
     player.matchDivision?.id,
 
     player.rankDivision?.divisionId,
+
+    player.rankDivision?.divisionID,
 
     player.rankDivision?.id
 
@@ -597,11 +662,46 @@ function extractDivisionId(
 
 
   for (
-    const value of candidates
+    const value
+    of candidates
   ) {
 
+    /*
+     * 객체가 들어오는 경우
+     */
+
+    if (
+      value &&
+      typeof value === "object"
+    ) {
+
+      const nestedId =
+        normalizeDivisionId(
+          value.divisionId ??
+          value.divisionID ??
+          value.id
+        );
+
+
+      if (
+        nestedId !== null
+      ) {
+
+        return nestedId;
+
+      }
+
+    }
+
+
+    /*
+     * 숫자 / 문자열
+     */
+
     const divisionId =
-      normalizeDivisionId(value);
+      normalizeDivisionId(
+        value
+      );
 
 
     if (
@@ -670,6 +770,37 @@ async function getLatestTier(
 
 
   /*
+   * 디버깅
+   *
+   * division 필드가 실제로 무엇인지 확인할 수 있음
+   */
+
+  if (detail) {
+
+    const player =
+      findUserMatchInfo(
+        detail,
+        ouid
+      );
+
+
+    if (player) {
+
+      console.log(
+        "[FC TIER] 최근 경기 player 정보:",
+        JSON.stringify(
+          player,
+          null,
+          2
+        )
+      );
+
+    }
+
+  }
+
+
+  /*
    * 3. 해당 유저의 당시 divisionId
    */
 
@@ -734,11 +865,30 @@ function getDivisionName(
   }
 
 
+  const normalizedId =
+    normalizeDivisionId(
+      divisionId
+    );
+
+
+  if (
+    normalizedId === null
+  ) {
+
+    return null;
+
+  }
+
+
+  /*
+   * 숫자 divisionId → 실제 이름
+   */
+
   return (
     divisionMap[
-      String(divisionId)
+      String(normalizedId)
     ] ||
-    `등급 ${divisionId}`
+    `등급 ${normalizedId}`
   );
 
 }
@@ -776,7 +926,6 @@ export default async function handler(
    *
    * /api/tier?nicknames=메시연,감차쯔키
    */
-
 
   const rawNicknames =
     req.query?.nicknames;
@@ -844,7 +993,8 @@ export default async function handler(
 
 
   for (
-    const streamer of streamers
+    const streamer
+    of streamers
   ) {
 
     if (
@@ -879,6 +1029,12 @@ export default async function handler(
     await getDivisionMap();
 
 
+  console.log(
+    "[DIVISION] 현재 division map:",
+    divisionMap
+  );
+
+
   const results = {};
 
 
@@ -887,7 +1043,8 @@ export default async function handler(
   ========================================================== */
 
   for (
-    const nickname of nicknames
+    const nickname
+    of nicknames
   ) {
 
     const streamer =
@@ -935,10 +1092,8 @@ export default async function handler(
 
 
     /*
-     * fallback
-     *
-     * 기존에 저장된 divisionId가 있으면
-     * Nexon API 실패 시 사용할 수 있음
+     * streamers.json의 divisionId는
+     * API 실패 시 fallback 용도
      */
 
     const fallbackDivisionId =
@@ -1050,10 +1205,6 @@ export default async function handler(
       };
 
 
-      /*
-       * 다음 스트리머 계속 처리
-       */
-
       continue;
 
     }
@@ -1103,7 +1254,7 @@ export default async function handler(
 
 
         console.log(
-          `[FC TIER] 성공: ${nickname} → ${divisionId}`
+          `[FC TIER] 성공: ${nickname} → divisionId ${divisionId}`
         );
 
       } else {
@@ -1149,6 +1300,11 @@ export default async function handler(
         divisionId,
         divisionMap
       );
+
+
+    console.log(
+      `[FC TIER] 최종 결과: ${nickname} → ${divisionId} → ${divisionName}`
+    );
 
 
     /* ========================================================
