@@ -3,486 +3,1441 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>FC온라인 스트리머 티어보드</title>
+
 <style>
+
   :root{
     --bg: #0c1210;
     --bg-elev: #121a17;
+    --bg-elev-2: #17211d;
+
     --pitch-line: #22332c;
+
     --turf: #9bff5c;
     --turf-dim: #6fbf3f;
+
     --text: #eef5ee;
     --text-dim: #93a89c;
+
     --plat: #7fe8d4;
     --gold: #f0c34c;
     --silver: #c7d0cd;
     --bronze: #c98b4e;
+
     --unranked: #5c6b64;
+
     --card-radius: 14px;
-    --font-display: 'Archivo Black', 'Pretendard', system-ui, sans-serif;
-    --font-body: 'Pretendard', -apple-system, 'Noto Sans KR', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', 'Roboto Mono', monospace;
+
+    --font-display:
+      'Archivo Black',
+      'Pretendard',
+      system-ui,
+      sans-serif;
+
+    --font-body:
+      'Pretendard',
+      -apple-system,
+      'Noto Sans KR',
+      system-ui,
+      sans-serif;
+
+    --font-mono:
+      'JetBrains Mono',
+      'Roboto Mono',
+      monospace;
   }
 
-  *{box-sizing:border-box;}
+
+  *{
+    box-sizing:border-box;
+  }
+
 
   body{
     margin:0;
+
     background:
-      radial-gradient(circle at 15% -10%, rgba(155,255,92,0.10), transparent 45%),
+      radial-gradient(
+        circle at 15% -10%,
+        rgba(155,255,92,0.10),
+        transparent 45%
+      ),
       var(--bg);
+
     color:var(--text);
+
     font-family:var(--font-body);
+
     padding-bottom:60px;
   }
 
+
+  /* ============================================================
+     HEADER
+  ============================================================ */
+
   header{
     padding:28px 20px 18px;
+
     border-bottom:1px solid var(--pitch-line);
+
     position:sticky;
     top:0;
-    z-index:10;
-    background:rgba(12,18,16,0.92);
-    backdrop-filter:blur(6px);
+    z-index:20;
+
+    background:rgba(12,18,16,0.94);
+
+    backdrop-filter:blur(8px);
   }
+
 
   .eyebrow{
     font-family:var(--font-mono);
+
     font-size:11px;
+
     letter-spacing:0.18em;
+
     color:var(--turf);
+
     text-transform:uppercase;
+
     margin:0 0 6px;
   }
 
+
   h1{
     font-family:var(--font-display);
+
     font-size:clamp(22px,6vw,34px);
+
     letter-spacing:-0.01em;
+
     margin:0 0 4px;
+
     line-height:1.05;
   }
 
+
   .sub{
     color:var(--text-dim);
+
     font-size:13px;
+
     margin:0;
   }
 
+
+  /* ============================================================
+     CONTROLS
+  ============================================================ */
+
   .controls{
     display:flex;
+
     gap:8px;
+
     margin-top:16px;
+
     flex-wrap:wrap;
   }
 
+
   .controls input[type=text]{
     flex:1;
+
     min-width:160px;
+
     background:var(--bg-elev);
+
     border:1px solid var(--pitch-line);
+
     color:var(--text);
+
     padding:10px 12px;
+
     border-radius:10px;
+
     font-family:var(--font-body);
+
     font-size:14px;
+
+    outline:none;
   }
+
+
+  .controls input[type=text]:focus{
+    border-color:rgba(155,255,92,0.45);
+  }
+
 
   select{
     background:var(--bg-elev);
+
     border:1px solid var(--pitch-line);
+
     color:var(--text);
+
     padding:10px 12px;
+
     border-radius:10px;
+
     font-size:13px;
+
     font-family:var(--font-body);
+
+    outline:none;
   }
+
+
+  /* ============================================================
+     FILTER AREA
+  ============================================================ */
+
+  .filter-panel{
+    max-width:760px;
+
+    margin:0 auto;
+
+    padding:14px 16px 0;
+  }
+
+
+  .filter-scroll{
+    display:flex;
+
+    gap:7px;
+
+    overflow-x:auto;
+
+    padding-bottom:2px;
+
+    scrollbar-width:none;
+  }
+
+
+  .filter-scroll::-webkit-scrollbar{
+    display:none;
+  }
+
+
+  .filter-btn{
+    flex-shrink:0;
+
+    border:1px solid var(--pitch-line);
+
+    background:var(--bg-elev);
+
+    color:var(--text-dim);
+
+    border-radius:9px;
+
+    padding:7px 11px;
+
+    font-size:11px;
+
+    font-family:var(--font-body);
+
+    cursor:pointer;
+
+    transition:
+      background .15s,
+      border-color .15s,
+      color .15s,
+      transform .15s;
+  }
+
+
+  .filter-btn:hover{
+    border-color:rgba(155,255,92,0.35);
+
+    color:var(--text);
+  }
+
+
+  .filter-btn.active{
+    background:rgba(155,255,92,0.10);
+
+    border-color:rgba(155,255,92,0.45);
+
+    color:var(--turf);
+
+    font-weight:700;
+  }
+
+
+  /* ============================================================
+     ACTIVE FILTERS
+  ============================================================ */
+
+  .active-filters{
+    display:none;
+
+    align-items:center;
+
+    gap:6px;
+
+    flex-wrap:wrap;
+
+    margin-top:10px;
+  }
+
+
+  .active-filters.has-filter{
+    display:flex;
+  }
+
+
+  .filter-label{
+    font-size:10px;
+
+    color:var(--text-dim);
+
+    font-family:var(--font-mono);
+  }
+
+
+  .active-chip{
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:5px;
+
+    border-radius:7px;
+
+    padding:4px 7px;
+
+    border:1px solid rgba(155,255,92,0.25);
+
+    background:rgba(155,255,92,0.07);
+
+    color:var(--turf);
+
+    font-size:10px;
+
+    cursor:pointer;
+  }
+
+
+  .active-chip:hover{
+    background:rgba(155,255,92,0.12);
+  }
+
+
+  .active-chip .x{
+    opacity:.65;
+
+    font-size:10px;
+  }
+
+
+  .clear-filters{
+    border:0;
+
+    background:transparent;
+
+    color:var(--text-dim);
+
+    font-size:10px;
+
+    cursor:pointer;
+
+    padding:4px 5px;
+  }
+
+
+  .clear-filters:hover{
+    color:var(--text);
+  }
+
+
+  /* ============================================================
+     MAIN
+  ============================================================ */
 
   main{
     max-width:760px;
+
     margin:0 auto;
+
     padding:18px 16px 0;
   }
 
+
   .live-strip{
     display:flex;
+
     align-items:center;
+
     gap:8px;
+
     font-family:var(--font-mono);
+
     font-size:11px;
+
     color:var(--text-dim);
+
     margin:14px 2px 18px;
+
     letter-spacing:0.04em;
   }
 
+
   .dot{
     width:7px;
+
     height:7px;
+
     border-radius:50%;
+
     background:#ff5c5c;
+
     box-shadow:0 0 8px #ff5c5c;
+
     animation:pulse 1.6s infinite;
   }
 
+
   @keyframes pulse{
-    0%,100%{opacity:1;}
-    50%{opacity:0.35;}
+
+    0%,100%{
+      opacity:1;
+    }
+
+    50%{
+      opacity:0.35;
+    }
+
   }
+
+
+  /* ============================================================
+     GROUP HEADER
+  ============================================================ */
+
+  .group{
+    margin-bottom:24px;
+  }
+
+
+  .group-header{
+    display:flex;
+
+    align-items:flex-end;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+    margin:0 2px 10px;
+
+    padding-bottom:9px;
+
+    border-bottom:1px solid var(--pitch-line);
+  }
+
+
+  .group-title{
+    font-family:var(--font-display);
+
+    font-size:16px;
+
+    color:var(--text);
+
+    letter-spacing:-0.01em;
+  }
+
+
+  .group-title .accent{
+    color:var(--turf);
+  }
+
+
+  .group-count{
+    color:var(--text-dim);
+
+    font-family:var(--font-mono);
+
+    font-size:10px;
+  }
+
+
+  /* ============================================================
+     GRID
+  ============================================================ */
 
   .grid{
     display:flex;
+
     flex-direction:column;
+
     gap:10px;
   }
 
+
+  /* ============================================================
+     CARD
+  ============================================================ */
+
   .card{
     background:var(--bg-elev);
+
     border:1px solid var(--pitch-line);
+
     border-radius:var(--card-radius);
-    padding:14px 14px;
+
+    padding:14px;
+
     display:grid;
+
     grid-template-columns:44px 1fr auto;
+
     gap:12px;
+
     align-items:center;
+
     text-decoration:none;
+
     color:inherit;
-    transition:border-color .15s, transform .15s;
+
+    transition:
+      border-color .15s,
+      transform .15s,
+      background .15s;
+
     position:relative;
+
     overflow:hidden;
   }
+
+
+  .card:hover{
+    border-color:#30463b;
+
+    background:#141e1a;
+  }
+
 
   .card:active{
     transform:scale(0.99);
   }
 
+
   .card.live{
     border-color:rgba(255,92,92,0.5);
   }
 
+
   .card.live::before{
     content:"";
+
     position:absolute;
+
     left:0;
+
     top:0;
+
     bottom:0;
+
     width:3px;
+
     background:#ff5c5c;
   }
 
+
+  /* ============================================================
+     AVATAR / BROADCAST LINK
+  ============================================================ */
+
+  .streamer-link{
+    display:block;
+
+    color:inherit;
+
+    text-decoration:none;
+
+    border-radius:10px;
+
+    outline:none;
+  }
+
+
+  .streamer-link:hover .avatar{
+    border-color:rgba(155,255,92,0.45);
+
+    transform:translateY(-1px);
+  }
+
+
+  .streamer-link:hover .name{
+    color:var(--turf);
+  }
+
+
   .avatar{
     width:44px;
+
     height:44px;
+
     border-radius:10px;
-    background:linear-gradient(135deg,var(--pitch-line),#1c2822);
+
+    background:
+      linear-gradient(
+        135deg,
+        var(--pitch-line),
+        #1c2822
+      );
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
+
     font-family:var(--font-display);
+
     font-size:15px;
+
     color:var(--turf-dim);
+
     overflow:hidden;
+
     flex-shrink:0;
+
+    border:1px solid transparent;
+
+    transition:
+      border-color .15s,
+      transform .15s;
   }
+
 
   .avatar img{
     width:100%;
+
     height:100%;
+
     object-fit:cover;
   }
+
+
+  /* ============================================================
+     META
+  ============================================================ */
 
   .meta{
     min-width:0;
   }
 
+
   .name-row{
     display:flex;
+
     align-items:center;
+
     gap:6px;
+
     flex-wrap:wrap;
   }
 
+
   .name{
     font-weight:700;
+
     font-size:15px;
+
+    transition:color .15s;
   }
+
 
   .live-badge{
     font-family:var(--font-mono);
+
     font-size:9px;
+
     letter-spacing:0.06em;
+
     background:#ff5c5c;
+
     color:#1a0a0a;
+
     padding:2px 6px;
+
     border-radius:5px;
+
     font-weight:700;
+
     flex-shrink:0;
   }
 
-  .id-line{
-    font-family:var(--font-mono);
-    font-size:11.5px;
-    color:var(--text-dim);
-    margin-top:2px;
+
+  /* ============================================================
+     FC NICKNAME
+  ============================================================ */
+
+  .fc-nickname{
+    margin-top:4px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:4px;
+
+    color:var(--turf);
+
+    font-size:14px;
+
+    line-height:1.25;
+
+    font-weight:800;
+
+    letter-spacing:-0.01em;
+
     white-space:nowrap;
+
     overflow:hidden;
+
     text-overflow:ellipsis;
   }
 
-  .tier-wrap{
-    text-align:right;
+
+  .fc-ball{
+    font-size:13px;
+
+    line-height:1;
+
     flex-shrink:0;
   }
 
-  .tier-badge{
-    font-family:var(--font-display);
-    font-size:11px;
-    letter-spacing:0.03em;
-    padding:5px 10px;
-    border-radius:8px;
-    display:inline-block;
+
+  /* ============================================================
+     SOOP ID / NOTE
+  ============================================================ */
+
+  .id-line{
+    font-family:var(--font-mono);
+
+    font-size:10.5px;
+
+    color:var(--text-dim);
+
+    margin-top:4px;
+
     white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
   }
+
+
+  /* ============================================================
+     BADGES
+  ============================================================ */
+
+  .tier-wrap{
+    text-align:right;
+
+    flex-shrink:0;
+
+    max-width:220px;
+  }
+
+
+  .badge-row{
+    display:flex;
+
+    align-items:center;
+
+    justify-content:flex-end;
+
+    gap:5px;
+
+    flex-wrap:wrap;
+  }
+
+
+  .filter-badge{
+    border:0;
+
+    cursor:pointer;
+
+    font-family:var(--font-display);
+
+    font-size:10px;
+
+    letter-spacing:0.02em;
+
+    padding:5px 9px;
+
+    border-radius:8px;
+
+    display:inline-block;
+
+    white-space:nowrap;
+
+    transition:
+      transform .12s,
+      filter .12s,
+      background .12s;
+  }
+
+
+  .filter-badge:hover{
+    filter:brightness(1.15);
+
+    transform:translateY(-1px);
+  }
+
+
+  .filter-badge:active{
+    transform:scale(.97);
+  }
+
+
+  /* ============================================================
+     FC ONLINE TIER COLORS
+  ============================================================ */
 
   .tier-top{
     background:rgba(127,232,212,0.14);
+
     color:var(--plat);
+
     border:1px solid rgba(127,232,212,0.35);
   }
 
+
   .tier-high{
     background:rgba(140,170,255,0.14);
+
     color:#a9bcff;
+
     border:1px solid rgba(140,170,255,0.35);
   }
 
+
   .tier-mid{
     background:rgba(240,195,76,0.15);
+
     color:var(--gold);
+
     border:1px solid rgba(240,195,76,0.4);
   }
 
+
   .tier-low{
     background:rgba(199,208,205,0.12);
+
     color:var(--silver);
+
     border:1px solid rgba(199,208,205,0.3);
   }
 
+
   .tier-basic{
     background:rgba(201,139,78,0.15);
+
     color:var(--bronze);
+
     border:1px solid rgba(201,139,78,0.4);
   }
 
+
   .tier-unranked{
     background:rgba(92,107,100,0.15);
+
     color:var(--unranked);
+
     border:1px solid rgba(92,107,100,0.3);
   }
 
-  .score{
-    font-family:var(--font-mono);
-    font-size:10px;
-    color:var(--text-dim);
-    margin-top:4px;
+
+  /* ============================================================
+     SOOP TIER COLORS
+  ============================================================ */
+
+  .soop-badge{
+    background:rgba(155,255,92,0.10);
+
+    color:var(--turf);
+
+    border:1px solid rgba(155,255,92,0.30);
   }
 
-  footer{
-    max-width:760px;
-    margin:28px auto 0;
-    padding:0 16px;
-    font-family:var(--font-mono);
-    font-size:11px;
-    color:var(--text-dim);
-    line-height:1.6;
+
+  .soop-2{
+    background:rgba(127,232,212,0.13);
+
+    color:#7fe8d4;
+
+    border-color:rgba(127,232,212,0.35);
   }
 
-  footer code{
-    background:var(--bg-elev);
-    padding:1px 5px;
-    border-radius:4px;
+
+  .soop-6{
+    background:rgba(240,195,76,0.13);
+
+    color:#f0c34c;
+
+    border-color:rgba(240,195,76,0.35);
   }
+
+
+  .soop-100{
+    background:rgba(201,139,78,0.13);
+
+    color:#e5a466;
+
+    border-color:rgba(201,139,78,0.35);
+  }
+
+
+  .soop-other{
+    background:rgba(155,255,92,0.08);
+
+    color:var(--turf);
+
+    border-color:rgba(155,255,92,0.25);
+  }
+
+
+  /* ============================================================
+     CREW COLORS
+  ============================================================ */
+
+  .crew-badge{
+    background:rgba(190,160,255,0.10);
+
+    color:#cdb7ff;
+
+    border:1px solid rgba(190,160,255,0.30);
+  }
+
+
+  .crew-0{
+    background:rgba(190,160,255,0.10);
+
+    color:#cdb7ff;
+
+    border-color:rgba(190,160,255,0.30);
+  }
+
+
+  .crew-1{
+    background:rgba(255,150,190,0.10);
+
+    color:#ff9fc0;
+
+    border-color:rgba(255,150,190,0.30);
+  }
+
+
+  .crew-2{
+    background:rgba(100,190,255,0.10);
+
+    color:#7fc9ff;
+
+    border-color:rgba(100,190,255,0.30);
+  }
+
+
+  .crew-3{
+    background:rgba(255,190,100,0.10);
+
+    color:#ffc56f;
+
+    border-color:rgba(255,190,100,0.30);
+  }
+
+
+  .crew-4{
+    background:rgba(130,220,160,0.10);
+
+    color:#8ee0a6;
+
+    border-color:rgba(130,220,160,0.30);
+  }
+
+
+  /* ============================================================
+     EMPTY
+  ============================================================ */
 
   .empty{
     text-align:center;
+
     padding:40px 20px;
+
     color:var(--text-dim);
+
     font-size:13px;
   }
-.badge-row{
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:5px;
-  flex-wrap:wrap;
-}
 
-.info-badge{
-  background:rgba(155,255,92,0.10);
-  color:var(--turf);
-  border:1px solid rgba(155,255,92,0.30);
-  font-family:var(--font-display);
-  font-size:11px;
-  letter-spacing:0.03em;
-  padding:5px 10px;
-  border-radius:8px;
-  display:inline-block;
-  white-space:nowrap;
-}
+
+  .empty strong{
+    display:block;
+
+    color:var(--text);
+
+    margin-bottom:5px;
+  }
+
+
+  /* ============================================================
+     FOOTER
+  ============================================================ */
+
+  footer{
+    max-width:760px;
+
+    margin:28px auto 0;
+
+    padding:0 16px;
+
+    font-family:var(--font-mono);
+
+    font-size:11px;
+
+    color:var(--text-dim);
+
+    line-height:1.6;
+  }
+
+
+  footer code{
+    background:var(--bg-elev);
+
+    padding:1px 5px;
+
+    border-radius:4px;
+  }
+
+
+  /* ============================================================
+     MOBILE
+  ============================================================ */
+
+  @media(max-width:560px){
+
+    .card{
+      grid-template-columns:44px 1fr auto;
+
+      gap:10px;
+
+      padding:13px 12px;
+    }
+
+
+    .tier-wrap{
+      max-width:145px;
+    }
+
+
+    .filter-badge{
+      font-size:9px;
+
+      padding:5px 7px;
+    }
+
+
+    .fc-nickname{
+      font-size:14px;
+    }
+
+  }
+
 </style>
 </head>
 
+
 <body>
 
+
+<!-- ============================================================
+     HEADER
+============================================================ -->
+
 <header>
-  <p class="eyebrow">SOOP · FC ONLINE</p>
-  <h1>스트리머 티어보드</h1>
-  <p class="sub">FC온라인 카테고리 스트리머 실력 랭킹</p>
+
+  <p class="eyebrow">
+    SOOP · FC ONLINE
+  </p>
+
+  <h1>
+    스트리머 티어보드
+  </h1>
+
+  <p class="sub">
+    FC온라인 카테고리 스트리머 실력 랭킹
+  </p>
+
 
   <div class="controls">
+
     <input
       type="text"
       id="search"
       placeholder="스트리머 이름 검색"
     >
 
+
     <select id="sortSel">
-      <option value="tier">티어순</option>
-      <option value="name">이름순</option>
-      <option value="live">방송중 우선</option>
+
+      <option value="tier">
+        티어순
+      </option>
+
+      <option value="name">
+        이름순
+      </option>
+
+      <option value="live">
+        방송중 우선
+      </option>
+
     </select>
+
   </div>
+
 </header>
 
+
+
+<!-- ============================================================
+     FILTERS
+============================================================ -->
+
+<div class="filter-panel">
+
+
+  <!-- SOOP TIER -->
+
+  <div
+    class="filter-scroll"
+    id="soopFilters"
+  ></div>
+
+
+  <!-- FC TIER -->
+
+  <div
+    class="filter-scroll"
+    id="fcFilters"
+    style="margin-top:7px;"
+  ></div>
+
+
+  <!-- CREW -->
+
+  <div
+    class="filter-scroll"
+    id="crewFilters"
+    style="margin-top:7px;"
+  ></div>
+
+
+  <!-- ACTIVE FILTERS -->
+
+  <div
+    class="active-filters"
+    id="activeFilters"
+  ></div>
+
+</div>
+
+
+
+<!-- ============================================================
+     MAIN
+============================================================ -->
+
 <main>
+
+
   <div class="live-strip">
+
     <span class="dot"></span>
-    <span id="liveCount">0명 방송 중</span>
+
+    <span id="liveCount">
+      0명 방송 중
+    </span>
+
   </div>
 
-  <div class="grid" id="grid"></div>
+
+  <div
+    class="grid"
+    id="grid"
+  ></div>
+
+
 </main>
 
+
+
 <footer>
-  데이터는 <code>data/streamers.json</code>에서 관리합니다.<br>
+
+  데이터는
+  <code>data/streamers.json</code>
+  에서 관리합니다.
+
+  <br>
+
   방송 상태는 60초마다 자동 확인하며,
-  FC온라인 공식경기 1on1 티어는 5분마다 자동 조회합니다.
+
+  FC온라인 공식경기 1on1 티어는
+  5분마다 자동 조회합니다.
+
 </footer>
+
+
 
 <script>
 
+
 /* ============================================================
-   스트리머 데이터
-   실제 등록 정보는 data/streamers.json에서 관리
+   DATA
 ============================================================ */
 
 let STREAMERS = [];
 
+
 const LIVE_REFRESH_MS = 60000;
+
 const TIER_REFRESH_MS = 300000;
 
 
+
 /* ============================================================
-   HTML 요소
+   FILTER STATE
 ============================================================ */
 
-const grid = document.getElementById('grid');
-const search = document.getElementById('search');
-const sortSel = document.getElementById('sortSel');
-const liveCount = document.getElementById('liveCount');
+const FILTERS = {
+
+  soopTier: null,
+
+  fcTier: null,
+
+  crew: null
+
+};
+
 
 
 /* ============================================================
-   streamers.json 불러오기
+   HTML ELEMENTS
+============================================================ */
+
+const grid =
+  document.getElementById('grid');
+
+
+const search =
+  document.getElementById('search');
+
+
+const sortSel =
+  document.getElementById('sortSel');
+
+
+const liveCount =
+  document.getElementById('liveCount');
+
+
+const soopFilters =
+  document.getElementById('soopFilters');
+
+
+const fcFilters =
+  document.getElementById('fcFilters');
+
+
+const crewFilters =
+  document.getElementById('crewFilters');
+
+
+const activeFilters =
+  document.getElementById('activeFilters');
+
+
+
+/* ============================================================
+   ESCAPE HTML
+============================================================ */
+
+function escapeHtml(value){
+
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+
+}
+
+
+
+/* ============================================================
+   STREAMERS.JSON
 ============================================================ */
 
 async function loadStreamers(){
 
-  const res = await fetch('/data/streamers.json', {
-    cache: 'no-store'
-  });
+  const res =
+    await fetch(
+      '/data/streamers.json',
+      {
+        cache:'no-store'
+      }
+    );
+
 
   if(!res.ok){
+
     throw new Error(
       `streamers.json fetch failed: ${res.status}`
     );
+
   }
 
-  const data = await res.json();
+
+  const data =
+    await res.json();
+
 
   if(!Array.isArray(data)){
+
     throw new Error(
       'streamers.json must be an array'
     );
+
   }
 
-  STREAMERS = data.map(s => {
 
-  const divisionId =
-    s.divisionId ?? null;
+  STREAMERS =
+    data
 
-  return {
-    id: s.id || '',
-    name: s.name || s.id || '',
-    fcNickname: s.fcNickname || '',
+      .filter(
+        s => s.active !== false
+      )
 
-    /*
-     * 저장된 tier가 있으면 사용
-     * 없고 divisionId가 있으면 임시로 표시
-     */
-    tier:
-      s.tier ||
-      (
-        divisionId != null
-          ? `등급 ${divisionId}`
-          : null
-      ),
+      .map(s => {
 
-    divisionId,
+        const divisionId =
+          s.divisionId ?? null;
 
-    soopTier: s.soopTier || null,
-    crew: s.crew || null,
-    note: s.note || '',
-    live: false
-  };
 
-  });
+        return {
+
+          id:
+            s.id || '',
+
+          name:
+            s.name ||
+            s.id ||
+            '',
+
+          fcNickname:
+            s.fcNickname ||
+            '',
+
+          tier:
+            s.tier || null,
+
+          divisionId:
+            divisionId,
+
+          divisionName:
+            s.divisionName ||
+            null,
+
+          soopTier:
+            s.soopTier ||
+            null,
+
+          crew:
+            s.crew ||
+            null,
+
+          note:
+            s.note ||
+            '',
+
+          live:false
+
+        };
+
+      });
 
 }
+
+
+
 /* ============================================================
-   SOOP 방송 상태
+   LIVE STATUS
 ============================================================ */
 
 async function refreshLiveStatus(){
 
   if(!STREAMERS.length){
+
     render();
+
     return;
+
   }
 
-  const ids = STREAMERS
-    .map(s => s.id)
-    .filter(Boolean)
-    .join(',');
+
+  const ids =
+    STREAMERS
+
+      .map(
+        s => s.id
+      )
+
+      .filter(Boolean)
+
+      .join(',');
+
 
   try{
 
-    const res = await fetch(
-      `/api/live-status?ids=${encodeURIComponent(ids)}`
-    );
+    const res =
+      await fetch(
+        `/api/live-status?ids=${encodeURIComponent(ids)}`
+      );
+
 
     if(!res.ok){
-      throw new Error('status fetch failed');
+
+      throw new Error(
+        'status fetch failed'
+      );
+
     }
 
-    const data = await res.json();
+
+    const data =
+      await res.json();
+
 
     STREAMERS.forEach(s => {
 
       if(data[s.id]){
-        s.live = !!data[s.id].live;
+
+        s.live =
+          !!data[s.id].live;
+
       }
 
     });
+
 
   }catch(err){
 
@@ -493,105 +1448,137 @@ async function refreshLiveStatus(){
 
   }
 
+
   render();
+
 }
 
 
+
 /* ============================================================
-   FC온라인 공식경기 1on1 티어
+   TIER STATUS
 ============================================================ */
 
 async function refreshTierStatus(){
 
-  const nicknames = STREAMERS
-    .map(s => s.fcNickname)
-    .filter(Boolean)
-    .join(',');
+  const nicknames =
+    STREAMERS
+
+      .map(
+        s => s.fcNickname
+      )
+
+      .filter(Boolean)
+
+      .join(',');
+
 
   if(!nicknames){
+
     render();
+
     return;
+
   }
+
 
   try{
 
-    const res = await fetch(
-      `/api/tier?nicknames=${encodeURIComponent(nicknames)}`
-    );
+    const res =
+      await fetch(
+        `/api/tier?nicknames=${encodeURIComponent(nicknames)}`
+      );
+
 
     if(!res.ok){
-      throw new Error('tier fetch failed');
+
+      throw new Error(
+        'tier fetch failed'
+      );
+
     }
 
-    const data = await res.json();
+
+    const data =
+      await res.json();
+
 
     STREAMERS.forEach(s => {
 
       if(!s.fcNickname){
+
         return;
+
       }
 
-      const info = data[s.fcNickname];
 
-      if(info){
-
-        /*
-         * 현재 FC온라인 닉네임
-         */
-        if(info.currentNickname){
-          s.fcNickname = info.currentNickname;
-        }
+      const info =
+        data[s.fcNickname];
 
 
-        /*
-         * ----------------------------------------------------
-         * divisionId
-         *
-         * API 값이 있으면 API 값
-         * 없으면 streamers.json에 저장된 기존 값 유지
-         * ----------------------------------------------------
-         */
-        if(info.divisionId != null){
+      if(!info){
 
-          s.divisionId =
-            Number(info.divisionId);
+        return;
 
-        }
+      }
 
 
-        /*
-         * ----------------------------------------------------
-         * tier
-         *
-         * 1순위 : API의 divisionName
-         * 2순위 : 기존 streamers.json의 tier
-         * 3순위 : divisionId를 이용한 임시 표시
-         * ----------------------------------------------------
-         */
-        if(
-          info.divisionName &&
-          info.divisionName !== 'null'
-        ){
+      /* 현재 닉네임 */
 
-          s.tier =
-            info.divisionName;
+      if(info.currentNickname){
 
-        }else if(
-          !s.tier &&
-          s.divisionId != null
-        ){
+        s.fcNickname =
+          info.currentNickname;
 
-          /*
-           * API가 divisionName을 주지 않는 경우에도
-           * tier가 null로 남지 않도록 합니다.
-           *
-           * 현재 API의 divisionName을 받지 못한 경우
-           * divisionId 자체를 표시합니다.
-           */
-          s.tier =
-            `등급 ${s.divisionId}`;
+      }
 
-        }
+
+      /* divisionId */
+
+      if(info.divisionId != null){
+
+        s.divisionId =
+          Number(info.divisionId);
+
+      }
+
+
+      /* divisionName */
+
+      if(
+        info.divisionName &&
+        info.divisionName !== 'null'
+      ){
+
+        s.divisionName =
+          info.divisionName;
+
+        s.tier =
+          info.divisionName;
+
+      }
+
+
+      /* fallback */
+
+      if(
+        !s.tier &&
+        s.divisionName
+      ){
+
+        s.tier =
+          s.divisionName;
+
+      }
+
+
+      if(
+        !s.tier &&
+        s.divisionId != null
+      ){
+
+        s.tier =
+          `등급 ${s.divisionId}`;
 
       }
 
@@ -606,12 +1593,18 @@ async function refreshTierStatus(){
     );
 
 
-    /*
-     * API 자체가 실패하더라도
-     * streamers.json의 divisionId가 있으면
-     * tier를 만들어줍니다.
-     */
     STREAMERS.forEach(s => {
+
+      if(
+        !s.tier &&
+        s.divisionName
+      ){
+
+        s.tier =
+          s.divisionName;
+
+      }
+
 
       if(
         !s.tier &&
@@ -628,226 +1621,1329 @@ async function refreshTierStatus(){
   }
 
 
+  buildFilterButtons();
+
   render();
+
 }
 
+
+
 /* ============================================================
-   티어 정렬
+   DIVISION RANK
 ============================================================ */
 
 function divisionRank(s){
 
   return s.divisionId == null
     ? Infinity
-    : s.divisionId;
+    : Number(s.divisionId);
 
 }
 
+
+
+/* ============================================================
+   FC TIER CLASS
+============================================================ */
 
 function tierClass(divisionId){
 
   if(divisionId == null)
     return 'tier-unranked';
 
+
   if(divisionId <= 1300)
     return 'tier-top';
+
 
   if(divisionId <= 1900)
     return 'tier-high';
 
+
   if(divisionId <= 2200)
     return 'tier-mid';
 
+
   if(divisionId <= 2500)
     return 'tier-low';
+
 
   return 'tier-basic';
 
 }
 
 
+
 /* ============================================================
-   화면 렌더링
+   SOOP TIER CLASS
 ============================================================ */
 
-function render(){
+function soopTierClass(tier){
 
-  if(!grid || !search || !sortSel || !liveCount){
-    console.error(
-      '화면 요소를 찾지 못했습니다.',
-      {
-        grid,
-        search,
-        sortSel,
-        liveCount
-      }
-    );
-
-    return;
-  }
-
-  const q = search.value
-    .trim()
-    .toLowerCase();
-
-  let list = STREAMERS.filter(s => {
-
-    const name = String(s.name || '').toLowerCase();
-    const id = String(s.id || '').toLowerCase();
-    const fcNickname = String(s.fcNickname || '').toLowerCase();
-
-    return (
-      name.includes(q) ||
-      id.includes(q) ||
-      fcNickname.includes(q)
-    );
-
-  });
+  const value =
+    String(tier || '').toLowerCase();
 
 
-  const mode = sortSel.value;
+  if(value.includes('2티어'))
+    return 'soop-2';
 
 
-if(mode === 'tier'){
-
-  list.sort(
-    (a,b) =>
-      (b.live - a.live) ||
-      (divisionRank(a) - divisionRank(b))
-  );
-
-}else if(mode === 'name'){
-
-    list.sort(
-      (a,b) =>
-        a.name.localeCompare(b.name, 'ko')
-    );
-
-  }else if(mode === 'live'){
-
-    list.sort(
-      (a,b) =>
-        (b.live - a.live) ||
-        (divisionRank(a) - divisionRank(b))
-    );
-
-  }else{
-
-    // 기본 정렬
-    // 1. 방송 중
-    // 2. 방송 중인 사람끼리는 FC온라인 티어순
-    // 3. 방송 종료
-    // 4. 방송 종료한 사람끼리도 FC온라인 티어순
-
-    list.sort(
-      (a,b) =>
-        (b.live - a.live) ||
-        (divisionRank(a) - divisionRank(b))
-    );
-
-  }
+  if(value.includes('6티어'))
+    return 'soop-6';
 
 
-  liveCount.textContent =
-    STREAMERS.filter(s => s.live).length +
-    '명 방송 중 (60초마다 자동 갱신)';
+  if(value.includes('100티어'))
+    return 'soop-100';
 
 
-  if(list.length === 0){
-
-    grid.innerHTML =
-      '<div class="empty">검색 결과가 없습니다</div>';
-
-    return;
-
-  }
-
-
-  grid.innerHTML = list.map(s => {
-
-    const tierLabel =
-      s.tier || '불러오는 중…';
-
-    const firstLetter =
-      String(s.name || '?').slice(0,1);
-
-
-    return `
-      <a
-        class="card ${s.live ? 'live' : ''}"
-        href="https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}"
-        target="_blank"
-        rel="noopener"
-      >
-
-        <div class="avatar">
-          ${firstLetter}
-        </div>
-
-        <div class="meta">
-
-          <div class="name-row">
-
-            <span class="name">
-              ${s.name}
-            </span>
-
-            ${
-              s.live
-                ? '<span class="live-badge">LIVE</span>'
-                : ''
-            }
-
-          </div>
-
-          <div class="id-line">
-  @${s.id}${s.fcNickname ? ` · ${s.fcNickname}` : ''}${s.note ? ` · ${s.note}` : ''}
-</div>
-        </div>
-
-        <div class="tier-wrap">
-
-  <div class="badge-row">
-
-    <span
-      class="tier-badge ${tierClass(s.divisionId)}"
-    >
-      ${tierLabel}
-    </span>
-
-    ${
-      s.soopTier
-        ? `
-          <span class="info-badge">
-            ${s.soopTier}
-          </span>
-        `
-        : ''
-    }
-
-    ${
-      s.crew
-        ? `
-          <span class="info-badge">
-            ${s.crew}
-          </span>
-        `
-        : ''
-    }
-
-  </div>
-
-</div>
-      </a>
-    `;
-
-  }).join('');
+  return 'soop-other';
 
 }
 
 
+
 /* ============================================================
-   검색 / 정렬
+   CREW CLASS
+============================================================ */
+
+const crewColorMap =
+  new Map();
+
+
+function crewClass(crew){
+
+  if(!crew){
+
+    return 'crew-0';
+
+  }
+
+
+  if(!crewColorMap.has(crew)){
+
+    crewColorMap.set(
+      crew,
+      crewColorMap.size % 5
+    );
+
+  }
+
+
+  return `crew-${crewColorMap.get(crew)}`;
+
+}
+
+
+
+/* ============================================================
+   UNIQUE SORTED VALUES
+============================================================ */
+
+function uniqueValues(key){
+
+  return [
+    ...new Set(
+
+      STREAMERS
+
+        .map(
+          s => s[key]
+        )
+
+        .filter(
+          value =>
+            value != null &&
+            String(value).trim() !== ''
+        )
+
+    )
+  ];
+
+}
+
+
+
+/* ============================================================
+   FILTER BUTTONS
+============================================================ */
+
+function buildFilterButtons(){
+
+  if(
+    !soopFilters ||
+    !fcFilters ||
+    !crewFilters
+  ){
+
+    return;
+
+  }
+
+
+  /* ----------------------------------------------------------
+     SOOP TIER
+  ---------------------------------------------------------- */
+
+  const soopValues =
+    uniqueValues('soopTier');
+
+
+  soopFilters.innerHTML = `
+
+    <button
+      class="filter-btn ${FILTERS.soopTier === null ? 'active' : ''}"
+      data-filter-type="soopTier"
+      data-filter-value=""
+    >
+      SOOP 전체
+    </button>
+
+    ${
+      soopValues
+        .map(
+          value => `
+
+            <button
+              class="filter-btn ${FILTERS.soopTier === value ? 'active' : ''}"
+              data-filter-type="soopTier"
+              data-filter-value="${escapeHtml(value)}"
+            >
+              ${escapeHtml(value)}
+            </button>
+
+          `
+        )
+        .join('')
+    }
+
+  `;
+
+
+  /* ----------------------------------------------------------
+     FC TIER
+  ---------------------------------------------------------- */
+
+  const fcValues =
+    uniqueValues('tier');
+
+
+  fcFilters.innerHTML = `
+
+    <button
+      class="filter-btn ${FILTERS.fcTier === null ? 'active' : ''}"
+      data-filter-type="fcTier"
+      data-filter-value=""
+    >
+      FC 전체
+    </button>
+
+    ${
+      fcValues
+        .map(
+          value => `
+
+            <button
+              class="filter-btn ${FILTERS.fcTier === value ? 'active' : ''}"
+              data-filter-type="fcTier"
+              data-filter-value="${escapeHtml(value)}"
+            >
+              ${escapeHtml(value)}
+            </button>
+
+          `
+        )
+        .join('')
+    }
+
+  `;
+
+
+  /* ----------------------------------------------------------
+     CREW
+  ---------------------------------------------------------- */
+
+  const crewValues =
+    uniqueValues('crew');
+
+
+  crewFilters.innerHTML = `
+
+    <button
+      class="filter-btn ${FILTERS.crew === null ? 'active' : ''}"
+      data-filter-type="crew"
+      data-filter-value=""
+    >
+      CREW 전체
+    </button>
+
+    ${
+      crewValues
+        .map(
+          value => `
+
+            <button
+              class="filter-btn ${FILTERS.crew === value ? 'active' : ''}"
+              data-filter-type="crew"
+              data-filter-value="${escapeHtml(value)}"
+            >
+              ${escapeHtml(value)}
+            </button>
+
+          `
+        )
+        .join('')
+    }
+
+  `;
+
+
+  bindFilterButtons();
+
+}
+
+
+
+/* ============================================================
+   FILTER BUTTON EVENTS
+============================================================ */
+
+function bindFilterButtons(){
+
+  document
+    .querySelectorAll('.filter-btn')
+    .forEach(button => {
+
+      button.addEventListener(
+        'click',
+        () => {
+
+          const type =
+            button.dataset.filterType;
+
+
+          const value =
+            button.dataset.filterValue;
+
+
+          if(type === 'soopTier'){
+
+            FILTERS.soopTier =
+              value || null;
+
+          }
+
+
+          if(type === 'fcTier'){
+
+            FILTERS.fcTier =
+              value || null;
+
+          }
+
+
+          if(type === 'crew'){
+
+            FILTERS.crew =
+              value || null;
+
+          }
+
+
+          buildFilterButtons();
+
+          render();
+
+        }
+      );
+
+    });
+
+}
+
+
+
+/* ============================================================
+   ACTIVE FILTER DISPLAY
+============================================================ */
+
+function renderActiveFilters(){
+
+  if(!activeFilters){
+
+    return;
+
+  }
+
+
+  const filters = [];
+
+
+  if(FILTERS.soopTier){
+
+    filters.push({
+
+      type:'soopTier',
+
+      label:`SOOP ${FILTERS.soopTier}`
+
+    });
+
+  }
+
+
+  if(FILTERS.fcTier){
+
+    filters.push({
+
+      type:'fcTier',
+
+      label:`FC ${FILTERS.fcTier}`
+
+    });
+
+  }
+
+
+  if(FILTERS.crew){
+
+    filters.push({
+
+      type:'crew',
+
+      label:`CREW ${FILTERS.crew}`
+
+    });
+
+  }
+
+
+  if(!filters.length){
+
+    activeFilters.classList.remove(
+      'has-filter'
+    );
+
+    activeFilters.innerHTML = '';
+
+    return;
+
+  }
+
+
+  activeFilters.classList.add(
+    'has-filter'
+  );
+
+
+  activeFilters.innerHTML = `
+
+    <span class="filter-label">
+      FILTER
+    </span>
+
+    ${
+      filters
+        .map(
+          filter => `
+
+            <button
+              class="active-chip"
+              data-active-type="${filter.type}"
+            >
+              ${escapeHtml(filter.label)}
+              <span class="x">×</span>
+            </button>
+
+          `
+        )
+        .join('')
+    }
+
+    <button
+      class="clear-filters"
+      id="clearFilters"
+    >
+      초기화
+    </button>
+
+  `;
+
+
+  activeFilters
+    .querySelectorAll('.active-chip')
+    .forEach(button => {
+
+      button.addEventListener(
+        'click',
+        () => {
+
+          const type =
+            button.dataset.activeType;
+
+
+          FILTERS[type] = null;
+
+
+          buildFilterButtons();
+
+          render();
+
+        }
+      );
+
+    });
+
+
+  const clear =
+    document.getElementById(
+      'clearFilters'
+    );
+
+
+  if(clear){
+
+    clear.addEventListener(
+      'click',
+      clearAllFilters
+    );
+
+  }
+
+}
+
+
+
+/* ============================================================
+   CLEAR FILTERS
+============================================================ */
+
+function clearAllFilters(){
+
+  FILTERS.soopTier = null;
+
+  FILTERS.fcTier = null;
+
+  FILTERS.crew = null;
+
+
+  buildFilterButtons();
+
+  render();
+
+}
+
+
+
+/* ============================================================
+   FILTER STREAMERS
+============================================================ */
+
+function applyFilters(list){
+
+  return list.filter(s => {
+
+
+    /* SOOP Tier */
+
+    if(
+      FILTERS.soopTier &&
+      s.soopTier !== FILTERS.soopTier
+    ){
+
+      return false;
+
+    }
+
+
+    /* FC Tier */
+
+    if(
+      FILTERS.fcTier &&
+      s.tier !== FILTERS.fcTier
+    ){
+
+      return false;
+
+    }
+
+
+    /* Crew */
+
+    if(
+      FILTERS.crew &&
+      s.crew !== FILTERS.crew
+    ){
+
+      return false;
+
+    }
+
+
+    return true;
+
+  });
+
+}
+
+
+
+/* ============================================================
+   SORT
+============================================================ */
+
+function sortList(list){
+
+  const mode =
+    sortSel.value;
+
+
+  if(mode === 'name'){
+
+    list.sort(
+      (a,b) =>
+        String(a.name || '')
+          .localeCompare(
+            String(b.name || ''),
+            'ko'
+          )
+    );
+
+
+    return;
+
+  }
+
+
+  if(mode === 'live'){
+
+    list.sort(
+      (a,b) =>
+        (Number(b.live) - Number(a.live)) ||
+        (divisionRank(a) - divisionRank(b))
+    );
+
+
+    return;
+
+  }
+
+
+  /* 기본: 티어순 */
+
+  list.sort(
+    (a,b) =>
+      (Number(b.live) - Number(a.live)) ||
+      (divisionRank(a) - divisionRank(b))
+  );
+
+}
+
+
+
+/* ============================================================
+   SOOP GROUPING
+============================================================ */
+
+function getGroupInfo(list){
+
+  /*
+   * SOOP Tier 필터가 선택되어 있으면
+   * 그 Tier를 하나의 서브 헤더로 표시
+   */
+
+  if(FILTERS.soopTier){
+
+    return [
+
+      {
+
+        title:
+          `SOOP TIER · ${FILTERS.soopTier}`,
+
+        items:list
+
+      }
+
+    ];
+
+  }
+
+
+  /*
+   * SOOP Tier 필터가 없으면
+   * 전체를 SOOP Tier별로 그룹화
+   */
+
+  const groups = new Map();
+
+  const noTier = [];
+
+
+  list.forEach(s => {
+
+    const tier =
+      s.soopTier;
+
+
+    if(!tier){
+
+      noTier.push(s);
+
+      return;
+
+    }
+
+
+    if(!groups.has(tier)){
+
+      groups.set(
+        tier,
+        []
+      );
+
+    }
+
+
+    groups
+      .get(tier)
+      .push(s);
+
+  });
+
+
+  const result = [];
+
+
+  /*
+   * 숫자가 작은 SOOP Tier를 먼저 표시
+   */
+
+  const sortedKeys =
+    [...groups.keys()]
+      .sort(
+        (a,b) => {
+
+          const na =
+            parseInt(
+              String(a).replace(/\D/g,''),
+              10
+            );
+
+          const nb =
+            parseInt(
+              String(b).replace(/\D/g,''),
+              10
+            );
+
+
+          if(
+            Number.isNaN(na) &&
+            Number.isNaN(nb)
+          ){
+
+            return String(a)
+              .localeCompare(
+                String(b),
+                'ko'
+              );
+
+          }
+
+
+          if(Number.isNaN(na))
+            return 1;
+
+
+          if(Number.isNaN(nb))
+            return -1;
+
+
+          return na - nb;
+
+        }
+      );
+
+
+  sortedKeys.forEach(key => {
+
+    result.push({
+
+      title:
+        `SOOP TIER · ${key}`,
+
+      items:
+        groups.get(key)
+
+    });
+
+  });
+
+
+  if(noTier.length){
+
+    result.push({
+
+      title:
+        'SOOP TIER · 미분류',
+
+      items:
+        noTier
+
+    });
+
+  }
+
+
+  return result;
+
+}
+
+
+
+/* ============================================================
+   RENDER
+============================================================ */
+
+function render(){
+
+  if(
+    !grid ||
+    !search ||
+    !sortSel ||
+    !liveCount
+  ){
+
+    console.error(
+      '화면 요소를 찾지 못했습니다.'
+    );
+
+    return;
+
+  }
+
+
+  const q =
+    search.value
+      .trim()
+      .toLowerCase();
+
+
+  let list =
+    STREAMERS.filter(s => {
+
+      const name =
+        String(
+          s.name || ''
+        ).toLowerCase();
+
+
+      const id =
+        String(
+          s.id || ''
+        ).toLowerCase();
+
+
+      const fcNickname =
+        String(
+          s.fcNickname || ''
+        ).toLowerCase();
+
+
+      const note =
+        String(
+          s.note || ''
+        ).toLowerCase();
+
+
+      return (
+
+        name.includes(q) ||
+
+        id.includes(q) ||
+
+        fcNickname.includes(q) ||
+
+        note.includes(q)
+
+      );
+
+    });
+
+
+  /* 필터 적용 */
+
+  list =
+    applyFilters(list);
+
+
+  /* 정렬 */
+
+  sortList(list);
+
+
+  /* 필터 상태 */
+
+  renderActiveFilters();
+
+
+  /* LIVE */
+
+  liveCount.textContent =
+
+    STREAMERS.filter(
+      s => s.live
+    ).length +
+
+    '명 방송 중 (60초마다 자동 갱신)';
+
+
+
+  /* 결과 없음 */
+
+  if(!list.length){
+
+    grid.innerHTML = `
+
+      <div class="empty">
+
+        <strong>
+          조건에 맞는 스트리머가 없습니다.
+        </strong>
+
+        검색어나 필터를 확인해주세요.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+
+  /* ==========================================================
+     SOOP GROUPS
+  ========================================================== */
+
+  const groups =
+    getGroupInfo(list);
+
+
+  grid.innerHTML =
+    groups
+      .map(
+        group => {
+
+          return `
+
+            <section class="group">
+
+              <div class="group-header">
+
+                <div class="group-title">
+
+                  <span class="accent">
+                    ${escapeHtml(group.title.split('·')[0])}
+                  </span>
+
+                  ${
+                    group.title.includes('·')
+                      ? ` · ${escapeHtml(group.title.split('·').slice(1).join('·').trim())}`
+                      : ''
+                  }
+
+                </div>
+
+                <div class="group-count">
+
+                  ${group.items.length}명
+
+                </div>
+
+              </div>
+
+
+              <div class="grid">
+
+                ${group.items
+                  .map(
+                    renderCard
+                  )
+                  .join('')}
+
+              </div>
+
+            </section>
+
+          `;
+
+        }
+      )
+      .join('');
+
+
+
+  bindCardFilterButtons();
+
+}
+
+
+
+/* ============================================================
+   CARD RENDER
+============================================================ */
+
+function renderCard(s){
+
+  const tierLabel =
+    s.tier ||
+    (
+      s.divisionId != null
+        ? `등급 ${s.divisionId}`
+        : '불러오는 중…'
+    );
+
+
+  const firstLetter =
+    String(
+      s.name || '?'
+    ).slice(0,1);
+
+
+  const fcNickname =
+    escapeHtml(
+      s.fcNickname
+    );
+
+
+  const soopTier =
+    escapeHtml(
+      s.soopTier
+    );
+
+
+  const crew =
+    escapeHtml(
+      s.crew
+    );
+
+
+  const note =
+    escapeHtml(
+      s.note
+    );
+
+
+  const id =
+    escapeHtml(
+      s.id
+    );
+
+
+  const name =
+    escapeHtml(
+      s.name
+    );
+
+
+  const safeTier =
+    escapeHtml(
+      tierLabel
+    );
+
+
+  return `
+
+    <article
+      class="card ${s.live ? 'live' : ''}"
+    >
+
+
+      <!-- ======================================================
+           방송국 이동 영역
+           썸네일 + 스트리머 이름만 링크
+      ======================================================= -->
+
+      <a
+        class="streamer-link"
+        href="https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}"
+        target="_blank"
+        rel="noopener"
+        aria-label="${name} 방송국 열기"
+      >
+
+        <div class="avatar">
+
+          ${firstLetter}
+
+        </div>
+
+      </a>
+
+
+
+      <div class="meta">
+
+
+        <!-- ==================================================
+             스트리머 이름
+             이름도 방송국 이동
+        =================================================== -->
+
+        <div class="name-row">
+
+          <a
+            class="streamer-link"
+            href="https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}"
+            target="_blank"
+            rel="noopener"
+          >
+
+            <span class="name">
+              ${name}
+            </span>
+
+          </a>
+
+
+          ${
+            s.live
+              ? `
+                <span class="live-badge">
+                  LIVE
+                </span>
+              `
+              : ''
+          }
+
+        </div>
+
+
+
+        <!-- ==================================================
+             FC NICKNAME
+             형광 초록 + Bold + 한 단계 크게
+        =================================================== -->
+
+        ${
+          s.fcNickname
+            ? `
+
+              <div
+                class="fc-nickname"
+                title="FC온라인 닉네임"
+              >
+
+                <span class="fc-ball">
+                  ⚽
+                </span>
+
+                <span>
+                  ${fcNickname}
+                </span>
+
+              </div>
+
+            `
+            : ''
+        }
+
+
+
+        <!-- ==================================================
+             SOOP ID + NOTE
+        =================================================== -->
+
+        <div class="id-line">
+
+          @${id}
+
+          ${
+            note
+              ? ` · ${note}`
+              : ''
+          }
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- ======================================================
+           오른쪽 필터 배지
+           클릭하면 방송국으로 가지 않고 필터 적용
+      ======================================================= -->
+
+      <div class="tier-wrap">
+
+
+        <div class="badge-row">
+
+
+          <!-- FC ONLINE TIER -->
+
+          <button
+            type="button"
+            class="filter-badge ${tierClass(s.divisionId)}"
+            data-filter-type="fcTier"
+            data-filter-value="${safeTier}"
+            title="이 FC온라인 티어만 보기"
+          >
+
+            ${safeTier}
+
+          </button>
+
+
+
+          <!-- SOOP TIER -->
+
+          ${
+            s.soopTier
+              ? `
+
+                <button
+                  type="button"
+                  class="filter-badge soop-badge ${soopTierClass(s.soopTier)}"
+                  data-filter-type="soopTier"
+                  data-filter-value="${soopTier}"
+                  title="이 SOOP 티어만 보기"
+                >
+
+                  ${soopTier}
+
+                </button>
+
+              `
+              : ''
+          }
+
+
+
+          <!-- CREW -->
+
+          ${
+            s.crew
+              ? `
+
+                <button
+                  type="button"
+                  class="filter-badge crew-badge ${crewClass(s.crew)}"
+                  data-filter-type="crew"
+                  data-filter-value="${crew}"
+                  title="이 크루만 보기"
+                >
+
+                  ${crew}
+
+                </button>
+
+              `
+              : ''
+          }
+
+
+        </div>
+
+
+      </div>
+
+
+    </article>
+
+  `;
+
+}
+
+
+
+/* ============================================================
+   CARD FILTER BUTTON EVENTS
+============================================================ */
+
+function bindCardFilterButtons(){
+
+  document
+    .querySelectorAll(
+      '.card .filter-badge'
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        'click',
+        event => {
+
+          /*
+           * 카드/링크 클릭 이벤트가
+           * 방송국으로 전달되지 않도록 차단
+           */
+
+          event.preventDefault();
+
+          event.stopPropagation();
+
+
+          const type =
+            button.dataset.filterType;
+
+
+          const value =
+            button.dataset.filterValue;
+
+
+          if(type === 'soopTier'){
+
+            /*
+             * 같은 필터를 다시 누르면 해제
+             */
+
+            FILTERS.soopTier =
+              FILTERS.soopTier === value
+                ? null
+                : value;
+
+          }
+
+
+          if(type === 'fcTier'){
+
+            FILTERS.fcTier =
+              FILTERS.fcTier === value
+                ? null
+                : value;
+
+          }
+
+
+          if(type === 'crew'){
+
+            FILTERS.crew =
+              FILTERS.crew === value
+                ? null
+                : value;
+
+          }
+
+
+          buildFilterButtons();
+
+          render();
+
+        }
+      );
+
+    });
+
+}
+
+
+
+/* ============================================================
+   SEARCH
 ============================================================ */
 
 search.addEventListener(
@@ -855,14 +2951,21 @@ search.addEventListener(
   render
 );
 
+
+
+/* ============================================================
+   SORT
+============================================================ */
+
 sortSel.addEventListener(
   'change',
   render
 );
 
 
+
 /* ============================================================
-   초기 실행
+   INITIALIZE
 ============================================================ */
 
 async function init(){
@@ -871,21 +2974,47 @@ async function init(){
 
     await loadStreamers();
 
+
+    /*
+     * 데이터가 로드되면
+     * 필터 버튼 먼저 생성
+     */
+
+    buildFilterButtons();
+
+
     render();
+
+
+    /*
+     * 방송 상태
+     */
 
     await refreshLiveStatus();
 
+
+    /*
+     * FC온라인 티어
+     */
+
     await refreshTierStatus();
+
+
+    /*
+     * 이후 주기적 갱신
+     */
 
     setInterval(
       refreshLiveStatus,
       LIVE_REFRESH_MS
     );
 
+
     setInterval(
       refreshTierStatus,
       TIER_REFRESH_MS
     );
+
 
   }catch(err){
 
@@ -894,21 +3023,32 @@ async function init(){
       err
     );
 
+
     if(grid){
 
-      grid.innerHTML =
-        `
+      grid.innerHTML = `
+
         <div class="empty">
-          스트리머 데이터를 불러오지 못했습니다.<br>
-          <small>${err.message}</small>
+
+          <strong>
+            스트리머 데이터를 불러오지 못했습니다.
+          </strong>
+
+          <small>
+            ${escapeHtml(err.message)}
+          </small>
+
         </div>
-        `;
+
+      `;
 
     }
 
   }
 
 }
+
+
 
 init();
 
