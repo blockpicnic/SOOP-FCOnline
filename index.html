@@ -11,6 +11,7 @@
 ============================================================ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
 <link
   href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap"
   rel="stylesheet"
@@ -23,6 +24,7 @@
 ============================================================ */
 
 :root{
+
   --bg:#0c1210;
   --bg-elev:#121a17;
   --bg-elev-2:#17211d;
@@ -39,17 +41,13 @@
 
   --card-radius:14px;
 
-  --font-display:
-    'Noto Sans KR',
-    sans-serif;
-
   --font-body:
     'Noto Sans KR',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
     sans-serif;
 
-  --font-mono:
-    'Noto Sans KR',
-    sans-serif;
 }
 
 
@@ -62,10 +60,11 @@
 }
 
 html{
-  font-family:var(--font-body);
+  -webkit-text-size-adjust:100%;
 }
 
 body{
+
   margin:0;
 
   background:
@@ -81,6 +80,7 @@ body{
   font-family:var(--font-body);
 
   padding-bottom:60px;
+
 }
 
 
@@ -89,6 +89,7 @@ body{
 ============================================================ */
 
 header{
+
   padding:28px 20px 20px;
 
   border-bottom:1px solid var(--pitch-line);
@@ -100,6 +101,7 @@ header{
   background:rgba(12,18,16,.95);
 
   backdrop-filter:blur(10px);
+
 }
 
 
@@ -108,6 +110,7 @@ header{
 ============================================================ */
 
 .hero{
+
   position:relative;
 
   max-width:1000px;
@@ -131,9 +134,11 @@ header{
     center/cover no-repeat;
 
   border:1px solid rgba(155,255,92,.12);
+
 }
 
 .hero::after{
+
   content:"";
 
   position:absolute;
@@ -148,19 +153,23 @@ header{
       rgba(155,255,92,.08),
       transparent 45%
     );
+
 }
 
 .hero-content{
+
   position:relative;
   z-index:1;
+
 }
 
 .eyebrow{
-  font-family:var(--font-body);
 
   font-size:12px;
 
-  letter-spacing:.12em;
+  font-weight:700;
+
+  letter-spacing:.14em;
 
   color:var(--turf);
 
@@ -168,31 +177,32 @@ header{
 
   margin:0 0 6px;
 
-  font-weight:700;
 }
 
 h1{
-  font-family:var(--font-display);
 
-  font-size:clamp(24px,6vw,36px);
+  font-size:clamp(26px,6vw,38px);
 
-  letter-spacing:-.03em;
+  font-weight:900;
+
+  letter-spacing:-.035em;
 
   margin:0 0 5px;
 
-  line-height:1.1;
+  line-height:1.05;
 
-  font-weight:900;
 }
 
 .sub{
+
   color:var(--text-dim);
 
   font-size:14px;
 
+  font-weight:500;
+
   margin:0;
 
-  font-weight:500;
 }
 
 
@@ -201,6 +211,7 @@ h1{
 ============================================================ */
 
 .controls{
+
   display:flex;
 
   gap:8px;
@@ -212,9 +223,11 @@ h1{
   flex-wrap:wrap;
 
   justify-content:flex-start;
+
 }
 
 .controls input[type=text]{
+
   flex:1;
 
   min-width:180px;
@@ -234,30 +247,35 @@ h1{
   font-size:14px;
 
   outline:none;
+
 }
 
 .controls input[type=text]:focus{
+
   border-color:rgba(155,255,92,.45);
+
 }
 
 select{
+
   background:var(--bg-elev);
 
   border:1px solid var(--pitch-line);
 
   color:var(--text);
 
-  padding:11px 13px;
+  padding:10px 12px;
 
   border-radius:10px;
 
-  font-size:13px;
+  font-size:14px;
 
   font-family:var(--font-body);
 
   outline:none;
 
   cursor:pointer;
+
 }
 
 
@@ -266,6 +284,7 @@ select{
 ============================================================ */
 
 .filter-panel{
+
   max-width:1000px;
 
   margin:0 auto;
@@ -273,9 +292,11 @@ select{
   padding:14px 20px 0;
 
   text-align:left;
+
 }
 
 .filter-row{
+
   display:flex;
 
   align-items:center;
@@ -289,6 +310,7 @@ select{
   scrollbar-width:none;
 
   padding-bottom:3px;
+
 }
 
 .filter-row::-webkit-scrollbar{
@@ -296,6 +318,7 @@ select{
 }
 
 .filter-btn{
+
   flex-shrink:0;
 
   border:1px solid var(--pitch-line);
@@ -310,22 +333,26 @@ select{
 
   font-size:12px;
 
+  font-weight:600;
+
   font-family:var(--font-body);
 
   cursor:pointer;
 
   transition:.15s;
 
-  font-weight:600;
 }
 
 .filter-btn:hover{
+
   border-color:rgba(155,255,92,.35);
 
   color:var(--text);
+
 }
 
 .filter-btn.active{
+
   background:rgba(155,255,92,.10);
 
   border-color:rgba(155,255,92,.45);
@@ -333,6 +360,7 @@ select{
   color:var(--turf);
 
   font-weight:800;
+
 }
 
 
@@ -341,6 +369,7 @@ select{
 ============================================================ */
 
 .active-filters{
+
   display:none;
 
   align-items:center;
@@ -350,6 +379,7 @@ select{
   flex-wrap:wrap;
 
   margin-top:10px;
+
 }
 
 .active-filters.has-filter{
@@ -357,16 +387,17 @@ select{
 }
 
 .filter-label{
+
   font-size:11px;
 
   color:var(--text-dim);
 
-  font-family:var(--font-body);
+  font-weight:600;
 
-  font-weight:700;
 }
 
 .active-chip{
+
   display:inline-flex;
 
   align-items:center;
@@ -385,14 +416,14 @@ select{
 
   font-size:11px;
 
+  font-weight:700;
+
   cursor:pointer;
 
-  font-family:var(--font-body);
-
-  font-weight:600;
 }
 
 .clear-filters{
+
   border:0;
 
   background:transparent;
@@ -403,7 +434,6 @@ select{
 
   cursor:pointer;
 
-  font-family:var(--font-body);
 }
 
 
@@ -412,23 +442,26 @@ select{
 ============================================================ */
 
 main{
+
   max-width:1000px;
 
   margin:0 auto;
 
   padding:18px 20px 0;
+
 }
 
 .live-strip{
+
   display:flex;
 
   align-items:center;
 
   gap:8px;
 
-  font-family:var(--font-body);
-
   font-size:12px;
+
+  font-weight:600;
 
   color:var(--text-dim);
 
@@ -436,10 +469,10 @@ main{
 
   letter-spacing:.01em;
 
-  font-weight:600;
 }
 
 .dot{
+
   width:8px;
   height:8px;
 
@@ -450,9 +483,11 @@ main{
   box-shadow:0 0 8px #ff5c5c;
 
   animation:pulse 1.6s infinite;
+
 }
 
 @keyframes pulse{
+
   0%,100%{
     opacity:1;
   }
@@ -460,6 +495,7 @@ main{
   50%{
     opacity:.35;
   }
+
 }
 
 
@@ -469,12 +505,14 @@ main{
 ============================================================ */
 
 .streamer-grid{
+
   display:grid;
 
   grid-template-columns:
     repeat(3,minmax(0,1fr));
 
   gap:14px;
+
 }
 
 
@@ -483,6 +521,7 @@ main{
 ============================================================ */
 
 .card{
+
   min-width:0;
 
   background:var(--bg-elev);
@@ -491,15 +530,13 @@ main{
 
   border-radius:var(--card-radius);
 
-  padding:13px;
+  padding:14px;
 
   display:flex;
 
-  flex-wrap:wrap;
-
   align-items:flex-start;
 
-  gap:11px;
+  gap:12px;
 
   position:relative;
 
@@ -509,21 +546,27 @@ main{
     border-color .15s,
     transform .15s,
     background .15s;
+
 }
 
 .card:hover{
+
   border-color:#30463b;
 
   background:#141e1a;
 
   transform:translateY(-2px);
+
 }
 
 .card.live{
+
   border-color:rgba(255,92,92,.5);
+
 }
 
 .card.live::before{
+
   content:"";
 
   position:absolute;
@@ -535,6 +578,7 @@ main{
   height:3px;
 
   background:#ff5c5c;
+
 }
 
 
@@ -543,6 +587,7 @@ main{
 ============================================================ */
 
 .card-soop-tier{
+
   position:absolute;
 
   top:10px;
@@ -562,13 +607,14 @@ main{
 
   font-family:var(--font-body);
 
-  font-size:10px;
+  font-size:11px;
 
   font-weight:800;
 
   white-space:nowrap;
 
   cursor:pointer;
+
 }
 
 
@@ -577,6 +623,7 @@ main{
 ============================================================ */
 
 .streamer-link{
+
   display:block;
 
   color:inherit;
@@ -588,12 +635,14 @@ main{
   outline:none;
 
   flex-shrink:0;
+
 }
 
 .avatar{
-  width:68px;
 
-  height:68px;
+  width:72px;
+
+  height:72px;
 
   border-radius:12px;
 
@@ -610,9 +659,9 @@ main{
 
   justify-content:center;
 
-  font-family:var(--font-display);
+  font-size:22px;
 
-  font-size:21px;
+  font-weight:900;
 
   color:var(--turf-dim);
 
@@ -622,20 +671,23 @@ main{
 
   transition:.15s;
 
-  font-weight:900;
 }
 
 .avatar img{
+
   width:100%;
   height:100%;
 
   object-fit:cover;
+
 }
 
 .streamer-link:hover .avatar{
+
   border-color:rgba(155,255,92,.45);
 
   transform:translateY(-1px);
+
 }
 
 
@@ -644,16 +696,19 @@ main{
 ============================================================ */
 
 .meta{
+
   min-width:0;
 
   flex:1;
 
-  padding-right:45px;
-
   text-align:left;
+
+  overflow:hidden;
+
 }
 
 .name-row{
+
   display:flex;
 
   align-items:center;
@@ -665,28 +720,38 @@ main{
   flex-wrap:nowrap;
 
   min-width:0;
+
+  padding-right:45px;
+
 }
 
 .name{
+
   font-weight:900;
 
   font-size:17px;
 
-  transition:color .15s;
+  line-height:1.25;
 
   white-space:nowrap;
 
   overflow:hidden;
 
   text-overflow:ellipsis;
+
+  transition:color .15s;
+
 }
 
 .streamer-link:hover .name{
+
   color:var(--turf);
+
 }
 
 .live-badge{
-  font-family:var(--font-body);
+
+  flex-shrink:0;
 
   font-size:10px;
 
@@ -700,7 +765,6 @@ main{
 
   font-weight:900;
 
-  flex-shrink:0;
 }
 
 
@@ -709,6 +773,7 @@ main{
 ============================================================ */
 
 .fc-nickname{
+
   margin-top:6px;
 
   display:flex;
@@ -725,7 +790,7 @@ main{
 
   line-height:1.25;
 
-  font-weight:800;
+  font-weight:700;
 
   letter-spacing:-.015em;
 
@@ -734,49 +799,72 @@ main{
   overflow:hidden;
 
   text-overflow:ellipsis;
+
 }
 
 .fc-ball{
+
   font-size:13px;
 
   line-height:1;
 
   flex-shrink:0;
+
 }
 
 
 /* ============================================================
-   SOOP ID
+   ID
+   FC ID / SOOP ID 위치 변경
 ============================================================ */
 
 .id-line{
-  font-family:var(--font-body);
 
-  font-size:11px;
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  margin-top:5px;
+
+  min-width:0;
 
   color:var(--text-dim);
 
-  margin-top:4px;
+  font-size:10px;
+
+  font-weight:500;
 
   white-space:nowrap;
 
   overflow:hidden;
 
+}
+
+.id-item{
+
+  min-width:0;
+
+  overflow:hidden;
+
   text-overflow:ellipsis;
 
-  font-weight:600;
 }
 
 
 /* ============================================================
-   TIER
+   TIER AREA
 ============================================================ */
 
 .tier-wrap{
-  margin-top:7px;
+
+  margin-top:8px;
+
 }
 
 .badge-row{
+
   display:flex;
 
   align-items:center;
@@ -785,15 +873,19 @@ main{
 
   gap:6px;
 
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
+
+  min-width:0;
+
 }
 
 
 /* ============================================================
-   BADGES
+   GENERAL BADGE
 ============================================================ */
 
 .filter-badge{
+
   border:1px solid rgba(155,255,92,.25);
 
   background:rgba(155,255,92,.08);
@@ -804,7 +896,7 @@ main{
 
   font-family:var(--font-body);
 
-  font-size:10px;
+  font-size:11px;
 
   font-weight:800;
 
@@ -816,24 +908,31 @@ main{
 
   white-space:nowrap;
 
+  flex-shrink:0;
+
   transition:.12s;
+
 }
 
 .filter-badge:hover{
+
   filter:brightness(1.15);
 
   border-color:rgba(155,255,92,.45);
 
   transform:translateY(-1px);
+
 }
 
 .filter-badge:active{
+
   transform:scale(.97);
+
 }
 
 
 /* ============================================================
-   FC / SOOP / CREW 색상 통일
+   FC / SOOP COLORS
 ============================================================ */
 
 .tier-top,
@@ -846,31 +945,69 @@ main{
 .soop-2,
 .soop-6,
 .soop-100,
-.soop-other,
-.crew-badge,
-.crew-0,
-.crew-1,
-.crew-2,
-.crew-3,
-.crew-4{
+.soop-other{
+
   background:rgba(155,255,92,.08);
 
   color:var(--turf);
 
   border-color:rgba(155,255,92,.25);
+
 }
 
 
 /* ============================================================
-   CARD BOTTOM INFO
-   크루명 → Division → Note
-   카드 전체 폭 사용
+   CREW
+   ★ 박스 제거
 ============================================================ */
 
-.card-info-row{
-  width:100%;
+.crew-badge{
 
-  min-width:0;
+  border:0 !important;
+
+  background:transparent !important;
+
+  color:var(--text) !important;
+
+  padding:0 !important;
+
+  font-family:var(--font-body);
+
+  font-size:11px;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  white-space:nowrap;
+
+  flex-shrink:0;
+
+  transition:.12s;
+
+}
+
+.crew-badge:hover{
+
+  border:0 !important;
+
+  background:transparent !important;
+
+  color:var(--turf) !important;
+
+  transform:none;
+
+  filter:none;
+
+}
+
+
+/* ============================================================
+   EXTRA INFO
+   크루명 → Division → Note
+============================================================ */
+
+.extra-info{
 
   display:flex;
 
@@ -878,63 +1015,71 @@ main{
 
   justify-content:flex-start;
 
-  gap:7px;
+  gap:9px;
 
-  padding-top:1px;
+  margin-top:8px;
 
-  border-top:1px solid rgba(34,51,44,.7);
-
-  overflow:hidden;
-}
-
-.card-info-item{
   min-width:0;
 
-  flex:0 1 auto;
-
-  display:block;
+  overflow:hidden;
 
   white-space:nowrap;
 
-  overflow:hidden;
-
-  text-overflow:clip;
-
   font-size:11px;
 
-  line-height:1.4;
+  line-height:1.2;
 
-  font-weight:600;
-
-  color:var(--text-dim);
 }
 
-.card-info-item.crew-info{
-  color:var(--turf);
+.extra-item{
 
-  font-weight:800;
-}
-
-.card-info-item.division-info{
-  color:var(--text);
-}
-
-.card-info-item.note-info{
-  color:var(--text-dim);
-
-  flex:1 1 auto;
+  min-width:0;
 
   overflow:hidden;
 
   text-overflow:ellipsis;
+
+  white-space:nowrap;
+
+  flex-shrink:1;
+
 }
 
-.card-info-separator{
+.extra-crew{
+
+  font-weight:800;
+
+  color:var(--text);
+
+}
+
+.extra-division{
+
+  color:var(--text-dim);
+
+  font-weight:600;
+
+}
+
+.extra-note{
+
+  color:var(--text-dim);
+
+  font-weight:500;
+
+}
+
+
+/* ============================================================
+   EXTRA INFO 구분자
+============================================================ */
+
+.extra-separator{
+
+  color:#50635a;
+
   flex-shrink:0;
 
-  color:#4b5d54;
-
-  font-size:10px;
 }
 
 
@@ -943,6 +1088,7 @@ main{
 ============================================================ */
 
 .empty{
+
   grid-column:1/-1;
 
   text-align:center;
@@ -952,18 +1098,17 @@ main{
   color:var(--text-dim);
 
   font-size:14px;
+
 }
 
 .empty strong{
+
   display:block;
 
   color:var(--text);
 
   margin-bottom:5px;
-}
 
-.empty small{
-  font-size:12px;
 }
 
 
@@ -972,27 +1117,29 @@ main{
 ============================================================ */
 
 footer{
+
   max-width:1000px;
 
   margin:28px auto 0;
 
   padding:0 20px;
 
-  font-family:var(--font-body);
-
   font-size:11px;
 
   color:var(--text-dim);
 
   line-height:1.6;
+
 }
 
 footer code{
+
   background:var(--bg-elev);
 
-  padding:1px 5px;
+  padding:2px 5px;
 
   border-radius:4px;
+
 }
 
 
@@ -1003,8 +1150,10 @@ footer code{
 @media(max-width:850px){
 
   .streamer-grid{
+
     grid-template-columns:
       repeat(2,minmax(0,1fr));
+
   }
 
 }
@@ -1017,76 +1166,102 @@ footer code{
 @media(max-width:620px){
 
   header{
+
     padding:18px 12px 14px;
+
   }
 
   .hero{
+
     padding:22px 16px;
+
   }
 
   .filter-panel{
+
     padding-left:12px;
     padding-right:12px;
+
   }
 
   main{
+
     padding-left:12px;
     padding-right:12px;
+
   }
 
   .streamer-grid{
+
     grid-template-columns:
       repeat(2,minmax(0,1fr));
 
     gap:9px;
+
   }
 
   .card{
-    padding:11px 9px 11px;
+
+    padding:11px 8px;
 
     gap:8px;
+
   }
 
   .avatar{
+
     width:56px;
     height:56px;
 
     border-radius:10px;
-  }
 
-  .meta{
-    padding-right:36px;
   }
 
   .name{
+
     font-size:14px;
+
   }
 
   .fc-nickname{
-    font-size:13px;
+
+    font-size:12px;
+
   }
 
   .id-line{
-    font-size:10px;
+
+    font-size:9px;
+
+    gap:5px;
+
   }
 
   .card-soop-tier{
+
     top:8px;
     right:8px;
 
     font-size:9px;
 
     padding:3px 6px;
+
   }
 
   .filter-badge{
+
     font-size:9px;
 
-    padding:4px 7px;
+    padding:4px 6px;
+
   }
 
-  .card-info-item{
-    font-size:10px;
+  .extra-info{
+
+    font-size:9px;
+
+    gap:6px;
+
   }
 
 }
@@ -1099,32 +1274,22 @@ footer code{
 @media(max-width:390px){
 
   .streamer-grid{
+
     grid-template-columns:1fr;
+
   }
 
   .card{
+
     padding:14px 12px;
+
   }
 
   .avatar{
+
     width:64px;
     height:64px;
-  }
 
-  .name{
-    font-size:16px;
-  }
-
-  .fc-nickname{
-    font-size:14px;
-  }
-
-  .id-line{
-    font-size:11px;
-  }
-
-  .card-info-item{
-    font-size:11px;
   }
 
 }
@@ -1232,15 +1397,11 @@ footer code{
 
 <div class="filter-panel">
 
-  <!-- SOOP TIER FILTER -->
-
   <div
     class="filter-row"
     id="soopFilters"
   ></div>
 
-
-  <!-- FC ONLINE FILTER -->
 
   <div
     class="filter-row"
@@ -1249,16 +1410,12 @@ footer code{
   ></div>
 
 
-  <!-- CREW FILTER -->
-
   <div
     class="filter-row"
     id="crewFilters"
     style="margin-top:7px;"
   ></div>
 
-
-  <!-- ACTIVE FILTER -->
 
   <div
     class="active-filters"
@@ -2449,18 +2606,12 @@ function render(){
           s.crew || ''
         ).toLowerCase();
 
-      const divisionName =
-        String(
-          s.divisionName || ''
-        ).toLowerCase();
-
       return (
         name.includes(q) ||
         id.includes(q) ||
         fcNickname.includes(q) ||
         note.includes(q) ||
-        crew.includes(q) ||
-        divisionName.includes(q)
+        crew.includes(q)
       );
 
     });
@@ -2586,7 +2737,7 @@ function renderCard(s){
     );
 
 
-  const divisionName =
+  const division =
     escapeHtml(
       s.divisionName ||
       (
@@ -2595,6 +2746,10 @@ function renderCard(s){
           : ''
       )
     );
+
+
+  const soopUrl =
+    `https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}`;
 
 
   return `
@@ -2617,37 +2772,35 @@ function renderCard(s){
       </button>
 
 
-      <!-- 상단 영역 -->
+      <!-- AVATAR -->
 
       <a
         class="streamer-link"
-        href="https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}"
+        href="${soopUrl}"
         target="_blank"
         rel="noopener"
         aria-label="${name} 방송국 열기"
       >
 
         <div class="avatar">
-
           ${firstLetter}
-
         </div>
 
       </a>
 
 
-      <!-- 스트리머 정보 -->
+      <!-- STREAMER INFO -->
 
       <div class="meta">
 
 
-        <!-- 스트리머 이름 -->
+        <!-- NAME -->
 
         <div class="name-row">
 
           <a
             class="streamer-link"
-            href="https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}"
+            href="${soopUrl}"
             target="_blank"
             rel="noopener"
           >
@@ -2672,7 +2825,7 @@ function renderCard(s){
         </div>
 
 
-        <!-- FC 닉네임 -->
+        <!-- FC NICKNAME -->
 
         ${
           s.fcNickname
@@ -2698,11 +2851,23 @@ function renderCard(s){
         }
 
 
-        <!-- SOOP ID -->
+        <!-- ID LINE -->
 
         <div class="id-line">
 
-          @${id}
+          <span
+            class="id-item"
+            title="FC ID"
+          >
+            FC ID: ${id}
+          </span>
+
+          <span
+            class="id-item"
+            title="SOOP ID"
+          >
+            @${id}
+          </span>
 
         </div>
 
@@ -2720,9 +2885,7 @@ function renderCard(s){
               data-filter-value="${safeTier}"
               title="이 FC온라인 티어만 보기"
             >
-
               ${safeTier}
-
             </button>
 
           </div>
@@ -2730,84 +2893,87 @@ function renderCard(s){
         </div>
 
 
+        <!-- ====================================================
+             EXTRA INFO
+             순서: 크루명 → Division → Note
+        ==================================================== -->
+
+        ${
+          (s.crew || division || s.note)
+            ? `
+
+              <div class="extra-info">
+
+                ${
+                  s.crew
+                    ? `
+                      <button
+                        type="button"
+                        class="extra-item extra-crew crew-badge"
+                        data-filter-type="crew"
+                        data-filter-value="${crew}"
+                        title="이 크루만 보기"
+                      >
+                        ${crew}
+                      </button>
+                    `
+                    : ''
+                }
+
+                ${
+                  s.crew && division
+                    ? `
+                      <span class="extra-separator">
+                        ·
+                      </span>
+                    `
+                    : ''
+                }
+
+                ${
+                  division
+                    ? `
+                      <span
+                        class="extra-item extra-division"
+                        title="${division}"
+                      >
+                        ${division}
+                      </span>
+                    `
+                    : ''
+                }
+
+                ${
+                  division && s.note
+                    ? `
+                      <span class="extra-separator">
+                        ·
+                      </span>
+                    `
+                    : ''
+                }
+
+                ${
+                  s.note
+                    ? `
+                      <span
+                        class="extra-item extra-note"
+                        title="${note}"
+                      >
+                        ${note}
+                      </span>
+                    `
+                    : ''
+                }
+
+              </div>
+
+            `
+            : ''
+        }
+
+
       </div>
-
-
-      <!-- ====================================================
-           하단 정보
-
-           순서:
-           크루명 → Division → Note
-      ==================================================== -->
-
-      <div class="card-info-row">
-
-        ${
-          s.crew
-            ? `
-
-              <button
-                type="button"
-                class="card-info-item crew-info"
-                data-filter-type="crew"
-                data-filter-value="${crew}"
-                title="이 크루만 보기"
-              >
-                ${crew}
-              </button>
-
-              <span class="card-info-separator">
-                ·
-              </span>
-
-            `
-            : ''
-        }
-
-
-        ${
-          divisionName
-            ? `
-
-              <span
-                class="card-info-item division-info"
-                title="${divisionName}"
-              >
-                ${divisionName}
-              </span>
-
-              ${
-                s.note
-                  ? `
-                    <span class="card-info-separator">
-                      ·
-                    </span>
-                  `
-                  : ''
-              }
-
-            `
-            : ''
-        }
-
-
-        ${
-          s.note
-            ? `
-
-              <span
-                class="card-info-item note-info"
-                title="${note}"
-              >
-                ${note}
-              </span>
-
-            `
-            : ''
-        }
-
-      </div>
-
 
     </article>
 
@@ -2824,7 +2990,7 @@ function bindCardFilterButtons(){
 
   document
     .querySelectorAll(
-      '.card .filter-badge, .card .card-soop-tier, .card .crew-info'
+      '.card .filter-badge, .card .card-soop-tier, .card .crew-badge'
     )
     .forEach(button => {
 
