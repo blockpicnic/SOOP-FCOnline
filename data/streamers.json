@@ -140,7 +140,7 @@
     "divisionId": 2800,
     "soopTier": "100티어",
     "crew": "95즈",
-    "note": "30황",
+    "note": "저치기",
     "active": true
   },
   {
@@ -152,7 +152,79 @@
     "divisionId": 2900,
     "soopTier": "100티어",
     "crew": "95즈",
-    "note": "30황",
+    "note": "나이쨔",
     "active": true
-  }
+  },
+    {
+    "id": "vbvb1230",
+    "name": "마빡",
+    "fcNickname": "데이비드베컴",
+    "fcOuid": null,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "3티어",
+    "crew": "크루없음",
+    "note": "계정관리의 신",
+    "active": true
+  },
+  {
+    "id": "chamingcha",
+    "name": "차밍챠",
+    "fcNickname": "최강섹시밍챠",
+    "fcOuid": null,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "티어없음",
+    "crew": "어인섬",
+    "note": null,
+    "active": true
+  },
+  {
+    "id": "fumagochi",
+    "name": "푸마고치",
+    "fcNickname": "푸마고스",
+    "fcOuid": null,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "티어없음",
+    "crew": "로스타시티",
+    "note": null,
+    "active": true
+  },
+  {
+    "id": "bxw0pal0",
+    "name": "강하리",
+    "fcNickname": "강하리",
+    "fcOuid": null,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "2티어",
+    "crew": "크루없음",
+    "note": null,
+    "active": true
+  },
+  {
+    "id": "gjstn7637",
+    "name": "아뚱",
+    "fcNickname": "뿌꾸마빡아뚱",
+    "fcOuid": null,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "티어없음",
+    "crew": "감컴퍼니",
+    "note": null,
+    "active": true
+  }, 
+  {
+    "id": "seh0305",
+    "name": "으-네",
+    "fcNickname": "AH가RE",
+    "fcOuid": null,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "2티어",
+    "crew": "자라섬",
+    "note": null,
+    "active": true
+  }, 
 ]
