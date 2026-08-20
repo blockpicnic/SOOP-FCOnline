@@ -126,7 +126,7 @@
     "fcOuid": "28f43087ba49c7e99299f597e903751c",
     "tier": null,
     "divisionId": 800,
-    "soopTier": "?티어",
+    "soopTier": "티어",
     "crew": "고래상사",
     "note": null,
     "active": true
@@ -138,7 +138,7 @@
     "fcOuid": "0791a88ff5f89f78c836e2933b47673c",
     "tier": null,
     "divisionId": 2800,
-    "soopTier": "100티어",
+    "soopTier": "?티어",
     "crew": "95즈",
     "note": "저치기",
     "active": true
@@ -150,7 +150,7 @@
     "fcOuid": "13a08feec2e48e4489e9b8dc3ae0ec86",
     "tier": null,
     "divisionId": 2900,
-    "soopTier": "100티어",
+    "soopTier": "?티어",
     "crew": "95즈",
     "note": "나이쨔",
     "active": true
@@ -174,7 +174,7 @@
     "fcOuid": null,
     "tier": null,
     "divisionId": null,
-    "soopTier": "티어없음",
+    "soopTier": "?티어",
     "crew": "어인섬",
     "note": null,
     "active": true
@@ -186,7 +186,7 @@
     "fcOuid": null,
     "tier": null,
     "divisionId": null,
-    "soopTier": "티어없음",
+    "soopTier": "?티어",
     "crew": "로스타시티",
     "note": null,
     "active": true
@@ -210,7 +210,7 @@
     "fcOuid": null,
     "tier": null,
     "divisionId": null,
-    "soopTier": "티어없음",
+    "soopTier": "?티어",
     "crew": "감컴퍼니",
     "note": null,
     "active": true
