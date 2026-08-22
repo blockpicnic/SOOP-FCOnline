@@ -226,5 +226,65 @@
     "crew": "자라섬",
     "note": null,
     "active": true
-  }
+  },
+  {
+    "id": "khm11903",
+    "name": "와꾸대장봉준",
+    "fcNickname": "마직",
+    "fcOuid": null,,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "4티어",
+    "crew": "무수",
+    "note": null,
+    "active": true
+  },
+  {
+    "id": "kus03125",
+    "name": "뀨알",
+    "fcNickname": "뀨뀨rr",
+    "fcOuid": null,,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "3티어",
+    "crew": "크루없음",
+    "note": null,
+    "active": true
+  },
+  {
+    "id": "ecvhao",
+    "name": "우왁굳",
+    "fcNickname": "왁딩크",
+    "fcOuid": null,,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "티어없음",
+    "crew": "왁타버스",
+    "note": null,
+    "active": true
+  },
+  {
+    "id": "kdsr6017",
+    "name": "표밤",
+    "fcNickname": "진짜표밤",
+    "fcOuid": null,,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "티어없음",
+    "crew": "어인섬",
+    "note": null,
+    "active": true
+  },
+    {
+    "id": "vcheong",
+    "name": "코이ㆍ",
+    "fcNickname": "코원영",
+    "fcOuid": null,,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "티어없음",
+    "crew": "어인섬",
+    "note": null,
+    "active": true
+  },
 ]
