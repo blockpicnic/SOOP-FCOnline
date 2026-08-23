@@ -1,3 +1,4 @@
+```yaml
 name: Update FC Online Data
 
 on:
@@ -26,9 +27,27 @@ jobs:
           import os
           import urllib.parse
           import urllib.request
+          import time
 
           API_KEY = os.environ["NEXON_API_KEY"]
           FILE = "data/streamers.json"
+
+          # =========================================================
+          # FC Online 공식경기 1on1
+          #
+          # 50 = 공식경기 1on1
+          #
+          # 중요:
+          # /user/maxdivision 은 역대 최고 티어이므로 사용하지 않습니다.
+          # =========================================================
+
+          OFFICIAL_MATCH_TYPE = 50
+
+          # 최근 경기 몇 개까지 확인할지
+          RECENT_MATCH_LIMIT = 5
+
+          # API 요청 간격
+          REQUEST_DELAY = 0.25
 
           with open(FILE, "r", encoding="utf-8") as f:
               streamers = json.load(f)
@@ -36,7 +55,12 @@ jobs:
           changed = False
 
 
+          # =========================================================
+          # Nexon API GET
+          # =========================================================
+
           def nexon_get(path):
+
               url = "https://open.api.nexon.com" + path
 
               req = urllib.request.Request(
@@ -47,67 +71,275 @@ jobs:
                   }
               )
 
-              with urllib.request.urlopen(req, timeout=20) as response:
+              with urllib.request.urlopen(
+                  req,
+                  timeout=20
+              ) as response:
+
                   return json.loads(
                       response.read().decode("utf-8")
                   )
 
 
+          # =========================================================
+          # 닉네임 → OUID
+          # =========================================================
+
+          def get_ouid(nickname):
+
+              encoded = urllib.parse.quote(
+                  nickname,
+                  safe=""
+              )
+
+              data = nexon_get(
+                  f"/fconline/v1/id?nickname={encoded}"
+              )
+
+              return data.get("ouid")
+
+
+          # =========================================================
+          # 최근 공식경기 ID 조회
+          # =========================================================
+
+          def get_recent_match_ids(ouid):
+
+              encoded_ouid = urllib.parse.quote(
+                  ouid,
+                  safe=""
+              )
+
+              data = nexon_get(
+                  "/fconline/v1/user/match"
+                  f"?ouid={encoded_ouid}"
+                  f"&matchtype={OFFICIAL_MATCH_TYPE}"
+                  f"&offset=0"
+                  f"&limit={RECENT_MATCH_LIMIT}"
+              )
+
+              if not isinstance(data, list):
+                  return []
+
+              result = []
+
+              for item in data:
+
+                  if isinstance(item, str):
+                      result.append(item)
+
+                  elif isinstance(item, dict):
+
+                      match_id = (
+                          item.get("matchId")
+                          or item.get("matchid")
+                      )
+
+                      if match_id:
+                          result.append(match_id)
+
+              return result
+
+
+          # =========================================================
+          # 경기 상세 조회
+          # =========================================================
+
+          def get_match_detail(match_id):
+
+              encoded = urllib.parse.quote(
+                  match_id,
+                  safe=""
+              )
+
+              return nexon_get(
+                  f"/fconline/v1/match-detail?matchid={encoded}"
+              )
+
+
+          # =========================================================
+          # 최근 공식경기 확인
+          #
+          # 주의:
+          # match-detail에는 당시 division이 없기 때문에
+          # divisionId를 여기서 억지로 만들지 않습니다.
+          #
+          # 대신 최근 공식경기 정보를 별도 필드에 저장합니다.
+          # =========================================================
+
+          def get_recent_official_match(ouid):
+
+              match_ids = get_recent_match_ids(
+                  ouid
+              )
+
+              if not match_ids:
+                  return None
+
+              for match_id in match_ids:
+
+                  try:
+
+                      detail = get_match_detail(
+                          match_id
+                      )
+
+                      if not detail:
+                          continue
+
+                      # API 응답의 matchType 확인
+                      match_type = detail.get(
+                          "matchType"
+                      )
+
+                      if (
+                          match_type is not None
+                          and int(match_type) != OFFICIAL_MATCH_TYPE
+                      ):
+                          continue
+
+                      match_date = (
+                          detail.get("matchDate")
+                          or detail.get("matchdate")
+                          or ""
+                      )
+
+                      match_info = detail.get(
+                          "matchInfo"
+                      )
+
+                      if not isinstance(
+                          match_info,
+                          list
+                      ):
+                          match_info = []
+
+                      # 현재 스트리머의 matchInfo 찾기
+                      own_info = None
+
+                      for player in match_info:
+
+                          if not isinstance(
+                              player,
+                              dict
+                          ):
+                              continue
+
+                          player_ouid = str(
+                              player.get("ouid")
+                              or ""
+                          )
+
+                          if player_ouid == str(ouid):
+                              own_info = player
+                              break
+
+                      if own_info is None:
+                          continue
+
+                      match_detail = (
+                          own_info.get(
+                              "matchDetail"
+                          )
+                          or {}
+                      )
+
+                      match_result = (
+                          match_detail.get(
+                              "matchResult"
+                          )
+                          or ""
+                      )
+
+                      # =================================================
+                      # 최근 공식경기 데이터
+                      # =================================================
+
+                      return {
+                          "matchId": match_id,
+                          "matchDate": match_date,
+                          "matchType": OFFICIAL_MATCH_TYPE,
+                          "matchResult": match_result
+                      }
+
+                  except Exception as e:
+
+                      print(
+                          f"[MATCH DETAIL ERROR] "
+                          f"{match_id} / {e}"
+                      )
+
+                  time.sleep(
+                      REQUEST_DELAY
+                  )
+
+              return None
+
+
+          # =========================================================
+          # 스트리머 처리
+          # =========================================================
+
           for streamer in streamers:
 
               nickname = (
-                  streamer.get("fcNickname") or ""
+                  streamer.get("fcNickname")
+                  or ""
               ).strip()
 
               if not nickname:
+
                   print(
-                      f"[SKIP] {streamer.get('id')} - FC 닉네임 없음"
+                      f"[SKIP] "
+                      f"{streamer.get('id')} - FC 닉네임 없음"
                   )
+
                   continue
 
 
               try:
 
                   # =================================================
-                  # 1. fcOuid가 없으면
-                  #    FC 닉네임 → OUID 조회
+                  # 1. OUID가 없으면 닉네임 → OUID
                   # =================================================
 
                   fc_ouid = (
-                      streamer.get("fcOuid") or ""
+                      streamer.get("fcOuid")
+                      or ""
                   ).strip()
+
 
                   if not fc_ouid:
 
                       print(
                           f"[LOOKUP] "
-                          f"{streamer.get('name')} / {nickname}"
+                          f"{streamer.get('name')} / "
+                          f"{nickname}"
                       )
 
-                      encoded_nickname = urllib.parse.quote(
-                          nickname,
-                          safe=""
+                      fc_ouid = get_ouid(
+                          nickname
                       )
 
-                      data = nexon_get(
-                          f"/fconline/v1/id?nickname={encoded_nickname}"
-                      )
+                      if not fc_ouid:
 
-                      new_ouid = data.get("ouid")
-
-                      if not new_ouid:
                           print(
-                              f"[FAIL] OUID 없음: {nickname}"
+                              f"[FAIL] "
+                              f"OUID 없음: {nickname}"
                           )
+
                           continue
 
-                      streamer["fcOuid"] = new_ouid
-                      fc_ouid = new_ouid
+                      streamer["fcOuid"] = fc_ouid
                       changed = True
 
                       print(
                           f"[OUID] "
-                          f"{nickname} → {new_ouid}"
+                          f"{nickname} → {fc_ouid}"
+                      )
+
+                      time.sleep(
+                          REQUEST_DELAY
                       )
 
 
@@ -115,16 +347,19 @@ jobs:
                   # 2. OUID → 현재 닉네임 확인
                   # =================================================
 
+                  encoded_ouid = urllib.parse.quote(
+                      fc_ouid,
+                      safe=""
+                  )
+
                   basic = nexon_get(
-                      "/fconline/v1/user/basic?ouid="
-                      + urllib.parse.quote(
-                          fc_ouid,
-                          safe=""
-                      )
+                      "/fconline/v1/user/basic"
+                      f"?ouid={encoded_ouid}"
                   )
 
                   current_nickname = (
-                      basic.get("nickname") or ""
+                      basic.get("nickname")
+                      or ""
                   ).strip()
 
 
@@ -135,88 +370,110 @@ jobs:
 
                       print(
                           "[NICKNAME CHANGE] "
-                          f"{nickname} → {current_nickname}"
+                          f"{nickname} → "
+                          f"{current_nickname}"
                       )
 
-                      streamer["fcNickname"] = current_nickname
+                      streamer["fcNickname"] = (
+                          current_nickname
+                      )
+
                       changed = True
+
+                      nickname = current_nickname
 
                   else:
 
                       print(
                           f"[OK] "
                           f"{streamer.get('name')} / "
-                          f"{current_nickname}"
+                          f"{current_nickname or nickname}"
                       )
 
 
-                  # =================================================
-                  # 3. 공식경기 1on1 현재 최고 티어 조회
-                  #
-                  # matchtype=50
-                  #
-                  # 여기서 받은 division 값을
-                  # streamers.json의 divisionId에 저장
-                  # =================================================
-
-                  division_data = nexon_get(
-                      "/fconline/v1/user/maxdivision"
-                      "?ouid="
-                      + urllib.parse.quote(
-                          fc_ouid,
-                          safe=""
-                      )
-                      + "&matchtype=50"
+                  time.sleep(
+                      REQUEST_DELAY
                   )
 
 
-                  if isinstance(division_data, list):
+                  # =================================================
+                  # 3. 최근 공식경기 조회
+                  #
+                  # 기존의 /user/maxdivision 제거
+                  #
+                  # 최고 티어를 divisionId에 저장하지 않음
+                  # =================================================
 
-                      entry = (
-                          division_data[0]
-                          if division_data
-                          else {}
+                  print(
+                      f"[RECENT MATCH] "
+                      f"{streamer.get('name')} "
+                      f"/ 최근 공식경기 조회"
+                  )
+
+                  recent_match = (
+                      get_recent_official_match(
+                          fc_ouid
+                      )
+                  )
+
+
+                  if recent_match:
+
+                      print(
+                          f"[RECENT MATCH] "
+                          f"{streamer.get('name')} → "
+                          f"{recent_match['matchId']} / "
+                          f"{recent_match['matchDate']} / "
+                          f"{recent_match['matchResult']}"
                       )
 
-                  else:
+                      # =================================================
+                      # 최근 경기 정보 저장
+                      #
+                      # 프론트에서 사용할 수 있도록 별도 필드 사용
+                      #
+                      # divisionId는 절대 여기서 변경하지 않음.
+                      # =================================================
 
-                      entry = division_data or {}
+                      if streamer.get(
+                          "recentMatchId"
+                      ) != recent_match["matchId"]:
 
-
-                  division_id = entry.get("division")
-
-
-                  if division_id is not None:
-
-                      old_division_id = streamer.get(
-                          "divisionId"
-                      )
-
-                      if old_division_id != division_id:
-
-                          print(
-                              f"[TIER CHANGE] "
-                              f"{streamer.get('name')} : "
-                              f"{old_division_id} → "
-                              f"{division_id}"
+                          streamer["recentMatchId"] = (
+                              recent_match["matchId"]
                           )
 
-                          streamer["divisionId"] = division_id
                           changed = True
 
-                      else:
 
-                          print(
-                              f"[TIER] "
-                              f"{streamer.get('name')} → "
-                              f"{division_id}"
+                      if streamer.get(
+                          "recentMatchDate"
+                      ) != recent_match["matchDate"]:
+
+                          streamer["recentMatchDate"] = (
+                              recent_match["matchDate"]
                           )
+
+                          changed = True
+
+
+                      if streamer.get(
+                          "recentMatchResult"
+                      ) != recent_match["matchResult"]:
+
+                          streamer["recentMatchResult"] = (
+                              recent_match["matchResult"]
+                          )
+
+                          changed = True
+
 
                   else:
 
                       print(
-                          f"[TIER FAIL] "
-                          f"{streamer.get('name')}"
+                          f"[RECENT MATCH FAIL] "
+                          f"{streamer.get('name')} "
+                          f"/ 최근 공식경기 없음"
                       )
 
 
@@ -228,6 +485,11 @@ jobs:
                       f"{nickname} / "
                       f"{e}"
                   )
+
+
+              time.sleep(
+                  REQUEST_DELAY
+              )
 
 
           # =========================================================
@@ -282,3 +544,4 @@ jobs:
 
           git commit -m "Auto update FC Online data"
           git push
+```
