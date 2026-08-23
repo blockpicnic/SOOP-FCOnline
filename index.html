@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -8,10 +9,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link
-  href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap"
-  rel="stylesheet"
->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -25,23 +23,9 @@
   --text-dim:#93a89c;
   --unranked:#5c6b64;
   --card-radius:14px;
-
-  --font-display:
-    'Noto Sans KR',
-    system-ui,
-    sans-serif;
-
-  --font-body:
-    'Noto Sans KR',
-    -apple-system,
-    BlinkMacSystemFont,
-    system-ui,
-    sans-serif;
-
-  --font-mono:
-    'JetBrains Mono',
-    'Noto Sans KR',
-    monospace;
+  --font-display:'Noto Sans KR',system-ui,sans-serif;
+  --font-body:'Noto Sans KR',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','Noto Sans KR',monospace;
 }
 
 *{
@@ -54,7 +38,6 @@ html{
 
 body{
   margin:0;
-
   background:
     radial-gradient(
       circle at 15% -10%,
@@ -62,15 +45,16 @@ body{
       transparent 45%
     ),
     var(--bg);
-
   color:var(--text);
   font-family:var(--font-body);
   padding-bottom:60px;
 }
 
-/* ============================================================
-   HEADER
-============================================================ */
+button,
+input,
+select{
+  font-family:inherit;
+}
 
 header{
   padding:28px 20px 20px;
@@ -82,10 +66,6 @@ header{
   backdrop-filter:blur(10px);
 }
 
-/* ============================================================
-   HERO
-============================================================ */
-
 .hero{
   position:relative;
   max-width:1000px;
@@ -93,7 +73,6 @@ header{
   padding:28px 24px 24px;
   overflow:hidden;
   border-radius:16px;
-
   background:
     linear-gradient(
       90deg,
@@ -103,7 +82,6 @@ header{
     ),
     url('/assets/fconline-bg.jpg')
     center/cover no-repeat;
-
   border:1px solid rgba(155,255,92,.12);
 }
 
@@ -112,7 +90,6 @@ header{
   position:absolute;
   inset:0;
   pointer-events:none;
-
   background:
     linear-gradient(
       135deg,
@@ -151,6 +128,52 @@ h1{
 }
 
 /* ============================================================
+   NAV
+============================================================ */
+
+.page-nav{
+  max-width:1000px;
+  margin:12px auto 0;
+  display:flex;
+  gap:7px;
+}
+
+.page-nav button{
+  border:1px solid var(--pitch-line);
+  background:var(--bg-elev);
+  color:var(--text-dim);
+  border-radius:9px;
+  padding:9px 14px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.page-nav button:hover{
+  border-color:rgba(155,255,92,.35);
+  color:var(--text);
+}
+
+.page-nav button.active{
+  background:rgba(155,255,92,.10);
+  border-color:rgba(155,255,92,.45);
+  color:var(--turf);
+}
+
+/* ============================================================
+   PAGE
+============================================================ */
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+/* ============================================================
    CONTROLS
 ============================================================ */
 
@@ -171,7 +194,6 @@ h1{
   color:var(--text);
   padding:11px 13px;
   border-radius:10px;
-  font-family:var(--font-body);
   font-size:14px;
   outline:none;
 }
@@ -187,7 +209,6 @@ select{
   padding:11px 13px;
   border-radius:10px;
   font-size:14px;
-  font-family:var(--font-body);
   outline:none;
   cursor:pointer;
 }
@@ -225,7 +246,6 @@ select{
   border-radius:9px;
   padding:8px 12px;
   font-size:12px;
-  font-family:var(--font-body);
   cursor:pointer;
   transition:.15s;
 }
@@ -241,10 +261,6 @@ select{
   color:var(--turf);
   font-weight:700;
 }
-
-/* ============================================================
-   ACTIVE FILTER
-============================================================ */
 
 .active-filters{
   display:none;
@@ -316,13 +332,8 @@ main{
 }
 
 @keyframes pulse{
-  0%,100%{
-    opacity:1;
-  }
-
-  50%{
-    opacity:.35;
-  }
+  0%,100%{opacity:1;}
+  50%{opacity:.35;}
 }
 
 /* ============================================================
@@ -350,7 +361,6 @@ main{
   gap:12px;
   position:relative;
   overflow:hidden;
-
   transition:
     border-color .15s,
     transform .15s,
@@ -377,10 +387,6 @@ main{
   background:#ff5c5c;
 }
 
-/* ============================================================
-   SOOP TIER
-============================================================ */
-
 .card-soop-tier{
   position:absolute;
   top:10px;
@@ -391,16 +397,11 @@ main{
   color:var(--turf);
   border-radius:7px;
   padding:4px 7px;
-  font-family:var(--font-body);
   font-size:11px;
   font-weight:800;
   white-space:nowrap;
   cursor:pointer;
 }
-
-/* ============================================================
-   AVATAR
-============================================================ */
 
 .streamer-link{
   display:block;
@@ -415,25 +416,22 @@ main{
   width:72px;
   height:72px;
   border-radius:12px;
-
   background:
     linear-gradient(
       135deg,
       var(--pitch-line),
       #1c2822
     );
-
   display:flex;
   align-items:center;
   justify-content:center;
-
-  font-family:var(--font-display);
   font-size:22px;
   font-weight:900;
   color:var(--turf-dim);
   overflow:hidden;
   border:1px solid transparent;
   transition:.15s;
+  position:relative;
 }
 
 .avatar img{
@@ -443,19 +441,7 @@ main{
 }
 
 .avatar-letter{
-  display:block;
-}
-
-.avatar img + .avatar-letter{
-  display:none;
-}
-
-.avatar-fallback img{
-  display:none;
-}
-
-.avatar-fallback .avatar-letter{
-  display:block;
+  position:absolute;
 }
 
 .streamer-link:hover .avatar{
@@ -463,15 +449,10 @@ main{
   transform:translateY(-1px);
 }
 
-/* ============================================================
-   META
-============================================================ */
-
 .meta{
   min-width:0;
   flex:1;
   padding-right:45px;
-  text-align:left;
 }
 
 .name-row{
@@ -505,10 +486,6 @@ main{
   font-weight:800;
 }
 
-/* ============================================================
-   SOOP ID
-============================================================ */
-
 .soop-id{
   margin-top:4px;
   color:var(--text-dim);
@@ -520,15 +497,10 @@ main{
   text-overflow:ellipsis;
 }
 
-/* ============================================================
-   FC NICKNAME
-============================================================ */
-
 .fc-nickname{
   margin-top:4px;
   display:flex;
   align-items:center;
-  justify-content:flex-start;
   gap:5px;
   color:var(--text);
   font-size:14px;
@@ -545,10 +517,6 @@ main{
   line-height:1;
   flex-shrink:0;
 }
-
-/* ============================================================
-   BOTTOM INFO
-============================================================ */
 
 .card-info-row{
   margin-top:9px;
@@ -573,7 +541,6 @@ main{
   color:var(--text-dim);
   padding:0;
   margin:0;
-  font-family:var(--font-body);
   font-size:11px;
   font-weight:700;
   white-space:nowrap;
@@ -606,10 +573,6 @@ main{
   flex:1;
 }
 
-/* ============================================================
-   EMPTY
-============================================================ */
-
 .empty{
   grid-column:1/-1;
   text-align:center;
@@ -623,156 +586,6 @@ main{
   color:var(--text);
   margin-bottom:5px;
 }
-
-.empty small{
-  display:block;
-  margin-top:8px;
-  word-break:break-word;
-}
-
-/* ============================================================
-   FRIENDLY MATCH
-============================================================ */
-
-.friendly-section{
-  margin-top:32px;
-}
-
-.section-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin:0 2px 14px;
-}
-
-.section-title{
-  margin:0;
-  font-size:18px;
-  font-weight:900;
-}
-
-.section-subtitle{
-  margin:3px 0 0;
-  color:var(--text-dim);
-  font-size:11px;
-}
-
-.refresh-matches{
-  border:1px solid var(--pitch-line);
-  background:var(--bg-elev);
-  color:var(--text-dim);
-  border-radius:8px;
-  padding:7px 10px;
-  cursor:pointer;
-  font-family:var(--font-body);
-  font-size:11px;
-}
-
-.refresh-matches:hover{
-  border-color:rgba(155,255,92,.4);
-  color:var(--turf);
-}
-
-.match-list{
-  display:flex;
-  flex-direction:column;
-  gap:9px;
-}
-
-.match-card{
-  background:var(--bg-elev);
-  border:1px solid var(--pitch-line);
-  border-radius:12px;
-  padding:13px 14px;
-}
-
-.match-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:10px;
-}
-
-.match-date{
-  color:var(--text-dim);
-  font-family:var(--font-mono);
-  font-size:10px;
-}
-
-.match-type{
-  color:var(--turf);
-  font-size:10px;
-  font-weight:800;
-}
-
-.match-players{
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  gap:10px;
-}
-
-.match-player{
-  min-width:0;
-}
-
-.match-player.right{
-  text-align:right;
-}
-
-.match-player-name{
-  font-size:13px;
-  font-weight:900;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.match-player-fc{
-  margin-top:2px;
-  color:var(--text-dim);
-  font-size:10px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.match-score{
-  font-family:var(--font-mono);
-  font-size:17px;
-  font-weight:900;
-  white-space:nowrap;
-}
-
-.match-score.win{
-  color:var(--turf);
-}
-
-.match-score.lose{
-  color:#ff7777;
-}
-
-.match-score.draw{
-  color:var(--text-dim);
-}
-
-.match-loading,
-.match-empty,
-.match-error{
-  padding:28px 20px;
-  text-align:center;
-  background:var(--bg-elev);
-  border:1px solid var(--pitch-line);
-  border-radius:12px;
-  color:var(--text-dim);
-  font-size:12px;
-}
-
-/* ============================================================
-   FOOTER
-============================================================ */
 
 footer{
   max-width:1000px;
@@ -788,6 +601,157 @@ footer code{
   background:var(--bg-elev);
   padding:1px 5px;
   border-radius:4px;
+}
+
+/* ============================================================
+   MATCH PAGE
+============================================================ */
+
+.match-page{
+  max-width:1000px;
+  margin:0 auto;
+  padding:18px 20px 0;
+}
+
+.match-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:8px 0 16px;
+}
+
+.match-title-wrap h2{
+  margin:0;
+  font-size:22px;
+  font-weight:900;
+}
+
+.match-title-wrap p{
+  margin:4px 0 0;
+  color:var(--text-dim);
+  font-size:12px;
+}
+
+.match-refresh{
+  border:1px solid var(--pitch-line);
+  background:var(--bg-elev);
+  color:var(--text-dim);
+  border-radius:9px;
+  padding:9px 12px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.match-refresh:hover{
+  color:var(--turf);
+  border-color:rgba(155,255,92,.35);
+}
+
+.match-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.match-card{
+  background:var(--bg-elev);
+  border:1px solid var(--pitch-line);
+  border-radius:14px;
+  padding:16px;
+  transition:.15s;
+}
+
+.match-card:hover{
+  border-color:#30463b;
+  background:#141e1a;
+  transform:translateY(-1px);
+}
+
+.match-date{
+  color:var(--text-dim);
+  font-family:var(--font-mono);
+  font-size:10px;
+  margin-bottom:12px;
+}
+
+.match-versus{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:12px;
+}
+
+.match-player{
+  min-width:0;
+}
+
+.match-player.right{
+  text-align:right;
+}
+
+.match-player-name{
+  font-size:16px;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.match-player-fc{
+  margin-top:3px;
+  color:var(--text-dim);
+  font-size:11px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.match-score{
+  min-width:90px;
+  text-align:center;
+}
+
+.match-score-number{
+  font-family:var(--font-mono);
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:.04em;
+}
+
+.match-result{
+  margin-top:4px;
+  color:var(--text-dim);
+  font-size:10px;
+}
+
+.match-result.win{
+  color:var(--turf);
+}
+
+.match-result.draw{
+  color:#e7d875;
+}
+
+.match-empty{
+  text-align:center;
+  padding:60px 20px;
+  background:var(--bg-elev);
+  border:1px solid var(--pitch-line);
+  border-radius:14px;
+  color:var(--text-dim);
+}
+
+.match-empty strong{
+  display:block;
+  color:var(--text);
+  margin-bottom:6px;
+}
+
+.match-loading{
+  text-align:center;
+  padding:60px 20px;
+  color:var(--text-dim);
 }
 
 /* ============================================================
@@ -814,12 +778,21 @@ footer code{
     padding:22px 16px;
   }
 
+  .page-nav{
+    margin-top:10px;
+  }
+
+  .page-nav button{
+    flex:1;
+  }
+
   .filter-panel{
     padding-left:12px;
     padding-right:12px;
   }
 
-  main{
+  main,
+  .match-page{
     padding-left:12px;
     padding-right:12px;
   }
@@ -871,12 +844,20 @@ footer code{
     padding:3px 5px;
   }
 
-  .match-players{
-    gap:6px;
+  .match-header{
+    align-items:flex-start;
+  }
+
+  .match-title-wrap h2{
+    font-size:19px;
+  }
+
+  .match-versus{
+    gap:7px;
   }
 
   .match-player-name{
-    font-size:11px;
+    font-size:13px;
   }
 
   .match-player-fc{
@@ -884,7 +865,11 @@ footer code{
   }
 
   .match-score{
-    font-size:15px;
+    min-width:60px;
+  }
+
+  .match-score-number{
+    font-size:21px;
   }
 }
 
@@ -936,14 +921,31 @@ footer code{
 
       <h1>스트리머 티어보드</h1>
 
-      <p class="sub">
-        FC온라인 카테고리 스트리머 실력 랭킹
-      </p>
+      <p class="sub">FC온라인 카테고리 스트리머 실력 랭킹</p>
     </div>
   </div>
 
-  <div class="controls">
+  <nav class="page-nav">
+    <button
+      type="button"
+      id="tierPageBtn"
+      class="active"
+    >
+      티어보드
+    </button>
 
+    <button
+      type="button"
+      id="matchPageBtn"
+    >
+      스트리머 매치
+    </button>
+  </nav>
+
+  <div
+    class="controls"
+    id="tierControls"
+  >
     <input
       type="text"
       id="search"
@@ -967,71 +969,94 @@ footer code{
       <option value="name">이름순</option>
       <option value="live">방송중 우선</option>
     </select>
-
   </div>
 
 </header>
 
-<div class="filter-panel">
+<!-- ============================================================
+     TIER PAGE
+============================================================ -->
 
-  <div class="filter-row" id="soopFilters"></div>
-
-  <div
-    class="filter-row"
-    id="fcFilters"
-    style="margin-top:7px;"
-  ></div>
-
-  <div
-    class="filter-row"
-    id="crewFilters"
-    style="margin-top:7px;"
-  ></div>
+<section
+  id="tierPage"
+  class="page active"
+>
 
   <div
-    class="active-filters"
-    id="activeFilters"
-  ></div>
+    class="filter-panel"
+    id="tierFilterPanel"
+  >
 
-</div>
+    <div
+      class="filter-row"
+      id="soopFilters"
+    ></div>
 
-<main>
+    <div
+      class="filter-row"
+      id="fcFilters"
+      style="margin-top:7px;"
+    ></div>
 
-  <div class="live-strip">
-    <span class="dot"></span>
+    <div
+      class="filter-row"
+      id="crewFilters"
+      style="margin-top:7px;"
+    ></div>
 
-    <span id="liveCount">
-      0명 방송 중
-    </span>
+    <div
+      class="active-filters"
+      id="activeFilters"
+    ></div>
+
   </div>
 
-  <div
-    class="streamer-grid"
-    id="grid"
-  ></div>
+  <main>
 
-  <!-- ========================================================
-       FRIENDLY MATCH
-  ========================================================= -->
+    <div class="live-strip">
+      <span class="dot"></span>
 
-  <section class="friendly-section">
+      <span id="liveCount">
+        0명 방송 중
+      </span>
+    </div>
 
-    <div class="section-header">
+    <div
+      class="streamer-grid"
+      id="grid"
+    ></div>
 
-      <div>
-        <h2 class="section-title">
-          스트리머 친선경기
-        </h2>
+  </main>
 
-        <p class="section-subtitle">
+</section>
+
+<!-- ============================================================
+     MATCH PAGE
+============================================================ -->
+
+<section
+  id="matchPage"
+  class="page"
+>
+
+  <div class="match-page">
+
+    <div class="match-header">
+
+      <div class="match-title-wrap">
+
+        <h2>스트리머 매치</h2>
+
+        <p>
           등록된 스트리머끼리 진행한 FC온라인 친선경기
         </p>
+
       </div>
 
       <button
         type="button"
-        class="refresh-matches"
-        id="refreshMatches"
+        class="match-refresh"
+        id="matchRefresh"
       >
         새로고침
       </button>
@@ -1041,17 +1066,11 @@ footer code{
     <div
       id="matchList"
       class="match-list"
-    >
+    ></div>
 
-      <div class="match-loading">
-        친선경기를 불러오는 중...
-      </div>
+  </div>
 
-    </div>
-
-  </section>
-
-</main>
+</section>
 
 <footer>
 
@@ -1069,6 +1088,7 @@ footer code{
 </footer>
 
 <script>
+
 /* ============================================================
    DATA
 ============================================================ */
@@ -1081,14 +1101,14 @@ const LIVE_REFRESH_MS = 60000;
 
 const TIER_REFRESH_MS = 300000;
 
+const MATCH_REFRESH_MS = 300000;
 
 /* ============================================================
-   NEXON DIVISION META
+   NEXON
 ============================================================ */
 
 const DIVISION_META_URL =
   'https://open.api.nexon.com/static/fconline/meta/division.json';
-
 
 /* ============================================================
    FILTER STATE
@@ -1099,7 +1119,6 @@ const FILTERS = {
   fcTier:null,
   crew:null
 };
-
 
 /* ============================================================
    ELEMENTS
@@ -1135,12 +1154,26 @@ const crewFilters =
 const activeFilters =
   document.getElementById('activeFilters');
 
+const tierPage =
+  document.getElementById('tierPage');
+
+const matchPage =
+  document.getElementById('matchPage');
+
+const tierPageBtn =
+  document.getElementById('tierPageBtn');
+
+const matchPageBtn =
+  document.getElementById('matchPageBtn');
+
+const tierControls =
+  document.getElementById('tierControls');
+
 const matchList =
   document.getElementById('matchList');
 
-const refreshMatches =
-  document.getElementById('refreshMatches');
-
+const matchRefresh =
+  document.getElementById('matchRefresh');
 
 /* ============================================================
    ESCAPE
@@ -1157,9 +1190,8 @@ function escapeHtml(value){
 
 }
 
-
 /* ============================================================
-   NORMALIZE SOOP TIER
+   SOOP TIER
 ============================================================ */
 
 function normalizeSoopTier(value){
@@ -1178,9 +1210,8 @@ function normalizeSoopTier(value){
   return text;
 }
 
-
 /* ============================================================
-   DIVISION NAME
+   DIVISION
 ============================================================ */
 
 function getDivisionName(divisionId){
@@ -1215,6 +1246,7 @@ function getDivisionName(divisionId){
         found.name ||
         null
       );
+
     }
   }
 
@@ -1242,7 +1274,6 @@ function getDivisionName(divisionId){
 
   return null;
 }
-
 
 /* ============================================================
    LOAD DIVISION META
@@ -1280,9 +1311,8 @@ async function loadDivisionMeta(){
   }
 }
 
-
 /* ============================================================
-   APPLY DIVISION NAME
+   APPLY DIVISION
 ============================================================ */
 
 function applyDivisionNames(){
@@ -1316,7 +1346,6 @@ function applyDivisionNames(){
     }
   });
 }
-
 
 /* ============================================================
    LOAD STREAMERS
@@ -1352,7 +1381,7 @@ async function loadStreamers(){
   STREAMERS =
     data
       .filter(
-        s => s && s.active !== false
+        s => s.active !== false
       )
       .map(s => {
 
@@ -1372,6 +1401,10 @@ async function loadStreamers(){
           fcNickname:
             s.fcNickname ||
             '',
+
+          fcOuid:
+            s.fcOuid ||
+            null,
 
           tier:
             s.tier ||
@@ -1409,7 +1442,6 @@ async function loadStreamers(){
   applyDivisionNames();
 }
 
-
 /* ============================================================
    LIVE STATUS
 ============================================================ */
@@ -1428,13 +1460,6 @@ async function refreshLiveStatus(){
       .map(s => s.id)
       .filter(Boolean)
       .join(',');
-
-  if(!ids){
-
-    render();
-
-    return;
-  }
 
   try{
 
@@ -1457,7 +1482,7 @@ async function refreshLiveStatus(){
 
     STREAMERS.forEach(s => {
 
-      if(data && data[s.id]){
+      if(data[s.id]){
 
         s.live =
           !!data[s.id].live;
@@ -1474,7 +1499,6 @@ async function refreshLiveStatus(){
 
   render();
 }
-
 
 /* ============================================================
    TIER STATUS
@@ -1533,6 +1557,12 @@ async function refreshTierStatus(){
           info.currentNickname;
       }
 
+      if(info.ouid){
+
+        s.fcOuid =
+          info.ouid;
+      }
+
       if(info.divisionId != null){
 
         s.divisionId =
@@ -1568,9 +1598,8 @@ async function refreshTierStatus(){
   render();
 }
 
-
 /* ============================================================
-   DIVISION RANK
+   RANK
 ============================================================ */
 
 function divisionRank(s){
@@ -1579,11 +1608,6 @@ function divisionRank(s){
     ? Infinity
     : Number(s.divisionId);
 }
-
-
-/* ============================================================
-   SOOP RANK
-============================================================ */
 
 function soopRank(s){
 
@@ -1604,9 +1628,8 @@ function soopRank(s){
   return Number(match[0]);
 }
 
-
 /* ============================================================
-   UNIQUE VALUES
+   UNIQUE
 ============================================================ */
 
 function uniqueValues(key){
@@ -1633,7 +1656,6 @@ function uniqueValues(key){
     )
   ];
 }
-
 
 /* ============================================================
    FILTER BUTTONS
@@ -1667,39 +1689,47 @@ function buildFilterButtons(){
       SOOP 전체
     </button>
 
-    ${soopValues.map(value => `
+    ${
+      soopValues
+        .map(
+          value => `
 
-      <button
-        class="filter-btn ${FILTERS.soopTier === value ? 'active' : ''}"
-        data-filter-type="soopTier"
-        data-filter-value="${escapeHtml(value)}"
-      >
-        ${escapeHtml(value)}
-      </button>
+            <button
+              class="filter-btn ${FILTERS.soopTier === value ? 'active' : ''}"
+              data-filter-type="soopTier"
+              data-filter-value="${escapeHtml(value)}"
+            >
+              ${escapeHtml(value)}
+            </button>
 
-    `).join('')}
+          `
+        )
+        .join('')
+    }
 
   `;
 
   const fcValues =
     uniqueValues('tier')
-      .sort((a,b) => {
+      .sort(
+        (a,b) => {
 
-        const sa =
-          STREAMERS.find(
-            s => s.tier === a
+          const sa =
+            STREAMERS.find(
+              s => s.tier === a
+            );
+
+          const sb =
+            STREAMERS.find(
+              s => s.tier === b
+            );
+
+          return (
+            divisionRank(sa || {}) -
+            divisionRank(sb || {})
           );
-
-        const sb =
-          STREAMERS.find(
-            s => s.tier === b
-          );
-
-        return (
-          divisionRank(sa || {}) -
-          divisionRank(sb || {})
-        );
-      });
+        }
+      );
 
   fcFilters.innerHTML = `
 
@@ -1711,17 +1741,23 @@ function buildFilterButtons(){
       FC 전체
     </button>
 
-    ${fcValues.map(value => `
+    ${
+      fcValues
+        .map(
+          value => `
 
-      <button
-        class="filter-btn ${FILTERS.fcTier === value ? 'active' : ''}"
-        data-filter-type="fcTier"
-        data-filter-value="${escapeHtml(value)}"
-      >
-        ${escapeHtml(value)}
-      </button>
+            <button
+              class="filter-btn ${FILTERS.fcTier === value ? 'active' : ''}"
+              data-filter-type="fcTier"
+              data-filter-value="${escapeHtml(value)}"
+            >
+              ${escapeHtml(value)}
+            </button>
 
-    `).join('')}
+          `
+        )
+        .join('')
+    }
 
   `;
 
@@ -1745,23 +1781,28 @@ function buildFilterButtons(){
       CREW 전체
     </button>
 
-    ${crewValues.map(value => `
+    ${
+      crewValues
+        .map(
+          value => `
 
-      <button
-        class="filter-btn ${FILTERS.crew === value ? 'active' : ''}"
-        data-filter-type="crew"
-        data-filter-value="${escapeHtml(value)}"
-      >
-        ${escapeHtml(value)}
-      </button>
+            <button
+              class="filter-btn ${FILTERS.crew === value ? 'active' : ''}"
+              data-filter-type="crew"
+              data-filter-value="${escapeHtml(value)}"
+            >
+              ${escapeHtml(value)}
+            </button>
 
-    `).join('')}
+          `
+        )
+        .join('')
+    }
 
   `;
 
   bindFilterButtons();
 }
-
 
 /* ============================================================
    FILTER EVENTS
@@ -1804,7 +1845,6 @@ function bindFilterButtons(){
       );
     });
 }
-
 
 /* ============================================================
    ACTIVE FILTERS
@@ -1863,17 +1903,23 @@ function renderActiveFilters(){
       FILTER
     </span>
 
-    ${filters.map(filter => `
+    ${
+      filters
+        .map(
+          filter => `
 
-      <button
-        class="active-chip"
-        data-active-type="${filter.type}"
-      >
-        ${escapeHtml(filter.label)}
-        <span>×</span>
-      </button>
+            <button
+              class="active-chip"
+              data-active-type="${filter.type}"
+            >
+              ${escapeHtml(filter.label)}
+              <span>×</span>
+            </button>
 
-    `).join('')}
+          `
+        )
+        .join('')
+    }
 
     <button
       class="clear-filters"
@@ -1908,18 +1954,12 @@ function renderActiveFilters(){
     );
 
   if(clear){
-
     clear.addEventListener(
       'click',
       clearAllFilters
     );
   }
 }
-
-
-/* ============================================================
-   CLEAR FILTERS
-============================================================ */
 
 function clearAllFilters(){
 
@@ -1931,7 +1971,6 @@ function clearAllFilters(){
   render();
 }
 
-
 /* ============================================================
    APPLY FILTERS
 ============================================================ */
@@ -1942,9 +1981,8 @@ function applyFilters(list){
 
     if(
       FILTERS.soopTier &&
-      normalizeSoopTier(
-        s.soopTier
-      ) !== FILTERS.soopTier
+      normalizeSoopTier(s.soopTier) !==
+      FILTERS.soopTier
     ){
       return false;
     }
@@ -1967,7 +2005,6 @@ function applyFilters(list){
   });
 }
 
-
 /* ============================================================
    SORT
 ============================================================ */
@@ -1987,11 +2024,10 @@ function sortList(list){
 
     list.sort(
       (a,b) =>
-        String(a.name || '')
-          .localeCompare(
-            String(b.name || ''),
-            'ko'
-          )
+        String(a.name || '').localeCompare(
+          String(b.name || ''),
+          'ko'
+        )
     );
 
     return;
@@ -2001,10 +2037,8 @@ function sortList(list){
 
     list.sort(
       (a,b) =>
-        Number(b.live) -
-        Number(a.live) ||
-        divisionRank(a) -
-        divisionRank(b)
+        Number(b.live) - Number(a.live) ||
+        divisionRank(a) - divisionRank(b)
     );
 
     return;
@@ -2014,8 +2048,7 @@ function sortList(list){
 
     list.sort(
       (a,b) =>
-        soopRank(a) -
-        soopRank(b)
+        soopRank(a) - soopRank(b)
     );
 
     return;
@@ -2025,8 +2058,7 @@ function sortList(list){
 
     list.sort(
       (a,b) =>
-        soopRank(b) -
-        soopRank(a)
+        soopRank(b) - soopRank(a)
     );
 
     return;
@@ -2056,13 +2088,10 @@ function sortList(list){
 
   list.sort(
     (a,b) =>
-      Number(b.live) -
-      Number(a.live) ||
-      divisionRank(a) -
-      divisionRank(b)
+      Number(b.live) - Number(a.live) ||
+      divisionRank(a) - divisionRank(b)
   );
 }
-
 
 /* ============================================================
    RENDER
@@ -2090,24 +2119,16 @@ function render(){
     STREAMERS.filter(s => {
 
       const name =
-        String(
-          s.name || ''
-        ).toLowerCase();
+        String(s.name || '').toLowerCase();
 
       const id =
-        String(
-          s.id || ''
-        ).toLowerCase();
+        String(s.id || '').toLowerCase();
 
       const fcNickname =
-        String(
-          s.fcNickname || ''
-        ).toLowerCase();
+        String(s.fcNickname || '').toLowerCase();
 
       const note =
-        String(
-          s.note || ''
-        ).toLowerCase();
+        String(s.note || '').toLowerCase();
 
       return (
         name.includes(q) ||
@@ -2157,7 +2178,6 @@ function render(){
   bindCardFilterButtons();
 }
 
-
 /* ============================================================
    CARD
 ============================================================ */
@@ -2180,7 +2200,6 @@ function renderCard(s){
     s.tier &&
     !String(s.tier).match(/^등급\s*\d+$/)
   ){
-
     divisionName =
       s.tier;
   }
@@ -2238,27 +2257,21 @@ function renderCard(s){
           src="${escapeHtml(s.avatarUrl)}"
           alt="${name}"
           loading="lazy"
-          onerror="
-            this.style.display='none';
-            this.parentElement.classList.add('avatar-fallback');
-          "
+          onerror="this.style.display='none';"
         >
 
         <span class="avatar-letter">
-          ${escapeHtml(firstLetter)}
+          ${firstLetter}
         </span>
 
       `
       : `
 
         <span class="avatar-letter">
-          ${escapeHtml(firstLetter)}
+          ${firstLetter}
         </span>
 
       `;
-
-  const channelUrl =
-    `https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}`;
 
   return `
 
@@ -2278,7 +2291,7 @@ function renderCard(s){
 
       <a
         class="streamer-link"
-        href="${channelUrl}"
+        href="https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}"
         target="_blank"
         rel="noopener"
         aria-label="${name} 방송국 열기"
@@ -2296,7 +2309,7 @@ function renderCard(s){
 
           <a
             class="streamer-link"
-            href="${channelUrl}"
+            href="https://ch.sooplive.co.kr/${encodeURIComponent(s.id)}"
             target="_blank"
             rel="noopener"
           >
@@ -2310,11 +2323,9 @@ function renderCard(s){
           ${
             s.live
               ? `
-
                 <span class="live-badge">
                   LIVE
                 </span>
-
               `
               : ''
           }
@@ -2413,9 +2424,8 @@ function renderCard(s){
   `;
 }
 
-
 /* ============================================================
-   CARD FILTER BUTTONS
+   CARD FILTER
 ============================================================ */
 
 function bindCardFilterButtons(){
@@ -2470,15 +2480,14 @@ function bindCardFilterButtons(){
     });
 }
 
-
 /* ============================================================
-   FRIENDLY MATCH
+   MATCH PAGE
 ============================================================ */
 
 function formatMatchDate(value){
 
   if(!value){
-    return '날짜 확인 중';
+    return '경기 시간 확인 불가';
   }
 
   const date =
@@ -2500,127 +2509,112 @@ function formatMatchDate(value){
   );
 }
 
+function renderMatchResult(match){
 
-function renderFriendlyMatches(matches){
-
-  if(!matchList){
-    return;
+  if(
+    match.result === 'draw'
+  ){
+    return '무승부';
   }
 
-  if(!Array.isArray(matches) || !matches.length){
-
-    matchList.innerHTML = `
-
-      <div class="match-empty">
-        등록된 스트리머끼리 진행한 친선경기가 없습니다.
-      </div>
-
-    `;
-
-    return;
-  }
-
-  matchList.innerHTML =
-    matches
-      .map(match => {
-
-        const p1 =
-          match.player1 || {};
-
-        const p2 =
-          match.player2 || {};
-
-        const score1 =
-          Number(p1.score ?? 0);
-
-        const score2 =
-          Number(p2.score ?? 0);
-
-        let scoreClass1 = 'draw';
-        let scoreClass2 = 'draw';
-
-        if(score1 > score2){
-
-          scoreClass1 = 'win';
-          scoreClass2 = 'lose';
-
-        }else if(score1 < score2){
-
-          scoreClass1 = 'lose';
-          scoreClass2 = 'win';
-        }
-
-        return `
-
-          <article class="match-card">
-
-            <div class="match-top">
-
-              <span class="match-date">
-                ${escapeHtml(
-                  formatMatchDate(
-                    match.matchDate
-                  )
-                )}
-              </span>
-
-              <span class="match-type">
-                FC ONLINE · FRIENDLY
-              </span>
-
-            </div>
-
-            <div class="match-players">
-
-              <div class="match-player">
-
-                <div class="match-player-name">
-                  ${escapeHtml(
-                    p1.name || p1.fcNickname || '-'
-                  )}
-                </div>
-
-                <div class="match-player-fc">
-                  ${escapeHtml(
-                    p1.fcNickname || ''
-                  )}
-                </div>
-
-              </div>
-
-              <div
-                class="match-score ${scoreClass1}"
-              >
-                ${score1} : ${score2}
-              </div>
-
-              <div class="match-player right">
-
-                <div class="match-player-name">
-                  ${escapeHtml(
-                    p2.name || p2.fcNickname || '-'
-                  )}
-                </div>
-
-                <div class="match-player-fc">
-                  ${escapeHtml(
-                    p2.fcNickname || ''
-                  )}
-                </div>
-
-              </div>
-
-            </div>
-
-          </article>
-
-        `;
-      })
-      .join('');
+  return '스트리머 매치';
 }
 
+function renderMatchCard(match){
 
-async function loadFriendlyMatches(){
+  const p1 =
+    match.player1 || {};
+
+  const p2 =
+    match.player2 || {};
+
+  const score1 =
+    Number.isFinite(Number(p1.score))
+      ? Number(p1.score)
+      : 0;
+
+  const score2 =
+    Number.isFinite(Number(p2.score))
+      ? Number(p2.score)
+      : 0;
+
+  let resultClass =
+    'draw';
+
+  if(score1 > score2){
+    resultClass = 'win';
+  }
+
+  if(score1 < score2){
+    resultClass = 'lose';
+  }
+
+  return `
+
+    <article class="match-card">
+
+      <div class="match-date">
+        ${escapeHtml(
+          formatMatchDate(match.matchDate)
+        )}
+      </div>
+
+      <div class="match-versus">
+
+        <div class="match-player">
+
+          <div class="match-player-name">
+            ${escapeHtml(
+              p1.name || p1.fcNickname || '-'
+            )}
+          </div>
+
+          <div class="match-player-fc">
+            ${escapeHtml(
+              p1.fcNickname || ''
+            )}
+          </div>
+
+        </div>
+
+        <div class="match-score">
+
+          <div class="match-score-number">
+            ${score1}
+            :
+            ${score2}
+          </div>
+
+          <div class="match-result ${resultClass}">
+            ${renderMatchResult(match)}
+          </div>
+
+        </div>
+
+        <div class="match-player right">
+
+          <div class="match-player-name">
+            ${escapeHtml(
+              p2.name || p2.fcNickname || '-'
+            )}
+          </div>
+
+          <div class="match-player-fc">
+            ${escapeHtml(
+              p2.fcNickname || ''
+            )}
+          </div>
+
+        </div>
+
+      </div>
+
+    </article>
+
+  `;
+}
+
+async function loadStreamerMatches(){
 
   if(!matchList){
     return;
@@ -2629,7 +2623,7 @@ async function loadFriendlyMatches(){
   matchList.innerHTML = `
 
     <div class="match-loading">
-      친선경기를 불러오는 중...
+      스트리머 매치 데이터를 불러오는 중입니다...
     </div>
 
   `;
@@ -2644,70 +2638,133 @@ async function loadFriendlyMatches(){
         }
       );
 
-    if(!res.ok){
-
-      let message =
-        `HTTP ${res.status}`;
-
-      try{
-
-        const errorData =
-          await res.json();
-
-        if(errorData?.error){
-          message =
-            errorData.error;
-        }
-
-      }catch{}
-
-      throw new Error(message);
-    }
-
     const data =
       await res.json();
 
-    renderFriendlyMatches(
-      data.matches || []
-    );
+    if(!res.ok){
+
+      throw new Error(
+        data?.error ||
+        '스트리머 매치 조회 실패'
+      );
+    }
+
+    const matches =
+      Array.isArray(data.matches)
+        ? data.matches
+        : [];
+
+    if(!matches.length){
+
+      matchList.innerHTML = `
+
+        <div class="match-empty">
+
+          <strong>
+            아직 스트리머끼리 진행한 경기가 없습니다.
+          </strong>
+
+          등록된 스트리머끼리 FC온라인 친선경기를 진행하면
+          여기에 표시됩니다.
+
+        </div>
+
+      `;
+
+      return;
+    }
+
+    matchList.innerHTML =
+      matches
+        .map(renderMatchCard)
+        .join('');
 
   }catch(error){
 
-    console.warn(
-      '친선경기 조회 실패:',
+    console.error(
+      '스트리머 매치 조회 실패:',
       error
     );
 
     matchList.innerHTML = `
 
-      <div class="match-error">
-        친선경기를 불러오지 못했습니다.
-        <br>
-        <small>
-          ${escapeHtml(
-            error.message
-          )}
-        </small>
+      <div class="match-empty">
+
+        <strong>
+          스트리머 매치 데이터를 불러오지 못했습니다.
+        </strong>
+
+        <span>
+          ${escapeHtml(error.message)}
+        </span>
+
       </div>
 
     `;
   }
 }
 
+/* ============================================================
+   PAGE SWITCH
+============================================================ */
+
+function showTierPage(){
+
+  tierPage.classList.add('active');
+  matchPage.classList.remove('active');
+
+  tierPageBtn.classList.add('active');
+  matchPageBtn.classList.remove('active');
+
+  tierControls.style.display = 'flex';
+
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
+}
+
+async function showMatchPage(){
+
+  tierPage.classList.remove('active');
+  matchPage.classList.add('active');
+
+  tierPageBtn.classList.remove('active');
+  matchPageBtn.classList.add('active');
+
+  tierControls.style.display = 'none';
+
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
+
+  await loadStreamerMatches();
+}
+
+tierPageBtn.addEventListener(
+  'click',
+  showTierPage
+);
+
+matchPageBtn.addEventListener(
+  'click',
+  showMatchPage
+);
+
+matchRefresh.addEventListener(
+  'click',
+  loadStreamerMatches
+);
 
 /* ============================================================
-   SEARCH
+   SEARCH / SORT
 ============================================================ */
 
 search.addEventListener(
   'input',
   render
 );
-
-
-/* ============================================================
-   SORT
-============================================================ */
 
 sortSel.addEventListener(
   'change',
@@ -2724,20 +2781,6 @@ fcSort.addEventListener(
   render
 );
 
-
-/* ============================================================
-   FRIENDLY REFRESH
-============================================================ */
-
-if(refreshMatches){
-
-  refreshMatches.addEventListener(
-    'click',
-    loadFriendlyMatches
-  );
-}
-
-
 /* ============================================================
    INITIALIZE
 ============================================================ */
@@ -2746,73 +2789,41 @@ async function init(){
 
   try{
 
-    /*
-     * 1.
-     * 스트리머 데이터 로드
-     */
     await loadStreamers();
 
-
-    /*
-     * 2.
-     * Nexon Division 이름 메타 로드
-     */
     await loadDivisionMeta();
 
-
-    /*
-     * 3.
-     * divisionId → divisionName
-     */
     applyDivisionNames();
 
-
-    /*
-     * 4.
-     * 필터 / 최초 화면
-     */
     buildFilterButtons();
+
     render();
 
-
-    /*
-     * 5.
-     * 실시간 방송 상태
-     */
     await refreshLiveStatus();
 
-
-    /*
-     * 6.
-     * FC온라인 공식경기 1on1 티어
-     */
     await refreshTierStatus();
 
-
-    /*
-     * 7.
-     * 친선경기
-     */
-    await loadFriendlyMatches();
-
-
-    /*
-     * 8.
-     * 60초마다 방송 상태
-     */
     setInterval(
       refreshLiveStatus,
       LIVE_REFRESH_MS
     );
 
-
-    /*
-     * 9.
-     * 5분마다 FC 티어
-     */
     setInterval(
       refreshTierStatus,
       TIER_REFRESH_MS
+    );
+
+    setInterval(
+      () => {
+
+        if(
+          matchPage.classList.contains('active')
+        ){
+          loadStreamerMatches();
+        }
+
+      },
+      MATCH_REFRESH_MS
     );
 
   }catch(err){
@@ -2833,9 +2844,7 @@ async function init(){
           </strong>
 
           <small>
-            ${escapeHtml(
-              err.message
-            )}
+            ${escapeHtml(err.message)}
           </small>
 
         </div>
@@ -2845,14 +2854,10 @@ async function init(){
   }
 }
 
-
-/* ============================================================
-   START
-============================================================ */
-
 init();
 
 </script>
 
 </body>
 </html>
+```
