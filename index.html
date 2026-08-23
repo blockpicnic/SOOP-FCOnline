@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>FC온라인 스트리머 티어보드</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1103,6 +1104,10 @@ const TIER_REFRESH_MS = 300000;
 
 const MATCH_REFRESH_MS = 300000;
 
+const TIER_BATCH_SIZE = 3;
+
+const TIER_BATCH_DELAY_MS = 1000;
+
 /* ============================================================
    NEXON
 ============================================================ */
@@ -1385,9 +1390,6 @@ async function loadStreamers(){
       )
       .map(s => {
 
-        const divisionId =
-          s.divisionId ?? null;
-
         return {
 
           id:
@@ -1406,15 +1408,12 @@ async function loadStreamers(){
             s.fcOuid ||
             null,
 
-          tier:
-            s.tier ||
-            null,
+          // JSON에 남아 있던 과거 divisionId는 현재 티어로 사용하지 않는다.
+          tier:null,
 
-          divisionId,
+          divisionId:null,
 
-          divisionName:
-            s.divisionName ||
-            null,
+          divisionName:null,
 
           soopTier:
             normalizeSoopTier(
@@ -1439,7 +1438,6 @@ async function loadStreamers(){
         };
       });
 
-  applyDivisionNames();
 }
 
 /* ============================================================
@@ -1509,10 +1507,9 @@ async function refreshTierStatus(){
   const nicknames =
     STREAMERS
       .map(s => s.fcNickname)
-      .filter(Boolean)
-      .join(',');
+      .filter(Boolean);
 
-  if(!nicknames){
+  if(!nicknames.length){
 
     render();
 
@@ -1520,23 +1517,29 @@ async function refreshTierStatus(){
   }
 
   try{
+    const data = {};
 
-    const res =
-      await fetch(
-        `/api/tier?nicknames=${encodeURIComponent(nicknames)}`,
-        {
-          cache:'no-store'
-        }
+    // API의 요청 상한(3명) 안에서 순차 조회한다. 한 번에 모든 스트리머를
+    // 요청해 Nexon 429를 유발하지 않으며, 한 묶음 실패도 나머지에 영향이 없다.
+    for(let index = 0; index < nicknames.length; index += TIER_BATCH_SIZE){
+
+      const batch = nicknames.slice(index, index + TIER_BATCH_SIZE);
+
+      const res = await fetch(
+        `/api/tier?nicknames=${encodeURIComponent(batch.join(','))}`,
+        { cache:'no-store' }
       );
 
-    if(!res.ok){
-      throw new Error(
-        'tier fetch failed'
-      );
+      if(!res.ok){
+        console.warn('tier batch fetch failed:', await res.text());
+      }else{
+        Object.assign(data, await res.json());
+      }
+
+      if(index + TIER_BATCH_SIZE < nicknames.length){
+        await new Promise(resolve => setTimeout(resolve, TIER_BATCH_DELAY_MS));
+      }
     }
-
-    const data =
-      await res.json();
 
     STREAMERS.forEach(s => {
 
@@ -1582,8 +1585,6 @@ async function refreshTierStatus(){
           info.divisionName;
       }
     });
-
-    applyDivisionNames();
 
   }catch(err){
 
