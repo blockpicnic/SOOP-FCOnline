@@ -1,13 +1,13 @@
 /*
  * api/streamer-matches.js
  *
- * 등록된 스트리머끼리 진행한 1:1 친선경기 조회
+ * 등록된 스트리머끼리 진행한 FC온라인 1:1 친선경기 조회
  *
  * 동작
  * 1. data/streamers.json 로드
- * 2. 등록된 스트리머들의 fcOuid 사용
+ * 2. 등록된 스트리머의 fcOuid 사용
  * 3. fcOuid가 없으면 fcNickname으로 OUID 자동 조회
- * 4. 친선경기(matchtype=30) matchId 조회
+ * 4. 친선경기 matchId 조회
  * 5. match-detail 조회
  * 6. matchInfo 안에 등록 스트리머 2명이 모두 있는 경기만 추출
  * 7. matchId 기준 중복 제거
@@ -15,9 +15,12 @@
  *
  * 중요
  * - 공식경기 1:1 = 50
- * - 친선경기 = 30
- * - 이 API에서는 골 수 / 승패를 계산하지 않음
- * - 핵심은 "등록 스트리머 2명이 같은 경기에서 만났는가" 확인
+ * - 친선경기는 별도 matchtype 사용
+ * - 현재 프로젝트에서는 FRIENDLY_MATCH_TYPE = 30 사용
+ *
+ * 주의
+ * - 이 API는 경기 결과/득점을 티어 계산에 사용하지 않음
+ * - 등록 스트리머 2명이 실제로 같은 경기에서 만났는지만 확인
  */
 
 const fs = require("fs");
@@ -31,33 +34,24 @@ const NEXON_BASE =
   "https://open.api.nexon.com/fconline/v1";
 
 /*
- * FC온라인 리그 친선
+ * FC온라인 친선경기
  */
 const FRIENDLY_MATCH_TYPE = 30;
 
 /*
- * 스트리머 1명당 가져올 최근 친선경기 수
- *
- * 등록 스트리머가 많아질수록 API 호출량이 증가하므로
- * 30경기 정도로 제한
+ * 스트리머 1명당 조회할 최근 경기 수
  */
 const MATCH_LIMIT = 30;
 
 /*
  * API 호출 간격
- *
- * 429 방지
  */
 const REQUEST_DELAY = 250;
 
 /*
- * 429 재시도 횟수
+ * 429 재시도
  */
 const MAX_RETRIES = 3;
-
-/*
- * 429 재시도 기본 대기시간
- */
 const RETRY_BASE_DELAY = 1500;
 
 
@@ -111,12 +105,10 @@ async function nexonFetch(
     `${NEXON_BASE}${endpoint}`,
     {
       method: "GET",
-
       headers: {
         "x-nxopen-api-key": apiKey,
         "Accept": "application/json"
       },
-
       cache: "no-store"
     }
   );
@@ -125,7 +117,7 @@ async function nexonFetch(
 
 
   /* ==========================================================
-     429 Rate Limit
+     429
   ========================================================== */
 
   if (response.status === 429) {
@@ -223,10 +215,6 @@ async function getMatchIds(
   ouid,
   apiKey
 ) {
-  if (!ouid) {
-    return [];
-  }
-
   const endpoint =
     `/user/match` +
     `?ouid=${encodeURIComponent(ouid)}` +
@@ -242,20 +230,6 @@ async function getMatchIds(
   if (!Array.isArray(data)) {
     return [];
   }
-
-  /*
-   * Nexon API의 MatchIdList는
-   *
-   * [
-   *   {
-   *     "matchId": "..."
-   *   }
-   * ]
-   *
-   * 형태를 기본으로 사용
-   *
-   * 혹시 문자열 형태가 들어오는 경우도 방어
-   */
 
   return data
     .map(item => {
@@ -308,9 +282,7 @@ function createStreamerMap(
 ) {
   const map = new Map();
 
-  for (
-    const streamer of streamers
-  ) {
+  for (const streamer of streamers) {
     if (
       !streamer ||
       streamer.active === false
@@ -363,9 +335,7 @@ function findStreamerPlayers(
 
   const found = [];
 
-  for (
-    const player of players
-  ) {
+  for (const player of players) {
     if (
       !player ||
       !player.ouid
@@ -390,16 +360,13 @@ function findStreamerPlayers(
 
 
   /*
-   * 같은 OUID가 중복으로 들어오는
-   * 비정상 데이터 방지
+   * 같은 스트리머가 비정상적으로
+   * 중복으로 들어오는 경우 제거
    */
 
-  const unique =
-    new Map();
+  const unique = new Map();
 
-  for (
-    const item of found
-  ) {
+  for (const item of found) {
     unique.set(
       String(item.streamer.fcOuid),
       item
@@ -413,24 +380,63 @@ function findStreamerPlayers(
 
 
 /* ============================================================
-   경기 날짜 추출
+   날짜 추출
 ============================================================ */
 
-function extractMatchDate(
+function extractDate(
   detail
 ) {
   if (!detail) {
     return null;
   }
 
-  /*
-   * Nexon match-detail의 공식 필드
-   */
   return (
     detail.matchDate ||
     detail.matchdate ||
+    detail.date ||
+    detail.matchTime ||
+    detail.matchtime ||
     null
   );
+}
+
+
+/* ============================================================
+   점수 추출
+============================================================ */
+
+/*
+ * 주의:
+ * 친선경기 화면에서 실제 점수를 표시하지 않는다면
+ * 이 값은 단순 보조 데이터입니다.
+ *
+ * 티어 계산에는 절대 사용하지 않습니다.
+ */
+
+function extractScore(
+  player
+) {
+  if (!player) {
+    return 0;
+  }
+
+  const candidates = [
+    player.shoot,
+    player.goal,
+    player.score,
+    player.scores,
+    player.matchScore
+  ];
+
+  for (const value of candidates) {
+    const number = Number(value);
+
+    if (Number.isFinite(number)) {
+      return number;
+    }
+  }
+
+  return 0;
 }
 
 
@@ -444,8 +450,7 @@ function buildMatchResult(
   streamerPlayers
 ) {
   /*
-   * 등록 스트리머가 정확히 2명인 경우만
-   * 스트리머끼리의 친선경기로 인정
+   * 등록 스트리머 2명이 정확히 있어야 함
    */
 
   if (
@@ -460,6 +465,31 @@ function buildMatchResult(
   const second =
     streamerPlayers[1];
 
+  const firstPlayer =
+    first.player;
+
+  const secondPlayer =
+    second.player;
+
+
+  const firstScore =
+    extractScore(firstPlayer);
+
+  const secondScore =
+    extractScore(secondPlayer);
+
+
+  let result = "draw";
+
+  if (firstScore > secondScore) {
+    result = "win";
+  } else if (
+    firstScore < secondScore
+  ) {
+    result = "lose";
+  }
+
+
   return {
     matchId,
 
@@ -467,7 +497,7 @@ function buildMatchResult(
       FRIENDLY_MATCH_TYPE,
 
     matchDate:
-      extractMatchDate(detail),
+      extractDate(detail),
 
     player1: {
       id:
@@ -476,19 +506,16 @@ function buildMatchResult(
 
       name:
         first.streamer.name ||
-        first.streamer.fcNickname ||
-        first.player.nickname ||
-        null,
+        first.streamer.fcNickname,
 
       fcNickname:
-        first.streamer.fcNickname ||
-        first.player.nickname ||
-        null,
+        first.streamer.fcNickname,
 
       fcOuid:
-        first.streamer.fcOuid ||
-        first.player.ouid ||
-        null
+        first.streamer.fcOuid,
+
+      score:
+        firstScore
     },
 
     player2: {
@@ -498,26 +525,25 @@ function buildMatchResult(
 
       name:
         second.streamer.name ||
-        second.streamer.fcNickname ||
-        second.player.nickname ||
-        null,
+        second.streamer.fcNickname,
 
       fcNickname:
-        second.streamer.fcNickname ||
-        second.player.nickname ||
-        null,
+        second.streamer.fcNickname,
 
       fcOuid:
-        second.streamer.fcOuid ||
-        second.player.ouid ||
-        null
-    }
+        second.streamer.fcOuid,
+
+      score:
+        secondScore
+    },
+
+    result
   };
 }
 
 
 /* ============================================================
-   날짜 → timestamp
+   날짜 정렬용
 ============================================================ */
 
 function getTimestamp(
@@ -558,8 +584,6 @@ export default async function handler(
 
   if (!apiKey) {
     return res.status(500).json({
-      success: false,
-
       error:
         "NEXON_API_KEY가 설정되어 있지 않습니다."
     });
@@ -575,10 +599,9 @@ export default async function handler(
   try {
     streamers =
       loadStreamers();
+
   } catch (error) {
     return res.status(500).json({
-      success: false,
-
       error:
         "streamers.json을 읽지 못했습니다.",
 
@@ -599,10 +622,6 @@ export default async function handler(
         streamer.active !== false
     );
 
-
-  /* ==========================================================
-     등록 스트리머 없음
-  ========================================================== */
 
   if (
     activeStreamers.length === 0
@@ -629,24 +648,11 @@ export default async function handler(
     of activeStreamers
   ) {
 
-    /*
-     * 이미 OUID가 있으면
-     * API를 다시 조회하지 않음
-     */
-
-    if (
-      streamer.fcOuid
-    ) {
+    if (streamer.fcOuid) {
       continue;
     }
 
-    /*
-     * FC 닉네임이 없으면 조회 불가
-     */
-
-    if (
-      !streamer.fcNickname
-    ) {
+    if (!streamer.fcNickname) {
       continue;
     }
 
@@ -662,12 +668,6 @@ export default async function handler(
         );
 
       if (ouid) {
-        /*
-         * 이번 요청에서만 사용
-         *
-         * streamers.json 자체를 수정하지 않음
-         */
-
         streamer.fcOuid =
           ouid;
 
@@ -706,22 +706,13 @@ export default async function handler(
   const ouidStreamers =
     activeStreamers.filter(
       streamer =>
-        !!streamer.fcOuid
+        streamer.fcOuid
     );
 
-
-  /* ==========================================================
-     최소 2명 확인
-  ========================================================== */
 
   if (
     ouidStreamers.length < 2
   ) {
-    res.setHeader(
-      "Cache-Control",
-      "no-store, max-age=0"
-    );
-
     return res.status(200).json({
       success: true,
 
@@ -752,7 +743,7 @@ export default async function handler(
 
     try {
       console.log(
-        `[FRIENDLY] 경기 목록 조회: ${streamer.name || streamer.fcNickname}`
+        `[FRIENDLY] 경기 목록 조회: ${streamer.name} / ${streamer.fcNickname}`
       );
 
       const matchIds =
@@ -765,13 +756,6 @@ export default async function handler(
         const matchId
         of matchIds
       ) {
-
-        /*
-         * 같은 matchId는
-         * 여러 스트리머의 최근 경기 목록에
-         * 동시에 존재할 수 있으므로
-         * 여기서부터 중복 제거
-         */
 
         if (
           !matchOwnerMap.has(
@@ -799,7 +783,7 @@ export default async function handler(
 
 
   /* ==========================================================
-     match-detail 조회
+     경기 상세 조회
   ========================================================== */
 
   const matches = [];
@@ -812,19 +796,13 @@ export default async function handler(
     of matchOwnerMap.keys()
   ) {
 
-    /*
-     * 이중 안전장치
-     */
-
     if (
       processed.has(matchId)
     ) {
       continue;
     }
 
-    processed.add(
-      matchId
-    );
+    processed.add(matchId);
 
     try {
 
@@ -840,24 +818,8 @@ export default async function handler(
 
 
       /*
-       * 실제 match-detail의 matchType이
-       * 30인지 한 번 더 확인
-       *
-       * 다른 종류의 경기가 섞이는 것을 방지
-       */
-
-      if (
-        detail.matchType != null &&
-        Number(detail.matchType) !==
-          FRIENDLY_MATCH_TYPE
-      ) {
-        continue;
-      }
-
-
-      /*
-       * matchInfo 안에서
-       * 등록 스트리머 찾기
+       * 해당 경기에서
+       * 등록 스트리머가 몇 명 참가했는지 확인
        */
 
       const streamerPlayers =
@@ -868,8 +830,8 @@ export default async function handler(
 
 
       /*
-       * 등록 스트리머가 정확히 2명인 경우만
-       * 스트리머끼리의 경기로 인정
+       * 정확히 2명의 등록 스트리머가
+       * 같은 경기에 참가한 경우만 저장
        */
 
       if (
@@ -878,12 +840,6 @@ export default async function handler(
         continue;
       }
 
-
-      /*
-       * 최종 경기 데이터 생성
-       *
-       * 골 수 / 승패는 저장하지 않음
-       */
 
       const match =
         buildMatchResult(
@@ -896,9 +852,7 @@ export default async function handler(
         continue;
       }
 
-      matches.push(
-        match
-      );
+      matches.push(match);
 
     } catch (error) {
       console.warn(
@@ -914,7 +868,7 @@ export default async function handler(
 
 
   /* ==========================================================
-     matchId 기준 최종 중복 제거
+     matchId 중복 제거
   ========================================================== */
 
   const uniqueMatches =
@@ -932,22 +886,17 @@ export default async function handler(
 
 
   /* ==========================================================
-     최신 경기순 정렬
+     최신순 정렬
   ========================================================== */
 
   const sortedMatches =
     Array.from(
       uniqueMatches.values()
-    )
-      .sort(
-        (a, b) =>
-          getTimestamp(
-            b.matchDate
-          ) -
-          getTimestamp(
-            a.matchDate
-          )
-      );
+    ).sort(
+      (a, b) =>
+        getTimestamp(b.matchDate) -
+        getTimestamp(a.matchDate)
+    );
 
 
   /* ==========================================================
