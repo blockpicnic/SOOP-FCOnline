@@ -286,5 +286,53 @@
     "crew": "어인섬",
     "note": null,
     "active": true
-  }
+  },
+  {
+    "id": "doormomo",
+    "name": "문모모",
+    "fcNickname": "문모모",
+    "fcOuid": null,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "티어없음",
+    "crew": null,
+    "note": null,
+    "active": true
+  },
+  {
+    "id": "heesunn",
+    "name": "S2써니",
+    "fcNickname": "써니텐포도맛",
+    "fcOuid": null,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "3티어",
+    "crew": null,
+    "note": null,
+    "active": true
+  },
+  {
+    "id": "해리",
+    "name": "찌미♥",
+    "fcNickname": "감롱도르해리",
+    "fcOuid": null,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "4티어",
+    "crew": "버컴퍼니",
+    "note": null,
+    "active": true
+  },
+  {
+    "id": "devil0108",
+    "name": "감스트",
+    "fcNickname": "감스트",
+    "fcOuid": null,
+    "tier": null,
+    "divisionId": null,
+    "soopTier": "3티어",
+    "crew": "감컴퍼니",
+    "note": null,
+    "active": true
+  },
 ]
